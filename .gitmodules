@@ -1,0 +1,3 @@
+[submodule "FastLibrary"]
+	path = FastLibrary
+	url = git@github.com:Geekner/FastLibrary.git
