@@ -1,0 +1,28 @@
+<android.support.v4.widget.SlidingPaneLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sliding_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:background="#3E4147">
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test1"/>
+    </FrameLayout>
+    <FrameLayout
+        android:id="@+id/container2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test1"/>
+    </FrameLayout>
+
+</android.support.v4.widget.SlidingPaneLayout>
