@@ -1,3 +1,9 @@
 [submodule "FastLibrary"]
 	path = FastLibrary
 	url = git@github.com:Geekner/FastLibrary.git
+[submodule "volley"]
+	path = volley
+	url = git@github.com:Geekner/android-volley.git
+[submodule "SlidingMenu"]
+	path = SlidingMenu
+	url = git@github.com:Geekner/SlidingMenu.git

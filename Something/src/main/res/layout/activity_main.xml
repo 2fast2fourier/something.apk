@@ -6,19 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:background="#3E4147">
-    <FrameLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Test1"/>
-    </FrameLayout>
+    <fragment
+        android:id="@+id/threadlistfrag"
+        android:layout_width="360dp"
+        android:layout_height="match_parent"
+        android:name="com.salvadordalvik.something.ThreadListFragment"
+        tools:layout="@layout/threadlist_fragment"/>
     <FrameLayout
         android:id="@+id/container2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:background="#00FF00">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

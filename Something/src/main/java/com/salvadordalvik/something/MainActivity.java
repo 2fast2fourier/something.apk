@@ -18,13 +18,24 @@ import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
+public class MainActivity extends Activity {
+    private SlidingMenu slidingMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        configureSlidingMenu();
+    }
+
+    private void configureSlidingMenu(){
+        slidingMenu = new SlidingMenu(this, SlidingMenu.SLIDING_WINDOW);
+        slidingMenu.setMenu(R.layout.threadlist_fragment);
+        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+        slidingMenu.setTouchModeBehind(SlidingMenu.TOUCHMODE_FULLSCREEN);
+        slidingMenu.setBehindOffset(100);
     }
 
 }

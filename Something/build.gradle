@@ -20,4 +20,7 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:+'
+    compile project(':volley')
+    compile project(':FastLibrary')
+    compile project(':SlidingMenu:library')
 }
