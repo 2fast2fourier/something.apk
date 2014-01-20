@@ -7,20 +7,16 @@
     tools:context=".MainActivity"
     android:background="#3E4147">
     <fragment
-        android:id="@+id/threadlistfrag"
+        android:id="@+id/threadlist_fragment"
         android:layout_width="360dp"
         android:layout_height="match_parent"
         android:name="com.salvadordalvik.something.ThreadListFragment"
-        tools:layout="@layout/threadlist_fragment"/>
-    <FrameLayout
-        android:id="@+id/container2"
+        tools:layout="@layout/ptr_generic_listview" />
+    <fragment
+        android:id="@+id/threadview_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#00FF00">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Test1"/>
-    </FrameLayout>
+        android:name="com.salvadordalvik.something.ThreadViewFragment"
+        tools:layout="@layout/ptr_generic_listview" />
 
 </android.support.v4.widget.SlidingPaneLayout>

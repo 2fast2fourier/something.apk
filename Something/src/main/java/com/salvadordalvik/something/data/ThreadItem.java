@@ -7,6 +7,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.salvadordalvik.fastlibrary.list.BaseFastItem;
+import com.salvadordalvik.something.MainActivity;
 import com.salvadordalvik.something.R;
 
 /**
@@ -28,6 +29,11 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> {
     @Override
     public void onItemClick(Activity act, Fragment fragment) {
         Toast.makeText(act, "Clicked thread: "+id, Toast.LENGTH_SHORT).show();
+        if(act instanceof MainActivity){
+            ((MainActivity)act).showThread(id);
+        }else{
+//            act.startActivity();
+        }
     }
 
     @Override

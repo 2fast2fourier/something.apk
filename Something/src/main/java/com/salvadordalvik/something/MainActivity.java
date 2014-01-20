@@ -3,6 +3,7 @@ package com.salvadordalvik.something;
 import android.app.Activity;
 ;
 import android.app.ActionBar;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.SlidingPaneLayout;
 import android.view.MenuItem;
@@ -14,6 +15,9 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
     private SlidingMenu slidingMenu;
     private SlidingPaneLayout slidingLayout;
 
+    private ThreadListFragment threadList;
+    private ThreadViewFragment threadView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,6 +25,8 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
         configureSlidingMenu();
         configureActionbar();
         configureSlidingLayout();
+        threadList = (ThreadListFragment) getFragmentManager().findFragmentById(R.id.threadlist_fragment);
+        threadView = (ThreadViewFragment) getFragmentManager().findFragmentById(R.id.threadview_fragment);
     }
 
     private void configureSlidingMenu(){
@@ -39,6 +45,7 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
 
     private void configureSlidingLayout(){
         slidingLayout = (SlidingPaneLayout) findViewById(R.id.sliding_layout);
+        slidingLayout.setSliderFadeColor(Color.argb(0,0,0,0));
         slidingLayout.setPanelSlideListener(this);
         slidingLayout.openPane();
     }
@@ -91,5 +98,14 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
     @Override
     public void onClose() {
 
+    }
+
+    public void showThread(int id) {
+        showThread(id, 0);
+    }
+
+    public void showThread(int id, int page) {
+        slidingLayout.closePane();
+        threadView.loadThread(id, page);
     }
 }

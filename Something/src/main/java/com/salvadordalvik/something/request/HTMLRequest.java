@@ -39,4 +39,8 @@ public abstract class HTMLRequest<T> extends FastRequest<T> {
         }
         return fallback;
     }
+
+    protected static int stripParseInt(String str){
+        return Integer.parseInt(str.replaceAll("\\D", ""));
+    }
 }
