@@ -9,7 +9,7 @@ import com.salvadordalvik.fastlibrary.data.FastDatabase;
  * Created by matthewshepard on 1/21/14.
  */
 public class SomeDatabase extends FastDatabase {
-    public static final int DB_VERSION = 1;
+    public static final int DB_VERSION = 2;
 
     public static final String TABLE_FORUM = "forum";
     public static final String TABLE_STARRED_FORUM = "starred_forum";
@@ -34,7 +34,8 @@ public class SomeDatabase extends FastDatabase {
                 "forum_id INTEGER PRIMARY KEY," +
                 "forum_name TEXT NOT NULL," +
                 "parent_forum_id INTEGER DEFAULT 0," +
-                "category TEXT" +
+                "category TEXT," +
+                "forum_index INTEGER NOT NULL" +
                 ")");
         db.execSQL("create table starred_forum (" +
                 "forum_id INTEGER PRIMARY KEY," +

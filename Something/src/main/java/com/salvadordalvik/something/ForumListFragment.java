@@ -40,7 +40,7 @@ public class ForumListFragment extends FastFragment implements FastQueryTask.Que
 
     @Override
     public void refreshData(boolean pullToRefresh, boolean staleRefresh) {
-        new FastQueryTask<ForumItem>(SomeDatabase.getDatabase(), this).execute(SomeDatabase.TABLE_FORUM);
+        new FastQueryTask<ForumItem>(SomeDatabase.getDatabase(), this).query(SomeDatabase.TABLE_FORUM, "forum_index");
     }
 
     @Override

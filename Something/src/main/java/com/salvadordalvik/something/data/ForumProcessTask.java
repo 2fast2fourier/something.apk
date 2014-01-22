@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  * Created by matthewshepard on 1/21/14.
  */
 public class ForumProcessTask implements Runnable {
-    private static Pattern forumNameParser = Pattern.compile("(-*)\\s*([^-]+)");
+    private static Pattern forumNameParser = Pattern.compile("(-*)\\s*(.+)");
 
     private Document page;
 
@@ -28,6 +28,7 @@ public class ForumProcessTask implements Runnable {
     public void run() {
         ArrayList<ContentValues> forumList = new ArrayList<ContentValues>();
         String categoryName = "UNKNOWN";
+        int index = 1;
         Element forumSelect = page.getElementsByAttributeValue("name", "forumid").first();
         if(forumSelect == null){
             Log.e("ForumProcess", "Could not find forum selector.");
@@ -49,6 +50,8 @@ public class ForumProcessTask implements Runnable {
                         cv.put("category", categoryName);
                         //TODO parent forums
                         cv.put("parent_forum_id", 0);
+                        cv.put("forum_index", index);
+                        index++;
 
                         forumList.add(cv);
                     }else{
