@@ -2,26 +2,33 @@ package com.salvadordalvik.something.data;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.graphics.drawable.Drawable;
+import android.text.Editable;
 import android.text.Html;
+import android.text.Spanned;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.salvadordalvik.fastlibrary.list.BaseFastItem;
 import com.salvadordalvik.something.R;
 
+import org.xml.sax.XMLReader;
+
 /**
  * Created by matthewshepard on 1/19/14.
  */
-public class PostItem extends BaseFastItem<PostItem.PostHolder> {
-    private String author, avatar, avTitle, content, postDate;
+public class PostItem extends BaseFastItem<PostItem.PostHolder> implements Html.ImageGetter, Html.TagHandler {
+    private String author, avatar, avTitle, postDate;
+    private Spanned content;
 
     public PostItem(int id, String author, String avTitle, String avatar, String content, String postDate) {
         super(R.layout.post_item, id, 0, false);
         this.author = author;
         this.avatar = avatar;
         this.avTitle = avTitle;
-        this.content = content;
         this.postDate = postDate;
+        this.content = Html.fromHtml(content, this, this);
     }
 
     @Override
@@ -33,12 +40,23 @@ public class PostItem extends BaseFastItem<PostItem.PostHolder> {
     public void updateViewFromHolder(View view, PostHolder holder) {
         holder.author.setText(author);
         holder.date.setText(postDate);
-        holder.content.setText(Html.fromHtml(content));
+        holder.content.setText(content);
     }
 
     @Override
     public void onItemClick(Activity act, Fragment fragment) {
 
+    }
+
+    @Override
+    public Drawable getDrawable(String source) {
+        Log.e("PostItem", "Get Image: " + source);
+        return null;
+    }
+
+    @Override
+    public void handleTag(boolean opening, String tag, Editable output, XMLReader xmlReader) {
+//        Log.e("PostItem", "Unknown Tag: " + tag);
     }
 
     protected static class PostHolder{

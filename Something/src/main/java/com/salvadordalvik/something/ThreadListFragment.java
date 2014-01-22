@@ -17,6 +17,9 @@ import com.salvadordalvik.something.request.ThreadListRequest;
 public class ThreadListFragment extends FastFragment {
     private ListView threadList;
     private FastAdapter adapter;
+
+    private int forumId = 219;
+
     public ThreadListFragment() {
         super(R.layout.ptr_generic_listview);
     }
@@ -37,7 +40,7 @@ public class ThreadListFragment extends FastFragment {
 
     @Override
     public void refreshData(boolean pullToRefresh, boolean staleRefresh) {
-        queueRequest(new ThreadListRequest(219, new Response.Listener<ThreadListRequest.ThreadListResponse>() {
+        queueRequest(new ThreadListRequest(forumId, new Response.Listener<ThreadListRequest.ThreadListResponse>() {
             @Override
             public void onResponse(ThreadListRequest.ThreadListResponse response) {
                 adapter.clearList();
@@ -49,5 +52,11 @@ public class ThreadListFragment extends FastFragment {
                 Toast.makeText(getActivity(), "Failed to load!", Toast.LENGTH_LONG).show();
             }
         }));
+    }
+
+    public void showForum(int id) {
+        threadList.setSelection(0);
+        forumId = id;
+        startRefresh();
     }
 }

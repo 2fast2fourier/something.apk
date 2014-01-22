@@ -5,6 +5,7 @@ import android.util.Log;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.salvadordalvik.something.data.ForumProcessTask;
 import com.salvadordalvik.something.data.ThreadItem;
 
 import org.jsoup.nodes.Document;
@@ -37,6 +38,7 @@ public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListR
 
             threads.add(new ThreadItem(id, getFirstTextByClass(thread, "thread_title", "Thread Title")));
         }
+        ForumProcessTask.execute(document);
         return new ThreadListResponse(threads);
     }
 

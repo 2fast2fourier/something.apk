@@ -31,7 +31,7 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
 
     private void configureSlidingMenu(){
         slidingMenu = new SlidingMenu(this, SlidingMenu.SLIDING_WINDOW);
-        slidingMenu.setMenu(R.layout.ptr_generic_listview);
+        slidingMenu.setMenu(R.layout.forumlist_fragment);
         slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
         slidingMenu.setBehindOffset(100);
         slidingMenu.setOnOpenListener(this);
@@ -105,7 +105,14 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
     }
 
     public void showThread(int id, int page) {
+        slidingMenu.showContent();
         slidingLayout.closePane();
         threadView.loadThread(id, page);
+    }
+
+    public void showForum(int id) {
+        slidingMenu.showContent();
+        slidingLayout.openPane();
+        threadList.showForum(id);
     }
 }
