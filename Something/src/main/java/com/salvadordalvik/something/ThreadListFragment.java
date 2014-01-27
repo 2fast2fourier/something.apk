@@ -8,7 +8,8 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.salvadordalvik.fastlibrary.FastFragment;
-import com.salvadordalvik.fastlibrary.list.FastAdapter;
+import com.salvadordalvik.fastlibrary.list.SectionFastAdapter;
+import com.salvadordalvik.something.data.PostItem;
 import com.salvadordalvik.something.request.ThreadListRequest;
 
 /**
@@ -16,7 +17,7 @@ import com.salvadordalvik.something.request.ThreadListRequest;
  */
 public class ThreadListFragment extends FastFragment {
     private ListView threadList;
-    private FastAdapter adapter;
+    private SectionFastAdapter adapter;
 
     private int forumId = 219;
 
@@ -26,10 +27,13 @@ public class ThreadListFragment extends FastFragment {
 
     @Override
     public void viewCreated(View frag, Bundle savedInstanceState) {
-        adapter = new FastAdapter(getActivity(), this, 1);
+        adapter = new SectionFastAdapter(getActivity(), this, 2);
         threadList = (ListView) frag.findViewById(R.id.ptr_listview);
         threadList.setAdapter(adapter);
         threadList.setOnItemClickListener(adapter);
+
+        adapter.addItems(0, new PostItem(9, "Forums", "TEST", null, "FORUMS LIST HERE", "Yup"));
+        adapter.addItems(1, new PostItem(8, "Divider", "TEST", null, "DIVIDER HERE", "Yup"));
     }
 
     @Override
@@ -43,8 +47,9 @@ public class ThreadListFragment extends FastFragment {
         queueRequest(new ThreadListRequest(forumId, new Response.Listener<ThreadListRequest.ThreadListResponse>() {
             @Override
             public void onResponse(ThreadListRequest.ThreadListResponse response) {
-                adapter.clearList();
-                adapter.addItems(response.threads);
+                adapter.clearSection(2);
+                adapter.addItems(2, response.threads);
+                scrollToThreads();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -52,6 +57,13 @@ public class ThreadListFragment extends FastFragment {
                 Toast.makeText(getActivity(), "Failed to load!", Toast.LENGTH_LONG).show();
             }
         }));
+    }
+
+    private void scrollToThreads(){
+        int threadOffset = adapter.getSectionOffset(1);
+        if(threadOffset < adapter.getCount()){
+            threadList.setSelection(threadOffset);
+        }
     }
 
     public void showForum(int id) {
