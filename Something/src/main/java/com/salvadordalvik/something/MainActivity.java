@@ -7,6 +7,7 @@ import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.SlidingPaneLayout;
+import android.text.Spanned;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -35,6 +36,7 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
     private void configureSlidingLayout(){
         slidingLayout = (SlidingPaneLayout) findViewById(R.id.sliding_layout);
         slidingLayout.setSliderFadeColor(Color.argb(0,0,0,0));
+        slidingLayout.setShadowResource(R.drawable.right_divider);
         slidingLayout.setPanelSlideListener(this);
         slidingLayout.openPane();
     }
@@ -67,12 +69,18 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
 
     @Override
     public void onPanelOpened(View view) {
-
+        Spanned title = threadList.getTitle();
+        if(title != null && title.length() > 0){
+            setTitle(title);
+        }
     }
 
     @Override
     public void onPanelClosed(View view) {
-
+        Spanned title = threadView.getTitle();
+        if(title != null && title.length() > 0){
+            setTitle(title);
+        }
     }
 
     public void showThread(int id) {

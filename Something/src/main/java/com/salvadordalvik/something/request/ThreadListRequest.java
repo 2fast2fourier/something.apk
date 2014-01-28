@@ -10,6 +10,7 @@ import com.salvadordalvik.something.list.ThreadItem;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
@@ -36,7 +37,29 @@ public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListR
                 continue;
             }
 
-            threads.add(new ThreadItem(id, getFirstTextByClass(thread, "thread_title", "Thread Title")));
+            int unread = -1, replies;
+
+            Element seen = thread.getElementsByClass("lastseen").first();
+            if(seen != null){
+                Element count = seen.getElementsByClass("count").first();
+                if(count != null){
+                    unread = stripParseInt(count.text());
+                }else{
+                    unread = 0;
+                }
+            }
+
+            replies = stripParseInt(thread.getElementsByClass("replies").first().text());
+
+            Elements authors = thread.getElementsByClass("author");
+
+            String author, lastPost = null;
+            author = authors.first().text();
+            if(authors.size() > 1){
+                lastPost = authors.last().text();
+            }
+
+            threads.add(new ThreadItem(id, getFirstTextByClass(thread, "thread_title", "Thread Title"), unread, replies, author, lastPost));
         }
         ForumProcessTask.execute(document);
         return new ThreadListResponse(threads);

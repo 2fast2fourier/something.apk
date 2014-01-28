@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="8dp">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/forum_item_indent"
+        android:src="@drawable/ic_drawer"
+        android:layout_gravity="center_vertical"
+        android:visibility="visible"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Forum Name"
+        android:id="@+id/forum_item_title"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:layout_weight="1"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingRight="4dp"
+        android:paddingLeft="4dp"
+        android:layout_gravity="center_vertical" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/forum_item_star"
+        android:src="@drawable/star_empty"
+        android:layout_gravity="center_vertical"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp" />
+</LinearLayout>

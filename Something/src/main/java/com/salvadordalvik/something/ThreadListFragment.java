@@ -2,7 +2,9 @@ package com.salvadordalvik.something;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.text.Spanned;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -10,18 +12,22 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.salvadordalvik.fastlibrary.FastFragment;
+import com.salvadordalvik.fastlibrary.data.FastQueryTask;
 import com.salvadordalvik.fastlibrary.list.SectionFastAdapter;
+import com.salvadordalvik.something.data.SomeDatabase;
+import com.salvadordalvik.something.list.ForumItem;
 import com.salvadordalvik.something.list.MenuItem;
 import com.salvadordalvik.something.list.StubItem;
 import com.salvadordalvik.something.list.ThreadItem;
 import com.salvadordalvik.something.request.ThreadListRequest;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by matthewshepard on 1/16/14.
  */
-public class ThreadListFragment extends FastFragment {
+public class ThreadListFragment extends FastFragment implements FastQueryTask.QueryResultCallback<ForumItem> {
     private ListView threadList;
     private SectionFastAdapter adapter;
 
@@ -32,6 +38,7 @@ public class ThreadListFragment extends FastFragment {
     private int forumId = 219;
     private int page = 1;
     private int maxPage = 1;
+    private Spanned forumTitle;
 
     public ThreadListFragment() {
         super(R.layout.ptr_generic_listview);
@@ -65,7 +72,10 @@ public class ThreadListFragment extends FastFragment {
     @Override
     public void onResume() {
         super.onResume();
-        startRefreshIfStale();
+        if(!startRefreshIfStale()){
+            updateStarredForums();
+            updateForumTitle();
+        }
     }
 
     @Override
@@ -88,6 +98,7 @@ public class ThreadListFragment extends FastFragment {
                 threadData = response.threads;
 //                maxPage = response.maxPage;
                 scrollToThreads();
+                updateForumTitle();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -95,6 +106,31 @@ public class ThreadListFragment extends FastFragment {
                 Toast.makeText(getActivity(), "Failed to load!", Toast.LENGTH_LONG).show();
             }
         }));
+        updateStarredForums();
+        updateForumTitle();
+    }
+    
+
+    private void updateStarredForums(){
+        new FastQueryTask<ForumItem>(SomeDatabase.getDatabase(), this).query(SomeDatabase.VIEW_STARRED_FORUMS);
+    }
+
+    private void updateForumTitle() {
+        new FastQueryTask<ForumItem>(SomeDatabase.getDatabase(), new FastQueryTask.QueryResultCallback<ForumItem>() {
+            @Override
+            public void queryResult(List<ForumItem> results) {
+                Activity act = getActivity();
+                if(results.size() > 0 && act != null){
+                    forumTitle = results.get(0).getTitle();
+                    act.setTitle(forumTitle);
+                }
+            }
+
+            @Override
+            public ForumItem createItem(Cursor data) {
+                return new ForumItem(data, false);
+            }
+        }).query(SomeDatabase.VIEW_FORUMS, null, "forum_id=?", Integer.toString(forumId));
     }
 
     private void scrollToThreads(){
@@ -109,5 +145,20 @@ public class ThreadListFragment extends FastFragment {
         adapter.clearSection(THREAD_SECTION);
         forumId = id;
         startRefresh();
+    }
+
+    @Override
+    public void queryResult(List<ForumItem> results) {
+        adapter.clearSection(1);
+        adapter.addItems(1, results);
+    }
+
+    @Override
+    public ForumItem createItem(Cursor data) {
+        return new ForumItem(data, false);
+    }
+
+    public Spanned getTitle(){
+        return forumTitle;
     }
 }

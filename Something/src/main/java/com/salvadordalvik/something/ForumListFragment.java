@@ -26,7 +26,7 @@ public class ForumListFragment extends FastFragment implements FastQueryTask.Que
 
     @Override
     public void viewCreated(View frag, Bundle savedInstanceState) {
-        adapter = new FastAdapter(getActivity(), this, 1);
+        adapter = new FastAdapter(this, 1);
         forumList = (ListView) frag.findViewById(R.id.ptr_listview);
         forumList.setAdapter(adapter);
         forumList.setOnItemClickListener(adapter);
@@ -40,7 +40,7 @@ public class ForumListFragment extends FastFragment implements FastQueryTask.Que
 
     @Override
     public void refreshData(boolean pullToRefresh, boolean staleRefresh) {
-        new FastQueryTask<ForumItem>(SomeDatabase.getDatabase(), this).query(SomeDatabase.TABLE_FORUM, "forum_index");
+        new FastQueryTask<ForumItem>(SomeDatabase.getDatabase(), this).query(SomeDatabase.VIEW_FORUMS);
     }
 
     @Override
@@ -51,6 +51,6 @@ public class ForumListFragment extends FastFragment implements FastQueryTask.Que
 
     @Override
     public ForumItem createItem(Cursor data) {
-        return new ForumItem(data);
+        return new ForumItem(data, true);
     }
 }

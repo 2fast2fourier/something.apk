@@ -28,7 +28,7 @@ public class ForumProcessTask implements Runnable {
     public void run() {
         ArrayList<ContentValues> forumList = new ArrayList<ContentValues>();
         String categoryName = "UNKNOWN";
-        int index = 1;
+        int index = 1, parentId = 0;
         Element forumSelect = page.getElementsByAttributeValue("name", "forumid").first();
         if(forumSelect == null){
             Log.e("ForumProcess", "Could not find forum selector.");
@@ -48,14 +48,19 @@ public class ForumProcessTask implements Runnable {
                         cv.put("forum_id", forumId);
                         cv.put("forum_name", forumName);
                         cv.put("category", categoryName);
-                        //TODO parent forums
-                        cv.put("parent_forum_id", 0);
+                        if(indent.length() == 2){
+                            parentId = forumId;
+                            cv.put("parent_forum_id", 0);
+                        }else{
+                            cv.put("parent_forum_id", parentId);
+                        }
                         cv.put("forum_index", index);
                         index++;
 
                         forumList.add(cv);
                     }else{
                         categoryName = findForum.group(2);
+                        parentId = 0;
                     }
                 }
             }

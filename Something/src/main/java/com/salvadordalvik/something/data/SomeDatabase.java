@@ -9,10 +9,13 @@ import com.salvadordalvik.fastlibrary.data.FastDatabase;
  * Created by matthewshepard on 1/21/14.
  */
 public class SomeDatabase extends FastDatabase {
-    public static final int DB_VERSION = 2;
+    public static final int DB_VERSION = 3;
 
     public static final String TABLE_FORUM = "forum";
     public static final String TABLE_STARRED_FORUM = "starred_forum";
+
+    public static final String VIEW_FORUMS = "all_forums";
+    public static final String VIEW_STARRED_FORUMS = "starred_forums";
 
     private static SomeDatabase db;
 
@@ -41,12 +44,34 @@ public class SomeDatabase extends FastDatabase {
                 "forum_id INTEGER PRIMARY KEY," +
                 "forum_starred INTEGER DEFAULT 1" +
                 ")");
+        createViews(db);
+    }
+
+    private void createViews(SQLiteDatabase db){
+        db.execSQL("create view all_forums as " +
+                "select forum.forum_id as forum_id, forum_name, parent_forum_id, category, forum_starred " +
+                "from forum left join starred_forum using (forum_id) " +
+                "order by forum_index");
+        db.execSQL("create view starred_forums as " +
+                "select forum.forum_id as forum_id, forum_name, parent_forum_id, category, forum_starred " +
+                "from forum, starred_forum using (forum_id) " +
+                "order by forum_index");
+    }
+
+    private void dropViews(SQLiteDatabase db){
+        db.execSQL("drop view if exists all_forums");
+        db.execSQL("drop view if exists starred_forums");
+    }
+
+    private void dropTables(SQLiteDatabase db){
+        db.execSQL("drop table if exists forum");
+        db.execSQL("drop table if exists starred_forum");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("drop table if exists forum");
-        db.execSQL("drop table if exists starred_forum");
+        dropViews(db);
+        dropTables(db);
         onCreate(db);
     }
 }

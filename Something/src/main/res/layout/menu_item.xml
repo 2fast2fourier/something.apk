@@ -9,5 +9,7 @@
         android:text="Menu Item Text"
         android:id="@+id/menu_item_title"
         android:padding="12dp"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold" />
 </RelativeLayout>
