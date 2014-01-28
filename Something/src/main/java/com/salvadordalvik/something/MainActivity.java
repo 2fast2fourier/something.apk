@@ -1,18 +1,16 @@
 package com.salvadordalvik.something;
 
 import android.app.Activity;
-;
+
 import android.app.ActionBar;
+import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.SlidingPaneLayout;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-
-public class MainActivity extends Activity implements SlidingPaneLayout.PanelSlideListener, SlidingMenu.OnCloseListener, SlidingMenu.OnOpenListener {
-    private SlidingMenu slidingMenu;
+public class MainActivity extends Activity implements SlidingPaneLayout.PanelSlideListener {
     private SlidingPaneLayout slidingLayout;
 
     private ThreadListFragment threadList;
@@ -22,20 +20,11 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        configureSlidingMenu();
         configureActionbar();
         configureSlidingLayout();
-        threadList = (ThreadListFragment) getFragmentManager().findFragmentById(R.id.threadlist_fragment);
         threadView = (ThreadViewFragment) getFragmentManager().findFragmentById(R.id.threadview_fragment);
-    }
-
-    private void configureSlidingMenu(){
-        slidingMenu = new SlidingMenu(this, SlidingMenu.SLIDING_WINDOW);
-        slidingMenu.setMenu(R.layout.forumlist_fragment);
-        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-        slidingMenu.setBehindOffset(100);
-        slidingMenu.setOnOpenListener(this);
-        slidingMenu.setOnCloseListener(this);
+        threadList = new ThreadListFragment();
+        getFragmentManager().beginTransaction().add(R.id.list_container, threadList, "thread_list").commit();
     }
 
     private void configureActionbar(){
@@ -54,11 +43,7 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                if(slidingLayout.isOpen()){
-                    slidingMenu.toggle();
-                }else{
-                    slidingLayout.openPane();
-                }
+                slidingLayout.openPane();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -68,8 +53,8 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
     public void onBackPressed() {
         if(!slidingLayout.isOpen()){
             slidingLayout.openPane();
-        }else if(slidingMenu.isMenuShowing()){
-            slidingMenu.showContent();
+        }else if(getFragmentManager().getBackStackEntryCount() > 0){
+            getFragmentManager().popBackStack();
         }else{
             super.onBackPressed();
         }
@@ -77,7 +62,7 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
 
     @Override
     public void onPanelSlide(View view, float v) {
-        slidingMenu.setSlidingEnabled(v > 0.5f);
+
     }
 
     @Override
@@ -90,29 +75,27 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
 
     }
 
-    @Override
-    public void onOpen() {
-
-    }
-
-    @Override
-    public void onClose() {
-
-    }
-
     public void showThread(int id) {
         showThread(id, 0);
     }
 
     public void showThread(int id, int page) {
-        slidingMenu.showContent();
         slidingLayout.closePane();
         threadView.loadThread(id, page);
     }
 
     public void showForum(int id) {
-        slidingMenu.showContent();
         slidingLayout.openPane();
+        if(getFragmentManager().getBackStackEntryCount() > 0){
+            getFragmentManager().popBackStackImmediate();
+        }
         threadList.showForum(id);
+    }
+
+    public void showForumList(){
+        FragmentTransaction trans = getFragmentManager().beginTransaction();
+        trans.replace(R.id.list_container, new ForumListFragment(), "forum_list");
+        trans.addToBackStack("open_forum_list");
+        trans.commit();
     }
 }

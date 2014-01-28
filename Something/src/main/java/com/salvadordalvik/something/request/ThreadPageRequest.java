@@ -6,7 +6,7 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
-import com.salvadordalvik.something.data.PostItem;
+import com.salvadordalvik.something.list.PostItem;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -27,6 +27,8 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         }else{
             addParam("goto", "newpost");
         }
+        //TODO remove noseen when mark-last is added
+        addParam("noseen","1");
     }
 
     @Override

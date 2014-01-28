@@ -1,4 +1,4 @@
-package com.salvadordalvik.something.data;
+package com.salvadordalvik.something.list;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -23,7 +23,7 @@ public class PostItem extends BaseFastItem<PostItem.PostHolder> implements Html.
     private Spanned content;
 
     public PostItem(int id, String author, String avTitle, String avatar, String content, String postDate) {
-        super(R.layout.post_item, id, 0, false);
+        super(R.layout.post_item, id, false);
         this.author = author;
         this.avatar = avatar;
         this.avTitle = avTitle;

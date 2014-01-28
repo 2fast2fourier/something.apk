@@ -1,4 +1,4 @@
-package com.salvadordalvik.something.data;
+package com.salvadordalvik.something.list;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -19,12 +19,12 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
     private Spanned title;
 
     public ForumItem(int id, String title) {
-        super(R.layout.thread_item, id, 0, true);
+        super(R.layout.thread_item, id, true);
         this.title = Html.fromHtml(title);
     }
 
     public ForumItem(Cursor data) {
-        super(R.layout.thread_item, data.getInt(data.getColumnIndex("forum_id")), 0, true);
+        super(R.layout.thread_item, data.getInt(data.getColumnIndex("forum_id")), true);
         title = Html.fromHtml(data.getString(data.getColumnIndex("forum_name")));
     }
 

@@ -6,12 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:background="#3E4147">
-    <fragment
-        android:id="@+id/threadlist_fragment"
-        android:layout_width="360dp"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.salvadordalvik.something.ThreadListFragment"
-        tools:layout="@layout/ptr_generic_listview" />
+        android:id="@+id/list_container">
+    </RelativeLayout>
     <fragment
         android:id="@+id/threadview_fragment"
         android:layout_width="match_parent"

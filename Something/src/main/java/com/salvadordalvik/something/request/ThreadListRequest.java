@@ -6,7 +6,7 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.salvadordalvik.something.data.ForumProcessTask;
-import com.salvadordalvik.something.data.ThreadItem;
+import com.salvadordalvik.something.list.ThreadItem;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

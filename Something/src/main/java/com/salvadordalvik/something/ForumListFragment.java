@@ -8,7 +8,7 @@ import android.widget.ListView;
 import com.salvadordalvik.fastlibrary.FastFragment;
 import com.salvadordalvik.fastlibrary.data.FastQueryTask;
 import com.salvadordalvik.fastlibrary.list.FastAdapter;
-import com.salvadordalvik.something.data.ForumItem;
+import com.salvadordalvik.something.list.ForumItem;
 import com.salvadordalvik.something.data.SomeDatabase;
 
 import java.util.List;
