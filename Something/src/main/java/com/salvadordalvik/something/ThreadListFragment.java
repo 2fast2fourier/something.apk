@@ -43,6 +43,7 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
     private int page = 1;
     private int maxPage = 1;
     private Spanned forumTitle;
+    private boolean starred = false;
 
     public ThreadListFragment() {
         super(R.layout.ptr_generic_listview, R.menu.thread_list);
@@ -51,7 +52,7 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
         adapter.addItems(0, new MenuItem("Forums") {
             @Override
             public void onItemClick(Activity act, Fragment fragment) {
-                ((MainActivity)act).showForumList();
+                ((MainActivity) act).showForumList();
             }
         });
 
@@ -138,7 +139,7 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
     
 
     private void updateStarredForums(){
-        new FastQueryTask<ForumItem>(SomeDatabase.getDatabase(), this).query(SomeDatabase.VIEW_STARRED_FORUMS);
+        new FastQueryTask<ForumItem>(SomeDatabase.getDatabase(), this).query(SomeDatabase.VIEW_STARRED_FORUMS, null, "forum_id!=?", Integer.toString(forumId));
     }
 
     private void updateForumTitle() {
@@ -151,8 +152,11 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
                 public void queryResult(List<ForumItem> results) {
                     Activity act = getActivity();
                     if(results.size() > 0 && act != null){
-                        forumTitle = results.get(0).getTitle();
+                        ForumItem forum = results.get(0);
+                        forumTitle = forum.getTitle();
+                        starred = forum.isStarred();
                         act.setTitle(forumTitle);
+                        invalidateOptionsMenu();
                     }
                 }
 
@@ -167,7 +171,13 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.menu_forum_pin).setChecked(forumId == SomePreferences.favoriteForumId);
+        android.view.MenuItem pin = menu.findItem(R.id.menu_forum_pin);
+        pin.setChecked(forumId == SomePreferences.favoriteForumId);
+        pin.setTitle(forumId == Constants.BOOKMARK_FORUMID ? R.string.menu_forum_pin_bookmarks : R.string.menu_forum_pin);
+
+        android.view.MenuItem star = menu.findItem(R.id.menu_forum_star);
+        star.setVisible(forumId != Constants.BOOKMARK_FORUMID);
+        star.setIcon(starred ? R.drawable.star : R.drawable.star_empty);
     }
 
     @Override
@@ -176,6 +186,11 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
             case R.id.menu_forum_pin:
                 SomePreferences.setInt(SomePreferences.THREADLIST_FAVORITE_FORUMID, forumId);
                 invalidateOptionsMenu();
+                return true;
+            case R.id.menu_forum_star:
+                starred = ForumItem.toggleStar(forumId);
+                invalidateOptionsMenu();
+                updateStarredForums();
                 return true;
         }
         return super.onOptionsItemSelected(item);

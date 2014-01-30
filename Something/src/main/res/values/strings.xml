@@ -10,6 +10,8 @@
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
     <string name="bookmark_title">Bookmarks</string>
-    <string name="menu_forum_pin">Open Forum at Launch</string>
+    <string name="menu_forum_pin">Open This Forum on Launch</string>
+    <string name="menu_forum_pin_bookmarks">Open Bookmarks on Launch</string>
+    <string name="menu_forum_star">Favorite</string>
 
 </resources>

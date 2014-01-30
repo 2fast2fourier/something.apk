@@ -58,6 +58,10 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
         return title;
     }
 
+    public boolean isStarred() {
+        return starred;
+    }
+
     protected static class ForumHolder implements View.OnClickListener {
         public TextView title;
         public ImageView indent, star;
@@ -72,15 +76,23 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
         @Override
         public void onClick(View v) {
             if(forumId > 0){
-                ContentValues cv = new ContentValues();
-                cv.put("forum_id", forumId);
-                if(SomeDatabase.getDatabase().deleteRows(SomeDatabase.TABLE_STARRED_FORUM, "forum_id=?", Integer.toString(forumId)) > 0){
-                    star.setImageResource(R.drawable.star_empty);
-                }else{
-                    SomeDatabase.getDatabase().insertRows(SomeDatabase.TABLE_STARRED_FORUM, SQLiteDatabase.CONFLICT_IGNORE, cv);
+                if(toggleStar(forumId)){
                     star.setImageResource(R.drawable.star);
+                }else{
+                    star.setImageResource(R.drawable.star_empty);
                 }
             }
+        }
+    }
+
+    public static boolean toggleStar(int forumId){
+        ContentValues cv = new ContentValues();
+        cv.put("forum_id", forumId);
+        if(SomeDatabase.getDatabase().deleteRows(SomeDatabase.TABLE_STARRED_FORUM, "forum_id=?", Integer.toString(forumId)) > 0){
+            return false;
+        }else{
+            SomeDatabase.getDatabase().insertRows(SomeDatabase.TABLE_STARRED_FORUM, SQLiteDatabase.CONFLICT_IGNORE, cv);
+            return true;
         }
     }
 }

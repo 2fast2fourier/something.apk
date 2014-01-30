@@ -26,6 +26,14 @@ public class ForumProcessTask implements Runnable {
 
     @Override
     public void run() {
+        processForums(page);
+    }
+
+    public static void execute(Document document){
+        new Thread(new ForumProcessTask(document)).start();
+    }
+
+    public static void processForums(Document page){
         ArrayList<ContentValues> forumList = new ArrayList<ContentValues>();
         String categoryName = "UNKNOWN";
         int index = 1, parentId = 0;
@@ -70,10 +78,6 @@ public class ForumProcessTask implements Runnable {
             db.deleteRows(SomeDatabase.TABLE_FORUM, null);
             db.insertRows(SomeDatabase.TABLE_FORUM, SQLiteDatabase.CONFLICT_REPLACE, forumList);
         }
-    }
-
-    public static void execute(Document document){
-        new Thread(new ForumProcessTask(document)).start();
     }
 
     public static int parseForumId(Element forum){

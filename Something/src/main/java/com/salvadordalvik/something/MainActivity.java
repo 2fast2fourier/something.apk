@@ -74,6 +74,8 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
             setTitle(title);
         }
         threadView.onPaneObscured();
+        threadView.setMenuVisibility(false);
+        threadList.setMenuVisibility(true);
     }
 
     @Override
@@ -83,6 +85,8 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
             setTitle(title);
         }
         threadView.onPaneRevealed();
+        threadView.setMenuVisibility(true);
+        threadList.setMenuVisibility(false);
     }
 
     public void showThread(int id) {
