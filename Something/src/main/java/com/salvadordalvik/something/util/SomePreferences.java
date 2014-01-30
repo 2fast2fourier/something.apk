@@ -14,10 +14,15 @@ public class SomePreferences {
     //public static final String EXAMPLE_VARIABLE_NAME = "internal_variable_name";
     //public static int exampleVariable;
 
+    public static final String THREADLIST_FAVORITE_FORUMID = "threadlist_favorite_forumid";
+    private static final int DEFAULT_FAVORITE_FORUMID = Constants.BOOKMARK_FORUMID;
+    public static int favoriteForumId;
+
     private synchronized static void updatePreferences(SharedPreferences newPrefs){
         //Update cached preferences here:
         //exampleVariable = newPrefs.getInt(EXAMPLE_VARIABLE_NAME, 0);
 
+        favoriteForumId = newPrefs.getInt(THREADLIST_FAVORITE_FORUMID, DEFAULT_FAVORITE_FORUMID);
     }
 
 

@@ -1,6 +1,7 @@
 package com.salvadordalvik.something;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
@@ -47,6 +48,36 @@ public class ThreadViewFragment extends FastFragment {
         threadView.getSettings().setJavaScriptEnabled(true);
         threadView.setWebChromeClient(chromeClient);
         threadView.setWebViewClient(webClient);
+
+        threadView.setBackgroundColor(Color.BLACK);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        threadView.onResume();
+        threadView.resumeTimers();
+    }
+
+    public void onPaneObscured() {
+        if(isResumed()){
+            threadView.pauseTimers();
+            threadView.onPause();
+        }
+    }
+
+    public void onPaneRevealed() {
+        if(isResumed()){
+            threadView.onResume();
+            threadView.resumeTimers();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        threadView.pauseTimers();
+        threadView.onPause();
     }
 
     @Override

@@ -74,10 +74,10 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
             if(forumId > 0){
                 ContentValues cv = new ContentValues();
                 cv.put("forum_id", forumId);
-                if(SomeDatabase.getDatabase().insertRows(SomeDatabase.TABLE_STARRED_FORUM, SQLiteDatabase.CONFLICT_ABORT, cv) < 0){
-                    SomeDatabase.getDatabase().deleteRows(SomeDatabase.TABLE_STARRED_FORUM, "forum_id=?", Integer.toString(forumId));
+                if(SomeDatabase.getDatabase().deleteRows(SomeDatabase.TABLE_STARRED_FORUM, "forum_id=?", Integer.toString(forumId)) > 0){
                     star.setImageResource(R.drawable.star_empty);
                 }else{
+                    SomeDatabase.getDatabase().insertRows(SomeDatabase.TABLE_STARRED_FORUM, SQLiteDatabase.CONFLICT_IGNORE, cv);
                     star.setImageResource(R.drawable.star);
                 }
             }

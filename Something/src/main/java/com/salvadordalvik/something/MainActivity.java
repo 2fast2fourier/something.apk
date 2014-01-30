@@ -21,11 +21,11 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        configureActionbar();
-        configureSlidingLayout();
         threadView = (ThreadViewFragment) getFragmentManager().findFragmentById(R.id.threadview_fragment);
         threadList = new ThreadListFragment();
         getFragmentManager().beginTransaction().add(R.id.list_container, threadList, "thread_list").commit();
+        configureActionbar();
+        configureSlidingLayout();
     }
 
     private void configureActionbar(){
@@ -73,6 +73,7 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
         if(title != null && title.length() > 0){
             setTitle(title);
         }
+        threadView.onPaneObscured();
     }
 
     @Override
@@ -81,6 +82,7 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
         if(title != null && title.length() > 0){
             setTitle(title);
         }
+        threadView.onPaneRevealed();
     }
 
     public void showThread(int id) {

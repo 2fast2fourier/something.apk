@@ -31,8 +31,6 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         }else{
             addParam("goto", "newpost");
         }
-        //TODO remove noseen when mark-last is added
-        addParam("noseen","1");
     }
 
     @Override
