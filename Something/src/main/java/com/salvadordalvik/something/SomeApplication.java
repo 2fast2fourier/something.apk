@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.salvadordalvik.fastlibrary.request.FastVolley;
 import com.salvadordalvik.something.data.SomeDatabase;
+import com.salvadordalvik.something.util.MustCache;
 import com.salvadordalvik.something.util.OkHttpStack;
 import com.salvadordalvik.something.util.SomePreferences;
 
@@ -18,5 +19,6 @@ public class SomeApplication extends Application {
         SomeDatabase.init(this);
         FastVolley.init(this, new OkHttpStack());
         SomePreferences.init(this);
+        MustCache.init(this);
     }
 }
