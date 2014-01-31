@@ -12,8 +12,10 @@ import android.text.Spanned;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.salvadordalvik.fastlibrary.widget.ToggleSlidingPaneLayout;
+
 public class MainActivity extends Activity implements SlidingPaneLayout.PanelSlideListener {
-    private SlidingPaneLayout slidingLayout;
+    private ToggleSlidingPaneLayout slidingLayout;
 
     private ThreadListFragment threadList;
     private ThreadViewFragment threadView;
@@ -40,11 +42,24 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
     }
 
     private void configureSlidingLayout(){
-        slidingLayout = (SlidingPaneLayout) findViewById(R.id.sliding_layout);
+        slidingLayout = (ToggleSlidingPaneLayout) findViewById(R.id.sliding_layout);
         slidingLayout.setSliderFadeColor(Color.argb(0,0,0,0));
         slidingLayout.setShadowResource(R.drawable.right_divider);
         slidingLayout.setPanelSlideListener(this);
         slidingLayout.openPane();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(slidingLayout.isOpen()){
+            threadList.setMenuVisibility(true);
+            threadView.setMenuVisibility(false);
+        }else{
+            threadList.setMenuVisibility(false);
+            threadView.setMenuVisibility(true);
+        }
+        slidingLayout.setTouchSlidable(threadView.hasThreadLoaded());
     }
 
     @Override
@@ -100,6 +115,7 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
     }
 
     public void showThread(int id, int page) {
+        slidingLayout.setTouchSlidable(true);
         slidingLayout.closePane();
         threadView.loadThread(id, page);
     }
@@ -120,6 +136,7 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
     }
 
     public void onThreadPageLoaded(int threadId, int unreadDiff) {
+        slidingLayout.setTouchSlidable(true);
         threadList.onThreadPageLoaded(threadId, unreadDiff);
     }
 }

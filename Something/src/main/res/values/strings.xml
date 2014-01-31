@@ -13,5 +13,7 @@
     <string name="menu_forum_pin">Open This Forum on Launch</string>
     <string name="menu_forum_pin_bookmarks">Open Bookmarks on Launch</string>
     <string name="menu_forum_star">Favorite</string>
+    <string name="menu_thread_bookmark">Bookmark Thread</string>
+    <string name="thread_view_loading">Loading...</string>
 
 </resources>

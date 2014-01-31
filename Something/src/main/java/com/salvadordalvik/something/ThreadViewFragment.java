@@ -8,6 +8,8 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
@@ -35,9 +37,10 @@ public class ThreadViewFragment extends FastFragment {
     private int threadId, page, maxPage;
     private Spanned threadTitle;
     private String pageHtml, rawThreadTitle;
+    private boolean bookmarked;
 
     public ThreadViewFragment() {
-        super(R.layout.ptr_generic_webview);
+        super(R.layout.ptr_generic_webview, R.menu.thread_view);
     }
 
     @Override
@@ -109,6 +112,24 @@ public class ThreadViewFragment extends FastFragment {
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.menu_thread_bookmark).setIcon(bookmarked ? R.drawable.star : R.drawable.star_empty);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_thread_bookmark:
+                //TODO toggle bookmark.
+                bookmarked = !bookmarked;
+                invalidateOptionsMenu();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void refreshData(boolean pullToRefresh, boolean staleRefresh) {
         queueRequest(new ThreadPageRequest(threadId, page, new Response.Listener<ThreadPageRequest.ThreadPage>() {
             @Override
@@ -121,11 +142,13 @@ public class ThreadViewFragment extends FastFragment {
                 threadView.loadDataWithBaseURL(Constants.BASE_URL, response.pageHtml, "text/html", "utf-8", null);
                 pageHtml = response.pageHtml;
                 rawThreadTitle = response.threadTitle;
+                bookmarked = response.bookmarked;
                 Activity act = getActivity();
                 if(act != null){
                     act.setTitle(threadTitle);
                     ((MainActivity)act).onThreadPageLoaded(response.threadId, response.unreadDiff);
                 }
+                invalidateOptionsMenu();
             }
         }, null));
     }
@@ -133,6 +156,9 @@ public class ThreadViewFragment extends FastFragment {
     public void loadThread(int threadId, int page){
         this.threadId = threadId;
         this.page = page;
+        this.bookmarked = false;
+        setTitle(getString(R.string.thread_view_loading));
+        invalidateOptionsMenu();
         startRefresh();
     }
 
@@ -141,6 +167,10 @@ public class ThreadViewFragment extends FastFragment {
             page = pageNum;
             startRefresh();
         }
+    }
+
+    public boolean hasThreadLoaded() {
+        return pageHtml != null;
     }
 
     public Spanned getTitle() {

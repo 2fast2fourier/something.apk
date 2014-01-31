@@ -49,6 +49,8 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
             maxPage = FastUtils.safeParseInt(lastPage.attr("value"), 1);
         }
 
+        boolean bookmarked = document.getElementsByClass("unbookmark").size() > 0;
+
         String threadTitle = document.getElementsByClass("bclast").first().text();
 
         Element body = document.getElementsByTag("body").first();
@@ -71,7 +73,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
         MustCache.applyFooterTemplate(builder, footerArgs);
 
-        return new ThreadPage(builder.toString(), currentPage, maxPage, threadId, forumId, threadTitle, -unread);
+        return new ThreadPage(builder.toString(), currentPage, maxPage, threadId, forumId, threadTitle, -unread, bookmarked);
     }
 
     public static String getTheme(int forumId){
@@ -92,8 +94,9 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
     public static class ThreadPage{
         public final int pageNum, maxPageNum, threadId, forumId, unreadDiff;
         public final String threadTitle, pageHtml;
+        public final boolean bookmarked;
 
-        private ThreadPage(String pageHtml, int pageNum, int maxPageNum, int threadId, int forumId, String threadTitle, int unreadDiff){
+        private ThreadPage(String pageHtml, int pageNum, int maxPageNum, int threadId, int forumId, String threadTitle, int unreadDiff, boolean bookmarked){
             this.pageHtml = pageHtml;
             this.pageNum = pageNum;
             this.maxPageNum = maxPageNum;
@@ -101,6 +104,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
             this.forumId = forumId;
             this.threadTitle = threadTitle;
             this.unreadDiff = unreadDiff;
+            this.bookmarked = bookmarked;
         }
     }
 
