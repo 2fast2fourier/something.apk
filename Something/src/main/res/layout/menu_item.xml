@@ -12,4 +12,16 @@
         android:textSize="20sp"
         android:textColor="#FFFFFF"
         android:textStyle="bold" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/menu_item_bookmarks"
+        android:src="@drawable/ic_menu_bookmarks"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/menu_item_title"
+        android:layout_alignBottom="@+id/menu_item_title"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:background="@drawable/ic_divider" />
 </RelativeLayout>

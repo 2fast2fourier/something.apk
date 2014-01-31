@@ -49,19 +49,18 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
         super(R.layout.ptr_generic_listview, R.menu.thread_list);
         adapter = new SectionFastAdapter(this, 4);
 
-        adapter.addItems(0, new MenuItem("Forums") {
+        adapter.addItems(0, new MenuItem("Forums", R.drawable.ic_menu_bookmarks) {
             @Override
             public void onItemClick(Activity act, Fragment fragment) {
                 ((MainActivity) act).showForumList();
             }
-        });
 
-        adapter.addItems(0, new MenuItem("Bookmarks") {
             @Override
-            public void onItemClick(Activity act, Fragment fragment) {
-                ((MainActivity)act).showForum(Constants.BOOKMARK_FORUMID);
+            public void onButtonClick(View view) {
+                ((MainActivity)getActivity()).showForum(Constants.BOOKMARK_FORUMID);
             }
         });
+
         adapter.addItems(2, new StubItem(R.layout.divider_item));
     }
 

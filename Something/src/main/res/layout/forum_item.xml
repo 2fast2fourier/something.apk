@@ -12,7 +12,7 @@
         android:src="@drawable/ic_drawer"
         android:layout_gravity="center_vertical"
         android:visibility="visible"
-        android:paddingTop="8dp"
+        android:paddingTop="5dp"
         android:paddingBottom="8dp" />
 
     <TextView
@@ -35,8 +35,8 @@
         android:id="@+id/forum_item_star"
         android:src="@drawable/star_empty"
         android:layout_gravity="center_vertical"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingBottom="2dp"
-        android:paddingTop="2dp" />
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp" />
 </LinearLayout>
