@@ -32,8 +32,9 @@ import org.w3c.dom.Text;
 public class ThreadViewFragment extends FastFragment {
     private WebView threadView;
 
-    private int threadId, page, maxPage, forumId;
+    private int threadId, page, maxPage;
     private Spanned threadTitle;
+    private String pageHtml, rawThreadTitle;
 
     public ThreadViewFragment() {
         super(R.layout.ptr_generic_webview);
@@ -43,6 +44,20 @@ public class ThreadViewFragment extends FastFragment {
     public void viewCreated(View frag, Bundle savedInstanceState) {
         threadView = (WebView) frag.findViewById(R.id.ptr_webview);
         initWebview();
+
+        if(savedInstanceState != null && savedInstanceState.containsKey("thread_html")){
+            threadId = savedInstanceState.getInt("thread_id");
+            pageHtml = savedInstanceState.getString("thread_html");
+            page = savedInstanceState.getInt("thread_page", 1);
+            maxPage = savedInstanceState.getInt("thread_maxpage", 1);
+            rawThreadTitle = savedInstanceState.getString("thread_title");
+            if(!TextUtils.isEmpty(rawThreadTitle)){
+                threadTitle = Html.fromHtml(rawThreadTitle);
+                setTitle(threadTitle);
+            }
+
+            threadView.loadDataWithBaseURL(Constants.BASE_URL, pageHtml, "text/html", "utf-8", null);
+        }
     }
 
     private void initWebview() {
@@ -82,17 +97,30 @@ public class ThreadViewFragment extends FastFragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(pageHtml != null){
+            outState.putString("thread_html", pageHtml);
+            outState.putInt("thread_id", threadId);
+            outState.putInt("thread_page", page);
+            outState.putInt("thread_maxpage", maxPage);
+            outState.putString("thread_title", rawThreadTitle);
+        }
+    }
+
+    @Override
     public void refreshData(boolean pullToRefresh, boolean staleRefresh) {
         queueRequest(new ThreadPageRequest(threadId, page, new Response.Listener<ThreadPageRequest.ThreadPage>() {
             @Override
             public void onResponse(ThreadPageRequest.ThreadPage response) {
                 page = response.pageNum;
                 maxPage = response.maxPageNum;
-                forumId = response.forumId;
                 if(!TextUtils.isEmpty(response.threadTitle)){
                     threadTitle = Html.fromHtml(response.threadTitle);
                 }
                 threadView.loadDataWithBaseURL(Constants.BASE_URL, response.pageHtml, "text/html", "utf-8", null);
+                pageHtml = response.pageHtml;
+                rawThreadTitle = response.threadTitle;
                 Activity act = getActivity();
                 if(act != null){
                     act.setTitle(threadTitle);

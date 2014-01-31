@@ -3,6 +3,7 @@ package com.salvadordalvik.something;
 import android.app.Activity;
 
 import android.app.ActionBar;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -22,8 +23,13 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         threadView = (ThreadViewFragment) getFragmentManager().findFragmentById(R.id.threadview_fragment);
-        threadList = new ThreadListFragment();
-        getFragmentManager().beginTransaction().add(R.id.list_container, threadList, "thread_list").commit();
+        Fragment threads = getFragmentManager().findFragmentByTag("thread_list");
+        if(threads instanceof ThreadListFragment){
+            threadList = (ThreadListFragment) threads;
+        }else{
+            threadList = new ThreadListFragment();
+            getFragmentManager().beginTransaction().add(R.id.list_container, threadList, "thread_list").commit();
+        }
         configureActionbar();
         configureSlidingLayout();
     }
