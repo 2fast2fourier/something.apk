@@ -8,6 +8,7 @@ import com.android.volley.Response;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
 import com.salvadordalvik.something.list.PostItem;
 import com.salvadordalvik.something.util.MustCache;
+import com.salvadordalvik.something.util.SomePreferences;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -55,7 +56,10 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         threadId = Integer.parseInt(body.attr("data-thread"));
 
         StringBuilder builder = new StringBuilder(2048);
-        builder.append(MustCache.threadHeader);
+
+        HashMap<String, String> headerArgs = new HashMap<String, String>();
+        headerArgs.put("theme", getTheme(forumId));
+        MustCache.applyHeaderTemplate(builder, headerArgs);
 
         for(HashMap<String, String> post : posts){
             MustCache.applyPostTemplate(builder, post);
@@ -68,6 +72,21 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         MustCache.applyFooterTemplate(builder, footerArgs);
 
         return new ThreadPage(builder.toString(), currentPage, maxPage, threadId, forumId, threadTitle, -unread);
+    }
+
+    public static String getTheme(int forumId){
+        if(SomePreferences.forceTheme){
+            return SomePreferences.selectedTheme;
+        }else{
+            switch (forumId){
+                case 219:
+                    return SomePreferences.amberYos ? "amberpos" : "yospos";
+                case 26:
+                    return "fyad";
+                default:
+                    return SomePreferences.selectedTheme;
+            }
+        }
     }
 
     public static class ThreadPage{

@@ -17,8 +17,7 @@ import java.util.Map;
  * Created by matthewshepard on 1/29/14.
  */
 public class MustCache {
-    public static String threadHeader;
-    private static Template postTemplate, footerTemplate;
+    private static Template postTemplate, footerTemplate, headerTemplate;
 
 
     public static void init(final Context context){
@@ -38,13 +37,17 @@ public class MustCache {
         builder.append(footerTemplate.execute(args));
     }
 
+    public synchronized static void applyHeaderTemplate(StringBuilder builder, Map<String, String> args){
+        builder.append(headerTemplate.execute(args));
+    }
+
     private synchronized static void generatePostTemplates(Context context){
         try {
             InputStreamReader postMustReader = new InputStreamReader(context.getResources().getAssets().open("mustache/post.mustache"), Charsets.UTF_8);
             postTemplate = Mustache.compiler().compile(postMustReader);
 
-            InputStream headerInput = context.getResources().getAssets().open("mustache/header.html");
-            threadHeader = CharStreams.toString(new InputStreamReader(headerInput, Charsets.UTF_8));
+            InputStreamReader headerInput = new InputStreamReader(context.getResources().getAssets().open("mustache/header.mustache"), Charsets.UTF_8);
+            headerTemplate = Mustache.compiler().compile(headerInput);
 
             InputStreamReader footerInput = new InputStreamReader(context.getResources().getAssets().open("mustache/footer.mustache"), Charsets.UTF_8);
             footerTemplate = Mustache.compiler().compile(footerInput);

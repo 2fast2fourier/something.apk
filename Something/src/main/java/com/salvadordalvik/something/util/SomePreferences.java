@@ -18,6 +18,11 @@ public class SomePreferences {
     private static final int DEFAULT_FAVORITE_FORUMID = Constants.BOOKMARK_FORUMID;
     public static int favoriteForumId;
 
+    //TODO theme stuff
+    public static boolean forceTheme = false;
+    public static String selectedTheme = "dark";
+    public static boolean amberYos = false;
+
     private synchronized static void updatePreferences(SharedPreferences newPrefs){
         //Update cached preferences here:
         //exampleVariable = newPrefs.getInt(EXAMPLE_VARIABLE_NAME, 0);
