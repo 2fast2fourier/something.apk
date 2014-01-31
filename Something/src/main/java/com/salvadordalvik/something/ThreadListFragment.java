@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Spanned;
 import android.text.SpannedString;
 import android.view.Menu;
@@ -35,15 +36,14 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
     private ListView threadList;
     private SectionFastAdapter adapter;
 
-    private ArrayList<ThreadItem> threadData;
+    private ThreadListRequest.ThreadListResponse threadData;
 
     private static final int THREAD_SECTION = 3;
 
     private int forumId = -1;
     private int page = 1;
-    private int maxPage = 1;
-    private Spanned forumTitle;
     private boolean starred = false;
+    private Spanned forumTitle;
 
     public ThreadListFragment() {
         super(R.layout.ptr_generic_listview, R.menu.thread_list);
@@ -89,9 +89,9 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
         threadList.setOnItemClickListener(adapter);
 
         if(savedInstanceState != null){
-            threadData = savedInstanceState.getParcelableArrayList("thread_list");
-            if(threadData != null){
-                adapter.addItems(THREAD_SECTION, threadData);
+            ArrayList<ThreadItem> threads = savedInstanceState.getParcelableArrayList("thread_list");
+            if(threads != null){
+                adapter.addItems(THREAD_SECTION, threads);
             }
         }
     }
@@ -111,7 +111,7 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
         outState.putInt("forum_id", forumId);
         outState.putInt("forum_page", page);
         if(threadData != null){
-            outState.putParcelableArrayList("thread_list", threadData);
+            outState.putParcelableArrayList("thread_list", threadData.threads);
         }
     }
 
@@ -122,8 +122,7 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
             public void onResponse(ThreadListRequest.ThreadListResponse response) {
                 adapter.clearSection(THREAD_SECTION);
                 adapter.addItems(THREAD_SECTION, response.threads);
-                threadData = response.threads;
-                maxPage = response.maxPage;
+                threadData = response;
                 scrollToThreads();
                 updateForumTitle();
             }
@@ -224,5 +223,15 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
 
     public Spanned getTitle(){
         return forumTitle;
+    }
+
+    public void onThreadPageLoaded(int threadId, int unreadDiff) {
+        if(threadData != null){
+            ThreadItem item = threadData.threadArray.get(threadId);
+            if(item != null){
+                item.updateUnreadCount(unreadDiff);
+                adapter.notifyDataSetChanged();
+            }
+        }
     }
 }

@@ -112,4 +112,8 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
         trans.addToBackStack("open_forum_list");
         trans.commit();
     }
+
+    public void onThreadPageLoaded(int threadId, int unreadDiff) {
+        threadList.onThreadPageLoaded(threadId, unreadDiff);
+    }
 }

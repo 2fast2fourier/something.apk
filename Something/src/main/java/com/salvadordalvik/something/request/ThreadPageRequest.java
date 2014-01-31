@@ -37,9 +37,9 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
     public ThreadPage parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
         ArrayList<HashMap<String, String>> posts = new ArrayList<HashMap<String, String>>();
 
-        parsePosts(document, posts);
+        int currentPage, maxPage = 1, threadId, forumId, unread = 0;
 
-        int currentPage, maxPage = 1, threadId, forumId;
+        unread = parsePosts(document, posts);
 
         Element pages = document.getElementsByClass("pages").first();
         currentPage = FastUtils.safeParseInt(pages.getElementsByAttribute("selected").attr("value"), 1);
@@ -67,26 +67,28 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
         MustCache.applyFooterTemplate(builder, footerArgs);
 
-        return new ThreadPage(builder.toString(), currentPage, maxPage, threadId, forumId, threadTitle);
+        return new ThreadPage(builder.toString(), currentPage, maxPage, threadId, forumId, threadTitle, -unread);
     }
 
     public static class ThreadPage{
-        public final int pageNum, maxPageNum, threadId, forumId;
+        public final int pageNum, maxPageNum, threadId, forumId, unreadDiff;
         public final String threadTitle, pageHtml;
 
-        private ThreadPage(String pageHtml, int pageNum, int maxPageNum, int threadId, int forumId, String threadTitle){
+        private ThreadPage(String pageHtml, int pageNum, int maxPageNum, int threadId, int forumId, String threadTitle, int unreadDiff){
             this.pageHtml = pageHtml;
             this.pageNum = pageNum;
             this.maxPageNum = maxPageNum;
             this.threadId = threadId;
             this.forumId = forumId;
             this.threadTitle = threadTitle;
+            this.unreadDiff = unreadDiff;
         }
     }
 
     private static Pattern userJumpPattern = Pattern.compile("userid=(\\d+)");
 
-    private static void parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray){
+    private static int parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray){
+        int unread = 0;
         Elements posts = doc.getElementsByClass("post");
         for(Element post : posts){
             String rawId = post.id().replaceAll("\\D", "");
@@ -108,6 +110,9 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 }
 
                 boolean previouslyRead = post.getElementsByClass("seen1").size() > 0 || post.getElementsByClass("seen2").size() > 0;
+                if(!previouslyRead){
+                    unread++;
+                }
 
                 postData.put("username", author);
                 postData.put("avatarText", avTitle);
@@ -143,5 +148,6 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 postArray.add(postData);
             }
         }
+        return unread;
     }
 }

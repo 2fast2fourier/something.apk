@@ -77,6 +77,14 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         return new ThreadHolder(view);
     }
 
+    public void updateUnreadCount(int unreadDiff) {
+        unread = Math.max(0, unread+unreadDiff);
+    }
+
+    private static int pageToIndex(int page, int perPage) {
+        return (page-1)*perPage+1;
+    }
+
     protected static class ThreadHolder{
         public TextView title, subtext, unread;
         private ThreadHolder(View view){
@@ -88,7 +96,7 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
 
     //PARCEL
 
-    private static final Parcelable.Creator<ThreadItem> CREATOR = new Parcelable.Creator<ThreadItem>(){
+    public static final Parcelable.Creator<ThreadItem> CREATOR = new Parcelable.Creator<ThreadItem>(){
 
         @Override
         public ThreadItem createFromParcel(Parcel source) {

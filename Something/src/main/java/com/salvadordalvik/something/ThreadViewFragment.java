@@ -1,5 +1,6 @@
 package com.salvadordalvik.something;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -92,7 +93,11 @@ public class ThreadViewFragment extends FastFragment {
                     threadTitle = Html.fromHtml(response.threadTitle);
                 }
                 threadView.loadDataWithBaseURL(Constants.BASE_URL, response.pageHtml, "text/html", "utf-8", null);
-                getActivity().setTitle(threadTitle);
+                Activity act = getActivity();
+                if(act != null){
+                    act.setTitle(threadTitle);
+                    ((MainActivity)act).onThreadPageLoaded(response.threadId, response.unreadDiff);
+                }
             }
         }, null));
     }

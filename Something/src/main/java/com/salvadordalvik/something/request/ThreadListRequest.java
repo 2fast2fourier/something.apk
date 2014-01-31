@@ -1,6 +1,7 @@
 package com.salvadordalvik.something.request;
 
 import android.util.Log;
+import android.util.SparseArray;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -70,17 +71,23 @@ public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListR
             //bookmark page doesn't have forum shortcut list
             ForumProcessTask.execute(document);
         }
-        return new ThreadListResponse(threads);
+        SparseArray<ThreadItem> array = new SparseArray<ThreadItem>();
+        for(ThreadItem item : threads){
+            array.put(item.getId(), item);
+        }
+        return new ThreadListResponse(threads, array);
     }
 
     public static class ThreadListResponse{
         public final ArrayList<ThreadItem> threads;
+        public final SparseArray<ThreadItem> threadArray;
         public final int page, maxPage;
-        public ThreadListResponse(ArrayList<ThreadItem> threads){
+        public ThreadListResponse(ArrayList<ThreadItem> threads, SparseArray<ThreadItem> threadArray){
             this.threads = threads;
             //TODO implement endless scroller on thread lists
             this.page = 1;
             this.maxPage = 1;
+            this.threadArray = threadArray;
         }
     }
 }
