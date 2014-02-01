@@ -3,6 +3,7 @@ package com.salvadordalvik.something.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 /**
  * Created by matthewshepard on 1/17/14.
@@ -23,11 +24,18 @@ public class SomePreferences {
     public static String selectedTheme = "dark";
     public static boolean amberYos = false;
 
+    public static boolean loggedIn;
+    public static final String LOGIN_COOKIE_STRING = "login_cookie_string";
+    public static String cookieString;
+
     private synchronized static void updatePreferences(SharedPreferences newPrefs){
         //Update cached preferences here:
         //exampleVariable = newPrefs.getInt(EXAMPLE_VARIABLE_NAME, 0);
 
         favoriteForumId = newPrefs.getInt(THREADLIST_FAVORITE_FORUMID, DEFAULT_FAVORITE_FORUMID);
+
+        cookieString = newPrefs.getString(LOGIN_COOKIE_STRING, null);
+        loggedIn = !TextUtils.isEmpty(cookieString) && cookieString.contains("bbuserid");
     }
 
 

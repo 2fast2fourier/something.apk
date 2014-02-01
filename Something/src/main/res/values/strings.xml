@@ -13,5 +13,12 @@
     <string name="bookmarking_thread_success_add">Bookmark Added</string>
     <string name="bookmarking_thread_success_remove">Bookmark Removed</string>
     <string name="bookmarking_thread_failure">Bookmark Failed!</string>
+    <string name="login_activity_title">Login</string>
+    <string name="login_title">Login</string>
+    <string name="login_user_hint">Username...</string>
+    <string name="login_pass_hint">Password...</string>
+    <string name="login_button_text">Login</string>
+    <string name="login_success">Logged In!</string>
+    <string name="login_failed">Login Failed</string>
 
 </resources>

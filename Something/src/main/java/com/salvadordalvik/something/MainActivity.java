@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.SlidingPaneLayout;
@@ -13,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.salvadordalvik.fastlibrary.widget.ToggleSlidingPaneLayout;
+import com.salvadordalvik.something.util.OkHttpStack;
+import com.salvadordalvik.something.util.SomePreferences;
 
 public class MainActivity extends Activity implements SlidingPaneLayout.PanelSlideListener {
     private ToggleSlidingPaneLayout slidingLayout;
@@ -34,6 +37,11 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
         }
         configureActionbar();
         configureSlidingLayout();
+
+        if(!SomePreferences.loggedIn){
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+            finish();
+        }
     }
 
     private void configureActionbar(){
@@ -60,6 +68,11 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
             threadView.setMenuVisibility(true);
         }
         slidingLayout.setTouchSlidable(threadView.hasThreadLoaded());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override

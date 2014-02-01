@@ -1,9 +1,11 @@
 package com.salvadordalvik.something.request;
 
+
 import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
 import com.salvadordalvik.fastlibrary.request.FastRequest;
 import com.salvadordalvik.something.util.Constants;
+import com.salvadordalvik.something.util.SomePreferences;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,8 +21,9 @@ import java.io.IOException;
 public abstract class HTMLRequest<T> extends FastRequest<T> {
     public HTMLRequest(String baseUrl, int method, Response.Listener<T> success, Response.ErrorListener error) {
         super(baseUrl, method, success, error);
-        //TODO add auth
-        addHeader("Cookie","bbuserid=120309; bbpassword=b734e714966dc63e6e5441a3601da492; sessionid=445729229; sessionhash=5527e6117fe872072900a3e6b83031c7");
+        if(SomePreferences.loggedIn){
+            addHeader("Cookie", SomePreferences.cookieString);
+        }
     }
 
     @Override
