@@ -13,20 +13,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.salvadordalvik.fastlibrary.FastFragment;
-import com.salvadordalvik.fastlibrary.list.FastAdapter;
+import com.salvadordalvik.fastlibrary.alert.FastAlert;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
+import com.salvadordalvik.something.request.BookmarkRequest;
 import com.salvadordalvik.something.request.ThreadPageRequest;
 import com.salvadordalvik.something.util.Constants;
-
-import org.w3c.dom.Text;
 
 /**
  * Created by matthewshepard on 1/19/14.
@@ -121,9 +119,20 @@ public class ThreadViewFragment extends FastFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_thread_bookmark:
-                //TODO toggle bookmark.
-                bookmarked = !bookmarked;
-                invalidateOptionsMenu();
+                FastAlert.process(getActivity(), getView(), getString(bookmarked ? R.string.bookmarking_thread_started_removing : R.string.bookmarking_thread_started));
+                queueRequest(new BookmarkRequest(threadId, !bookmarked, new Response.Listener<Boolean>() {
+                    @Override
+                    public void onResponse(Boolean response) {
+                        bookmarked = response;
+                        invalidateOptionsMenu();
+                        FastAlert.notice(getActivity(), getView(), getString(response ? R.string.bookmarking_thread_success_add : R.string.bookmarking_thread_success_remove));
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        FastAlert.error(getActivity(), getView(), getString(R.string.bookmarking_thread_failure));
+                    }
+                }));
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -136,7 +145,7 @@ public class ThreadViewFragment extends FastFragment {
             public void onResponse(ThreadPageRequest.ThreadPage response) {
                 page = response.pageNum;
                 maxPage = response.maxPageNum;
-                if(!TextUtils.isEmpty(response.threadTitle)){
+                if (!TextUtils.isEmpty(response.threadTitle)) {
                     threadTitle = Html.fromHtml(response.threadTitle);
                 }
                 threadView.loadDataWithBaseURL(Constants.BASE_URL, response.pageHtml, "text/html", "utf-8", null);
@@ -144,9 +153,9 @@ public class ThreadViewFragment extends FastFragment {
                 rawThreadTitle = response.threadTitle;
                 bookmarked = response.bookmarked;
                 Activity act = getActivity();
-                if(act != null){
+                if (act != null) {
                     act.setTitle(threadTitle);
-                    ((MainActivity)act).onThreadPageLoaded(response.threadId, response.unreadDiff);
+                    ((MainActivity) act).onThreadPageLoaded(response.threadId, response.unreadDiff);
                 }
                 invalidateOptionsMenu();
             }

@@ -2,18 +2,16 @@
 <resources>
 
     <string name="app_name">Something</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_example">Example action</string>
-    <string name="action_settings">Settings</string>
     <string name="bookmark_title">Bookmarks</string>
     <string name="menu_forum_pin">Open This Forum on Launch</string>
     <string name="menu_forum_pin_bookmarks">Open Bookmarks on Launch</string>
     <string name="menu_forum_star">Favorite</string>
     <string name="menu_thread_bookmark">Bookmark Thread</string>
     <string name="thread_view_loading">Loading...</string>
+    <string name="bookmarking_thread_started">Bookmarking...</string>
+    <string name="bookmarking_thread_started_removing">Removing Bookmark...</string>
+    <string name="bookmarking_thread_success_add">Bookmark Added</string>
+    <string name="bookmarking_thread_success_remove">Bookmark Removed</string>
+    <string name="bookmarking_thread_failure">Bookmark Failed!</string>
 
 </resources>
