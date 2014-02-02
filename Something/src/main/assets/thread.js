@@ -18,6 +18,20 @@ function toggleoptions(menu){
 
 
 function pageinit() {
+
+    $('.quote').on('click', function(event) {
+         listener.onQuoteClick($(this).parent().parent().attr('id').replace(/post/,''));
+    });
+    $('.edit').on('click', function(event) {
+        listener.onEditClick($(this).parent().parent().attr('id').replace(/post/,''));
+    });
+    $('.more').on('click', function(event) {
+        listener.onMoreClick($(this).parent().parent().attr('id').replace(/post/,''), $(this).attr('username'), $(this).attr('userid'));
+    });
+    $('.lastread').on('click', function(event) {
+        listener.onLastReadClick($(this).attr('lastreadid'));
+    });
+
     $('.bbc-spoiler').removeAttr('onmouseover');
     $('.bbc-spoiler').removeAttr('onmouseout');
     $('.bbc-spoiler').click( function(){ $(this).toggleClass('spoiled');});

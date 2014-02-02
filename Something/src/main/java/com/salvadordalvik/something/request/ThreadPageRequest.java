@@ -38,7 +38,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
     public ThreadPage parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
         ArrayList<HashMap<String, String>> posts = new ArrayList<HashMap<String, String>>();
 
-        int currentPage, maxPage = 1, threadId, forumId, unread = 0;
+        int currentPage, maxPage = 1, threadId, forumId, unread;
 
         unread = parsePosts(document, posts);
 
@@ -59,8 +59,11 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
         StringBuilder builder = new StringBuilder(2048);
 
+        int previouslyRead = posts.size()-unread;
+
         HashMap<String, String> headerArgs = new HashMap<String, String>();
         headerArgs.put("theme", getTheme(forumId));
+        headerArgs.put("previouslyRead", previouslyRead > 0 && unread > 0 ? previouslyRead+" Previous Post"+(previouslyRead > 1 ? "s":"") : null);
         MustCache.applyHeaderTemplate(builder, headerArgs);
 
         for(HashMap<String, String> post : posts){
@@ -80,7 +83,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         return new ThreadPage(builder.toString(), currentPage, maxPage, threadId, forumId, threadTitle, -unread, bookmarked);
     }
 
-    public static String getTheme(int forumId){
+    private static String getTheme(int forumId){
         if(SomePreferences.forceTheme){
             return SomePreferences.selectedTheme;
         }else{
@@ -127,7 +130,8 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 String avTitle = title.text();
                 String avatarUrl = title.getElementsByTag("img").attr("src");
                 String postContent = post.getElementsByClass("postbody").html();
-                String postDate = post.getElementsByClass("postdate").text();
+                String postDate = post.getElementsByClass("postdate").text().replaceAll("[#?]", "").trim();
+                String postIndex = post.attr("data-idx");
 
                 Element userInfo = post.getElementsByClass("user_jump").first();
                 Matcher userIdMatcher = userJumpPattern.matcher(userInfo.attr("href"));
@@ -148,6 +152,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 postData.put("postDate", postDate);
                 postData.put("userID", userId);
                 postData.put("seen", previouslyRead ? "read" : "unread");
+                postData.put("postIndex",  postIndex);
 
 //                postData.put("regDate", post.getRegDate());
 //                postData.put("lastReadUrl",  post.getLastReadUrl());
@@ -163,7 +168,6 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 //                postData.put("admin", (post.isAdmin())?"admin":null);
 
                 postData.put("regDate", "");
-                postData.put("lastReadUrl",  "");
                 postData.put("isOP", null);
                 postData.put("isMarked", null);
                 postData.put("isSelf", null);

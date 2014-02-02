@@ -21,5 +21,8 @@
     <string name="login_success">Logged In!</string>
     <string name="login_failed">Login Failed</string>
     <string name="page_select_title">Select Page</string><string name="page_select_first">First</string><string name="page_select_last">Last</string><string name="page_select_submit">Select</string>
+    <string name="mark_last_read_success">Marked Position</string>
+    <string name="mark_last_read_failure">Failed to Mark!</string>
+    <string name="mark_last_read_started">Marking...</string>
 
 </resources>

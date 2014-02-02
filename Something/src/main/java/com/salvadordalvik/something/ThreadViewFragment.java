@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.ConsoleMessage;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -21,8 +22,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.salvadordalvik.fastlibrary.FastFragment;
 import com.salvadordalvik.fastlibrary.alert.FastAlert;
+import com.salvadordalvik.fastlibrary.request.FastRequest;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
 import com.salvadordalvik.something.request.BookmarkRequest;
+import com.salvadordalvik.something.request.MarkLastReadRequest;
 import com.salvadordalvik.something.request.ThreadPageRequest;
 import com.salvadordalvik.something.util.Constants;
 import com.salvadordalvik.something.widget.PageSelectDialogFragment;
@@ -66,6 +69,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         threadView.getSettings().setJavaScriptEnabled(true);
         threadView.setWebChromeClient(chromeClient);
         threadView.setWebViewClient(webClient);
+        threadView.addJavascriptInterface(new SomeJavascriptInterface(), "listener");
 
         threadView.setBackgroundColor(Color.BLACK);
     }
@@ -141,27 +145,10 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
 
     @Override
     public void refreshData(boolean pullToRefresh, boolean staleRefresh) {
-        queueRequest(new ThreadPageRequest(threadId, page, new Response.Listener<ThreadPageRequest.ThreadPage>() {
-            @Override
-            public void onResponse(ThreadPageRequest.ThreadPage response) {
-                page = response.pageNum;
-                maxPage = response.maxPageNum;
-                if (!TextUtils.isEmpty(response.threadTitle)) {
-                    threadTitle = Html.fromHtml(response.threadTitle);
-                }
-                threadView.loadDataWithBaseURL(Constants.BASE_URL, response.pageHtml, "text/html", "utf-8", null);
-                pageHtml = response.pageHtml;
-                rawThreadTitle = response.threadTitle;
-                bookmarked = response.bookmarked;
-                Activity act = getActivity();
-                if (act != null) {
-                    act.setTitle(threadTitle);
-                    ((MainActivity) act).onThreadPageLoaded(response.threadId, response.unreadDiff);
-                }
-                invalidateOptionsMenu();
-            }
-        }, null));
+        queueRequest(new ThreadPageRequest(threadId, page, , null));
     }
+
+    public 
 
     public void loadThread(int threadId, int page){
         this.threadId = threadId;
@@ -239,4 +226,49 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
             return true;
         }
     };
+
+    public class SomeJavascriptInterface {
+
+        @JavascriptInterface
+        public void onQuoteClick(String postId){
+
+        }
+
+        @JavascriptInterface
+        public void onEditClick(String postId){
+
+        }
+
+        @JavascriptInterface
+        public void onMoreClick(String postId, String username, String userid){
+
+        }
+
+        @JavascriptInterface
+        public void onLastReadClick(String postIndex){
+            final int index = FastUtils.safeParseInt(postIndex, 0);
+            if(index > 0){
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        FastAlert.process(getActivity(), getView(), getString(R.string.mark_last_read_started));
+                        queueRequest(new MarkLastReadRequest(threadId, index, new Response.Listener() {
+                            @Override
+                            public void onResponse(Object response) {
+                                FastAlert.notice(getActivity(), getView(), getString(R.string.mark_last_read_success));
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                FastAlert.error(getActivity(), getView(), getString(R.string.mark_last_read_failure));
+                            }
+                        }
+                        ));
+                    }
+                });
+            }else{
+                throw new RuntimeException("Invalid postIndex in onLastReadClick: "+postIndex);
+            }
+        }
+    }
 }
