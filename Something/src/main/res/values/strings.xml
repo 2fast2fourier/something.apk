@@ -20,5 +20,6 @@
     <string name="login_button_text">Login</string>
     <string name="login_success">Logged In!</string>
     <string name="login_failed">Login Failed</string>
+    <string name="page_select_title">Select Page</string><string name="page_select_first">First</string><string name="page_select_last">Last</string><string name="page_select_submit">Select</string>
 
 </resources>

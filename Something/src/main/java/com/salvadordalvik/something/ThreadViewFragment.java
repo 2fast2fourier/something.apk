@@ -25,11 +25,12 @@ import com.salvadordalvik.fastlibrary.util.FastUtils;
 import com.salvadordalvik.something.request.BookmarkRequest;
 import com.salvadordalvik.something.request.ThreadPageRequest;
 import com.salvadordalvik.something.util.Constants;
+import com.salvadordalvik.something.widget.PageSelectDialogFragment;
 
 /**
  * Created by matthewshepard on 1/19/14.
  */
-public class ThreadViewFragment extends FastFragment {
+public class ThreadViewFragment extends FastFragment implements PageSelectDialogFragment.PageSelectable {
     private WebView threadView;
 
     private int threadId, page, maxPage;
@@ -171,7 +172,7 @@ public class ThreadViewFragment extends FastFragment {
         startRefresh();
     }
 
-    protected void goToPage(int pageNum){
+    public void goToPage(int pageNum){
         if(pageNum <= maxPage && pageNum > 0){
             page = pageNum;
             startRefresh();
@@ -230,7 +231,7 @@ public class ThreadViewFragment extends FastFragment {
                     goToPage(page-1);
                     return true;
                 }else if(url.contains("something://something-pageselect")){
-                    Toast.makeText(getActivity(), "Not implemented yet.", Toast.LENGTH_SHORT).show();
+                    PageSelectDialogFragment.newInstance(page, maxPage, ThreadViewFragment.this).show(getFragmentManager(), "page_select");
                     return true;
                 }
             }

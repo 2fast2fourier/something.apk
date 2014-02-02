@@ -67,6 +67,10 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
             MustCache.applyPostTemplate(builder, post);
         }
 
+        if(currentPage == maxPage){
+            builder.append("<div class='unread'></div>");
+        }
+
         HashMap<String, String> footerArgs = new HashMap<String, String>();
         footerArgs.put("currentPage", Integer.toString(currentPage));
         footerArgs.put("pageCount", Integer.toString(maxPage));
