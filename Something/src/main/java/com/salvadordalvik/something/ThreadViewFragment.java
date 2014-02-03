@@ -194,6 +194,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
     public void loadThread(int threadId, int page){
         this.threadId = threadId;
         this.page = page;
+        this.maxPage = 0;
         this.bookmarked = false;
         setTitle(getString(R.string.thread_view_loading));
         invalidateOptionsMenu();

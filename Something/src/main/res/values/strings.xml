@@ -27,5 +27,6 @@
     <string name="threadview_navbar_prev">Previous Page</string>
     <string name="threadview_navbar_next">Next Page</string>
     <string name="threadview_navbar_page">Page 9999/9999</string>
+    <string name="menu_forum_home">Open Favorite Forum</string>
 
 </resources>

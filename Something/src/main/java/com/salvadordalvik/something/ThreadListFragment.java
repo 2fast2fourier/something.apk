@@ -176,6 +176,11 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
         android.view.MenuItem star = menu.findItem(R.id.menu_forum_star);
         star.setVisible(forumId != Constants.BOOKMARK_FORUMID);
         star.setIcon(starred ? R.drawable.star : R.drawable.star_empty);
+
+        android.view.MenuItem home = menu.findItem(R.id.menu_forum_home);
+        home.setVisible(forumId != SomePreferences.favoriteForumId);
+        //TODO find better home icon
+        home.setIcon(SomePreferences.favoriteForumId == Constants.BOOKMARK_FORUMID ? R.drawable.ic_menu_bookmarks : R.drawable.ic_menu_home);
     }
 
     @Override
@@ -189,6 +194,9 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
                 starred = ForumItem.toggleStar(forumId);
                 invalidateOptionsMenu();
                 updateStarredForums();
+                return true;
+            case R.id.menu_forum_home:
+                showForum(SomePreferences.favoriteForumId);
                 return true;
         }
         return super.onOptionsItemSelected(item);

@@ -2,13 +2,18 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menu_forum_pin"
-        android:checkable="true"
-        android:title="@string/menu_forum_pin"
-        android:showAsAction="never"/>
+        android:id="@+id/menu_forum_home"
+        android:title="@string/menu_forum_home"
+        android:icon="@drawable/ic_menu_bookmarks"
+        android:showAsAction="always"/>
     <item
         android:id="@+id/menu_forum_star"
         android:title="@string/menu_forum_star"
         android:icon="@drawable/star_empty"
         android:showAsAction="always"/>
+    <item
+        android:id="@+id/menu_forum_pin"
+        android:checkable="true"
+        android:title="@string/menu_forum_pin"
+        android:showAsAction="never"/>
 </menu>
