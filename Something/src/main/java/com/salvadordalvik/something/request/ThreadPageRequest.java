@@ -78,11 +78,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
             builder.append("<div class='unread'></div>");
         }
 
-        HashMap<String, String> footerArgs = new HashMap<String, String>();
-        footerArgs.put("currentPage", Integer.toString(currentPage));
-        footerArgs.put("pageCount", Integer.toString(maxPage));
-
-        MustCache.applyFooterTemplate(builder, footerArgs);
+        MustCache.applyFooterTemplate(builder, null);
 
         return new ThreadPage(builder.toString(), currentPage, maxPage, threadId, forumId, threadTitle, -unread, bookmarked);
 

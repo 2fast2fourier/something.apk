@@ -24,5 +24,8 @@
     <string name="mark_last_read_success">Marked Position</string>
     <string name="mark_last_read_failure">Failed to Mark!</string>
     <string name="mark_last_read_started">Marking...</string>
+    <string name="threadview_navbar_prev">Previous Page</string>
+    <string name="threadview_navbar_next">Next Page</string>
+    <string name="threadview_navbar_page">Page 9999/9999</string>
 
 </resources>

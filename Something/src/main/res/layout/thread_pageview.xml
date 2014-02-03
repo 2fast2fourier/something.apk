@@ -1,0 +1,53 @@
+
+<uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/ptr_layout"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <WebView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/ptr_webview"
+            android:layout_above="@+id/threadview_navbar"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:id="@+id/threadview_navbar">
+            <ImageView
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:id="@+id/threadview_prev"
+                android:src="@drawable/arrowleft"
+                android:gravity="center_horizontal"
+                android:padding="8dp"
+                android:contentDescription="@string/threadview_navbar_prev"
+                android:layout_weight="1"/>
+            <TextView
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:text="@string/threadview_navbar_page"
+                android:gravity="center"
+                android:id="@+id/threadview_page"
+                android:padding="8dp"
+                android:layout_weight="2"
+                android:textSize="18sp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold" />
+            <ImageView
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:id="@+id/threadview_next"
+                android:src="@drawable/arrowright"
+                android:gravity="center_horizontal"
+                android:padding="8dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/threadview_navbar_next" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>

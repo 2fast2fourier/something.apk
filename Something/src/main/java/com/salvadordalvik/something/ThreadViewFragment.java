@@ -16,6 +16,8 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -33,7 +35,7 @@ import com.salvadordalvik.something.widget.PageSelectDialogFragment;
 /**
  * Created by matthewshepard on 1/19/14.
  */
-public class ThreadViewFragment extends FastFragment implements PageSelectDialogFragment.PageSelectable {
+public class ThreadViewFragment extends FastFragment implements PageSelectDialogFragment.PageSelectable, View.OnClickListener {
     private WebView threadView;
 
     private int threadId, page, maxPage;
@@ -41,12 +43,22 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
     private String pageHtml, rawThreadTitle;
     private boolean bookmarked;
 
+    private ImageView navPrev, navNext;
+    private TextView navPageBar;
+
     public ThreadViewFragment() {
-        super(R.layout.ptr_generic_webview, R.menu.thread_view);
+        super(R.layout.thread_pageview, R.menu.thread_view);
     }
 
     @Override
     public void viewCreated(View frag, Bundle savedInstanceState) {
+        navPrev = (ImageView) frag.findViewById(R.id.threadview_prev);
+        navNext = (ImageView) frag.findViewById(R.id.threadview_next);
+        navPageBar = (TextView) frag.findViewById(R.id.threadview_page);
+        navPageBar.setOnClickListener(this);
+        navNext.setOnClickListener(this);
+        navPrev.setOnClickListener(this);
+
         threadView = (WebView) frag.findViewById(R.id.ptr_webview);
         initWebview();
 
@@ -63,6 +75,8 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
 
             threadView.loadDataWithBaseURL(Constants.BASE_URL, pageHtml, "text/html", "utf-8", null);
         }
+
+        updateNavbar();
     }
 
     private void initWebview() {
@@ -112,6 +126,12 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
             outState.putInt("thread_maxpage", maxPage);
             outState.putString("thread_title", rawThreadTitle);
         }
+    }
+
+    private void updateNavbar() {
+        navPrev.setEnabled(page > 1);
+        navPageBar.setText("Page "+page+"/"+maxPage);
+        navNext.setImageResource(page < maxPage ? R.drawable.ic_menu_arrowright : R.drawable.ic_menu_load);
     }
 
     @Override
@@ -165,6 +185,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
                 act.setTitle(threadTitle);
                 ((MainActivity) act).onThreadPageLoaded(response.threadId, response.unreadDiff);
             }
+            updateNavbar();
             invalidateOptionsMenu();
         }
     };
@@ -175,12 +196,14 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         this.bookmarked = false;
         setTitle(getString(R.string.thread_view_loading));
         invalidateOptionsMenu();
+        updateNavbar();
         startRefresh();
     }
 
     public void goToPage(int pageNum){
         if(pageNum <= maxPage && pageNum > 0){
             page = pageNum;
+            updateNavbar();
             startRefresh();
         }
     }
@@ -237,7 +260,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
                     goToPage(page-1);
                     return true;
                 }else if(url.contains("something://something-pageselect")){
-                    PageSelectDialogFragment.newInstance(page, maxPage, ThreadViewFragment.this).show(getFragmentManager(), "page_select");
+                    displayPageSelect();
                     return true;
                 }
             }
@@ -245,6 +268,29 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
             return true;
         }
     };
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.threadview_prev:
+                goToPage(page-1);
+                break;
+            case R.id.threadview_page:
+                displayPageSelect();
+                break;
+            case R.id.threadview_next:
+                if(page < maxPage){
+                    goToPage(page+1);
+                }else{
+                    startRefresh();
+                }
+                break;
+        }
+    }
+
+    private void displayPageSelect(){
+        PageSelectDialogFragment.newInstance(page, maxPage, ThreadViewFragment.this).show(getFragmentManager(), "page_select");
+    }
 
     public class SomeJavascriptInterface {
 
