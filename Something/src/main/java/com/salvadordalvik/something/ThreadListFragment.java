@@ -245,20 +245,17 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
 
     @Override
     public void showPageSelectDialog(int page, int maxPage) {
-        Log.e("showPageSelectDialog", "showPageSelectDialog "+page+" - "+maxPage);
         PageSelectDialogFragment.newInstance(page, maxPage, this).show(getFragmentManager(), "page_select");
 
     }
 
     @Override
     public void refreshPage(int page) {
-        Log.e("refreshPage", "Page: " + page);
         loadPage(page, false);
     }
 
     @Override
     public void scrollToTop() {
-        Log.e("scrollToTop", "scrollToTop");
         scrollToThreads();
     }
 

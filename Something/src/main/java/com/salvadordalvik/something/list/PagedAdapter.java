@@ -63,7 +63,7 @@ public class PagedAdapter extends SectionFastAdapter implements AbsListView.OnSc
     }
 
     public void clearPages() {
-        for(int ix=0;ix<lastPage;ix++){
+        for(int ix=1;ix<=lastPage;ix++){
             clearSection(getPageSection(ix));
         }
         lastPage = 0;
