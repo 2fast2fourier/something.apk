@@ -36,6 +36,10 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
     @Override
     public ThreadPage parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
+        return processThreadPage(document);
+    }
+
+    public static ThreadPage processThreadPage(Document document){
         ArrayList<HashMap<String, String>> posts = new ArrayList<HashMap<String, String>>();
 
         int currentPage, maxPage = 1, threadId, forumId, unread;
@@ -81,6 +85,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         MustCache.applyFooterTemplate(builder, footerArgs);
 
         return new ThreadPage(builder.toString(), currentPage, maxPage, threadId, forumId, threadTitle, -unread, bookmarked);
+
     }
 
     private static String getTheme(int forumId){

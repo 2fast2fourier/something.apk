@@ -9,7 +9,7 @@ import org.jsoup.nodes.Document;
 /**
  * Created by matthewshepard on 2/2/14.
  */
-public class MarkLastReadRequest extends HTMLRequest {
+public class MarkLastReadRequest extends HTMLRequest<ThreadPageRequest.ThreadPage> {
     public MarkLastReadRequest(int threadId, int postIndex, Response.Listener success, Response.ErrorListener error) {
         super("http://forums.somethingawful.com/showthread.php", Request.Method.GET, success, error);
         addParam("action", "setseen");
@@ -18,7 +18,7 @@ public class MarkLastReadRequest extends HTMLRequest {
     }
 
     @Override
-    public Object parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
-        return null;
+    public ThreadPageRequest.ThreadPage parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
+        return ThreadPageRequest.processThreadPage(document);
     }
 }

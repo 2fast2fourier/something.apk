@@ -145,10 +145,29 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
 
     @Override
     public void refreshData(boolean pullToRefresh, boolean staleRefresh) {
-        queueRequest(new ThreadPageRequest(threadId, page, , null));
+        queueRequest(new ThreadPageRequest(threadId, page, pageListener, null));
     }
 
-    public 
+    private Response.Listener<ThreadPageRequest.ThreadPage> pageListener = new Response.Listener<ThreadPageRequest.ThreadPage>() {
+        @Override
+        public void onResponse(ThreadPageRequest.ThreadPage response) {
+            page = response.pageNum;
+            maxPage = response.maxPageNum;
+            if (!TextUtils.isEmpty(response.threadTitle)) {
+                threadTitle = Html.fromHtml(response.threadTitle);
+            }
+            threadView.loadDataWithBaseURL(Constants.BASE_URL, response.pageHtml, "text/html", "utf-8", null);
+            pageHtml = response.pageHtml;
+            rawThreadTitle = response.threadTitle;
+            bookmarked = response.bookmarked;
+            Activity act = getActivity();
+            if (act != null) {
+                act.setTitle(threadTitle);
+                ((MainActivity) act).onThreadPageLoaded(response.threadId, response.unreadDiff);
+            }
+            invalidateOptionsMenu();
+        }
+    };
 
     public void loadThread(int threadId, int page){
         this.threadId = threadId;
@@ -252,10 +271,11 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
                     @Override
                     public void run() {
                         FastAlert.process(getActivity(), getView(), getString(R.string.mark_last_read_started));
-                        queueRequest(new MarkLastReadRequest(threadId, index, new Response.Listener() {
+                        queueRequest(new MarkLastReadRequest(threadId, index, new Response.Listener<ThreadPageRequest.ThreadPage>() {
                             @Override
-                            public void onResponse(Object response) {
+                            public void onResponse(ThreadPageRequest.ThreadPage response) {
                                 FastAlert.notice(getActivity(), getView(), getString(R.string.mark_last_read_success));
+                                pageListener.onResponse(response);
                             }
                         }, new Response.ErrorListener() {
                             @Override
