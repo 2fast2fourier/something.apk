@@ -165,6 +165,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
 
     @Override
     public void refreshData(boolean pullToRefresh, boolean staleRefresh) {
+        threadView.stopLoading();
         queueRequest(new ThreadPageRequest(threadId, page, pageListener, null));
     }
 
@@ -221,6 +222,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
             Log.d("WebView", "Progress: "+newProgress);
+            setProgress(newProgress);
         }
 
         @Override
@@ -241,6 +243,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
             Log.d("WebView", "onPageFinished: " + url);
+            setProgress(100);
         }
 
         @Override

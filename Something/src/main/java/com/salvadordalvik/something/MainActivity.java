@@ -12,6 +12,7 @@ import android.support.v4.widget.SlidingPaneLayout;
 import android.text.Spanned;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 
 import com.salvadordalvik.fastlibrary.widget.ToggleSlidingPaneLayout;
 import com.salvadordalvik.something.util.OkHttpStack;
@@ -26,7 +27,9 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_PROGRESS);
         setContentView(R.layout.activity_main);
+        setProgressBarVisibility(false);
         threadView = (ThreadViewFragment) getFragmentManager().findFragmentById(R.id.threadview_fragment);
         Fragment threads = getFragmentManager().findFragmentByTag("thread_list");
         if(threads instanceof ThreadListFragment){
