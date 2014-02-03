@@ -10,7 +10,24 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    signingConfigs {
+        somethingKey {
+            storeFile file("../../../something.jks")
+            storePassword "something"
+            keyAlias "something"
+            keyPassword "something"
+        }
+    }
+
     buildTypes {
+
+        signedRelease {
+            debuggable false
+            jniDebugBuild false
+            signingConfig signingConfigs.somethingKey
+        }
+
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
