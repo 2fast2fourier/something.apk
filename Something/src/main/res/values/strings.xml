@@ -28,5 +28,7 @@
     <string name="threadview_navbar_next">Next Page</string>
     <string name="threadview_navbar_page">Page 9999/9999</string>
     <string name="menu_forum_home">Open Favorite Forum</string>
+    <string name="page_divider_text">Page 9999/9999</string>
+    <string name="loading_item_message">Loading Page</string>
 
 </resources>

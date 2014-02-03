@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.text.Spanned;
 import android.text.SpannedString;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ListView;
@@ -16,38 +16,32 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.salvadordalvik.fastlibrary.FastFragment;
 import com.salvadordalvik.fastlibrary.data.FastQueryTask;
-import com.salvadordalvik.fastlibrary.list.SectionFastAdapter;
 import com.salvadordalvik.something.data.SomeDatabase;
 import com.salvadordalvik.something.list.ForumItem;
 import com.salvadordalvik.something.list.MenuItem;
+import com.salvadordalvik.something.list.PagedAdapter;
 import com.salvadordalvik.something.list.StubItem;
-import com.salvadordalvik.something.list.ThreadItem;
 import com.salvadordalvik.something.request.ThreadListRequest;
 import com.salvadordalvik.something.util.Constants;
 import com.salvadordalvik.something.util.SomePreferences;
+import com.salvadordalvik.something.widget.PageSelectDialogFragment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by matthewshepard on 1/16/14.
  */
-public class ThreadListFragment extends FastFragment implements FastQueryTask.QueryResultCallback<ForumItem> {
+public class ThreadListFragment extends FastFragment implements FastQueryTask.QueryResultCallback<ForumItem>,PagedAdapter.PagedCallbacks, PageSelectDialogFragment.PageSelectable {
     private ListView threadList;
-    private SectionFastAdapter adapter;
-
-    private ThreadListRequest.ThreadListResponse threadData;
-
-    private static final int THREAD_SECTION = 3;
+    private PagedAdapter adapter;
 
     private int forumId = -1;
-    private int page = 1;
     private boolean starred = false;
     private Spanned forumTitle;
 
     public ThreadListFragment() {
         super(R.layout.ptr_generic_listview, R.menu.thread_list);
-        adapter = new SectionFastAdapter(this, 4);
+        adapter = new PagedAdapter(this, 3, 6, this);
 
         adapter.addItems(0, new MenuItem("Forums", R.drawable.ic_menu_bookmarks) {
             @Override
@@ -70,11 +64,9 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
         Bundle args = getArguments();
         if(savedInstanceState != null && savedInstanceState.containsKey("forum_id")){
             forumId = savedInstanceState.getInt("forum_id", SomePreferences.favoriteForumId);
-            page = savedInstanceState.getInt("forum_page", 1);
         }else if(forumId < 1){
             if(args != null && args.containsKey("forum_id")){
                 forumId = args.getInt("forum_id", SomePreferences.favoriteForumId);
-                page = args.getInt("forum_page", 1);
             }else{
                 forumId = SomePreferences.favoriteForumId;
             }
@@ -86,13 +78,7 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
         threadList = (ListView) frag.findViewById(R.id.ptr_listview);
         threadList.setAdapter(adapter);
         threadList.setOnItemClickListener(adapter);
-
-        if(savedInstanceState != null){
-            ArrayList<ThreadItem> threads = savedInstanceState.getParcelableArrayList("thread_list");
-            if(threads != null){
-                adapter.addItems(THREAD_SECTION, threads);
-            }
-        }
+        threadList.setOnScrollListener(adapter);
     }
 
     @Override
@@ -108,32 +94,39 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("forum_id", forumId);
-        outState.putInt("forum_page", page);
-        if(threadData != null){
-            outState.putParcelableArrayList("thread_list", threadData.threads);
-        }
     }
 
     @Override
     public void refreshData(boolean pullToRefresh, boolean staleRefresh) {
-        queueRequest(new ThreadListRequest(forumId, new Response.Listener<ThreadListRequest.ThreadListResponse>() {
-            @Override
-            public void onResponse(ThreadListRequest.ThreadListResponse response) {
-                adapter.clearSection(THREAD_SECTION);
-                adapter.addItems(THREAD_SECTION, response.threads);
-                threadData = response;
-                scrollToThreads();
-                updateForumTitle();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity(), "Failed to load!", Toast.LENGTH_LONG).show();
-            }
-        }));
+        loadPage(1, true);
         updateStarredForums();
         updateForumTitle();
     }
+
+    private void loadPage(int page, boolean scrollTo){
+        setRefreshAnimation(true);
+        queueRequest(new ThreadListRequest(forumId, page, scrollTo, forumResponse, errorResponse));
+    }
+
+    private Response.Listener<ThreadListRequest.ThreadListResponse> forumResponse = new Response.Listener<ThreadListRequest.ThreadListResponse>() {
+        @Override
+        public void onResponse(ThreadListRequest.ThreadListResponse response) {
+            adapter.setPageContent(response.page, response.threads);
+            adapter.setMaxPage(response.maxPage);
+            if(response.scrollTo){
+                scrollToThreads(response.page);
+            }
+            updateForumTitle();
+        }
+    };
+
+    private Response.ErrorListener errorResponse =  new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Toast.makeText(getActivity(), "Failed to load!", Toast.LENGTH_LONG).show();
+            adapter.loadingPageFailed();
+        }
+    };
     
 
     private void updateStarredForums(){
@@ -209,9 +202,16 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
         }
     }
 
+    private void scrollToThreads(int page){
+        int threadOffset = adapter.getPageOffset(page);
+        if(threadOffset < adapter.getCount()){
+            threadList.setSelection(threadOffset);
+        }
+    }
+
     public void showForum(int id) {
         threadList.setSelection(1);
-        adapter.clearSection(THREAD_SECTION);
+        adapter.clearPages();
         forumId = id;
         startRefresh();
         invalidateOptionsMenu();
@@ -233,12 +233,37 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
     }
 
     public void onThreadPageLoaded(int threadId, int unreadDiff) {
-        if(threadData != null){
-            ThreadItem item = threadData.threadArray.get(threadId);
-            if(item != null){
-                item.updateUnreadCount(unreadDiff);
-                adapter.notifyDataSetChanged();
-            }
-        }
+        //TODO handle this better
+//        if(threadData != null){
+//            ThreadItem item = threadData.threadArray.get(threadId);
+//            if(item != null){
+//                item.updateUnreadCount(unreadDiff);
+//                adapter.notifyDataSetChanged();
+//            }
+//        }
+    }
+
+    @Override
+    public void showPageSelectDialog(int page, int maxPage) {
+        Log.e("showPageSelectDialog", "showPageSelectDialog "+page+" - "+maxPage);
+        PageSelectDialogFragment.newInstance(page, maxPage, this).show(getFragmentManager(), "page_select");
+
+    }
+
+    @Override
+    public void refreshPage(int page) {
+        Log.e("refreshPage", "Page: " + page);
+        loadPage(page, false);
+    }
+
+    @Override
+    public void scrollToTop() {
+        Log.e("scrollToTop", "scrollToTop");
+        scrollToThreads();
+    }
+
+    @Override
+    public void goToPage(int page) {
+        loadPage(page, true);
     }
 }

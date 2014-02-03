@@ -6,6 +6,7 @@ import android.util.SparseArray;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.salvadordalvik.fastlibrary.util.FastUtils;
 import com.salvadordalvik.something.data.ForumProcessTask;
 import com.salvadordalvik.something.list.ThreadItem;
 import com.salvadordalvik.something.util.Constants;
@@ -21,13 +22,16 @@ import java.util.ArrayList;
  */
 public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListResponse> {
     private int forumId;
+    private boolean scrollTo;
 
-    public ThreadListRequest(int forumId, Response.Listener<ThreadListResponse> success, Response.ErrorListener error) {
+    public ThreadListRequest(int forumId, int page, boolean scrollTo, Response.Listener<ThreadListResponse> success, Response.ErrorListener error) {
         super(forumId == Constants.BOOKMARK_FORUMID ? "http://forums.somethingawful.com/bookmarkthreads.php" : "http://forums.somethingawful.com/forumdisplay.php", Request.Method.GET, success, error);
         if(forumId != Constants.BOOKMARK_FORUMID){
             addParam("forumid", forumId);
         }
+        addParam("pagenumber", page);
         this.forumId = forumId;
+        this.scrollTo = scrollTo;
     }
 
     @Override
@@ -71,23 +75,34 @@ public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListR
             //bookmark page doesn't have forum shortcut list
             ForumProcessTask.execute(document);
         }
+
+        int currentPage, maxPage = 1;
+        Element pages = document.getElementsByClass("pages").first();
+        currentPage = FastUtils.safeParseInt(pages.getElementsByAttribute("selected").attr("value"), 1);
+        Element lastPage = pages.getElementsByTag("option").last();
+        if(lastPage != null){
+            maxPage = FastUtils.safeParseInt(lastPage.attr("value"), 1);
+        }
+
         SparseArray<ThreadItem> array = new SparseArray<ThreadItem>();
         for(ThreadItem item : threads){
             array.put(item.getId(), item);
         }
-        return new ThreadListResponse(threads, array);
+        return new ThreadListResponse(threads, array, currentPage, maxPage, scrollTo);
     }
 
     public static class ThreadListResponse{
         public final ArrayList<ThreadItem> threads;
         public final SparseArray<ThreadItem> threadArray;
         public final int page, maxPage;
-        public ThreadListResponse(ArrayList<ThreadItem> threads, SparseArray<ThreadItem> threadArray){
+        public final boolean scrollTo;
+
+        public ThreadListResponse(ArrayList<ThreadItem> threads, SparseArray<ThreadItem> threadArray, int page, int maxPage, boolean scrollTo){
             this.threads = threads;
-            //TODO implement endless scroller on thread lists
-            this.page = 1;
-            this.maxPage = 1;
+            this.page = page;
+            this.maxPage = maxPage;
             this.threadArray = threadArray;
+            this.scrollTo = scrollTo;
         }
     }
 }
