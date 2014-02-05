@@ -12,7 +12,8 @@
         android:name=".SomeApplication">
         <activity
             android:name="com.salvadordalvik.something.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:configChanges="orientation|screenSize|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

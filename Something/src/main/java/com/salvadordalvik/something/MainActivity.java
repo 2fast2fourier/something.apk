@@ -2,6 +2,7 @@ package com.salvadordalvik.something;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -9,7 +10,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.Spanned;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 
 import com.bugsense.trace.BugSenseHandler;
@@ -53,7 +53,11 @@ public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpen
         slidingMenu.setOnOpenedListener(this);
         slidingMenu.setMode(SlidingMenu.LEFT);
         slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+        updateSlidingMenuOffset();
         slidingMenu.showMenu();
+    }
+
+    private void updateSlidingMenuOffset(){
         DisplayMetrics met = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(met);
         if(met.widthPixels < getResources().getDimension(R.dimen.nav_list_width_cutoff)){
@@ -185,5 +189,11 @@ public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpen
     public void onThreadPageLoaded(int threadId, int unreadDiff) {
         slidingMenu.setSlidingEnabled(true);
         threadList.onThreadPageLoaded(threadId, unreadDiff);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        updateSlidingMenuOffset();
     }
 }
