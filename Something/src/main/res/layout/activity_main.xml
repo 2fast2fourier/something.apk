@@ -1,21 +1,15 @@
-<com.salvadordalvik.fastlibrary.widget.ToggleSlidingPaneLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/sliding_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:background="#3E4147">
-    <RelativeLayout
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/list_container">
-    </RelativeLayout>
+        android:id="@+id/list_container"
+        android:background="#3E4147"
+        tools:context=".MainActivity">
     <fragment
         android:id="@+id/threadview_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:name="com.salvadordalvik.something.ThreadViewFragment"
         tools:layout="@layout/ptr_generic_listview" />
-
-</com.salvadordalvik.fastlibrary.widget.ToggleSlidingPaneLayout>
+</RelativeLayout>

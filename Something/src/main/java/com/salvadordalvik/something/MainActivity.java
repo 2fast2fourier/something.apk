@@ -2,23 +2,22 @@ package com.salvadordalvik.something;
 
 import android.app.ActionBar;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.SlidingPaneLayout;
 import android.text.Spanned;
+import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 
 import com.bugsense.trace.BugSenseHandler;
-import com.salvadordalvik.fastlibrary.widget.ToggleSlidingPaneLayout;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.salvadordalvik.something.util.SomePreferences;
 
-public class MainActivity extends FragmentActivity implements SlidingPaneLayout.PanelSlideListener {
-    private ToggleSlidingPaneLayout slidingLayout;
+public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpenedListener, SlidingMenu.OnClosedListener {
+    private SlidingMenu slidingMenu;
 
     private ThreadListFragment threadList;
     private ThreadViewFragment threadView;
@@ -29,6 +28,8 @@ public class MainActivity extends FragmentActivity implements SlidingPaneLayout.
         BugSenseHandler.initAndStartSession(this, "cd75dfa8");
         requestWindowFeature(Window.FEATURE_PROGRESS);
         setContentView(R.layout.activity_main);
+        configureSlidingMenu();
+        configureActionbar();
         setProgressBarVisibility(false);
         threadView = (ThreadViewFragment) getSupportFragmentManager().findFragmentById(R.id.threadview_fragment);
         Fragment threads = getSupportFragmentManager().findFragmentByTag("thread_list");
@@ -36,10 +37,8 @@ public class MainActivity extends FragmentActivity implements SlidingPaneLayout.
             threadList = (ThreadListFragment) threads;
         }else{
             threadList = new ThreadListFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.list_container, threadList, "thread_list").commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.ptr_container, threadList, "thread_list").commit();
         }
-        configureActionbar();
-        configureSlidingLayout();
 
         if(!SomePreferences.loggedIn){
             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
@@ -48,20 +47,25 @@ public class MainActivity extends FragmentActivity implements SlidingPaneLayout.
     }
 
     private void configureSlidingMenu(){
-
+        slidingMenu = new SlidingMenu(this, SlidingMenu.SLIDING_CONTENT);
+        slidingMenu.setMenu(R.layout.ptr_generic_container);
+        slidingMenu.setOnClosedListener(this);
+        slidingMenu.setOnOpenedListener(this);
+        slidingMenu.setMode(SlidingMenu.LEFT);
+        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+        slidingMenu.showMenu();
+        DisplayMetrics met = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(met);
+        if(met.widthPixels < getResources().getDimension(R.dimen.nav_list_width_cutoff)){
+            slidingMenu.setBehindOffsetRes(R.dimen.nav_list_offset);
+        }else{
+            slidingMenu.setBehindWidthRes(R.dimen.nav_list_width);
+        }
     }
 
     private void configureActionbar(){
         ActionBar bar = getActionBar();
         bar.setHomeButtonEnabled(true);
-    }
-
-    private void configureSlidingLayout(){
-        slidingLayout = (ToggleSlidingPaneLayout) findViewById(R.id.sliding_layout);
-        slidingLayout.setSliderFadeColor(Color.argb(0,0,0,0));
-        slidingLayout.setShadowResource(R.drawable.right_divider);
-        slidingLayout.setPanelSlideListener(this);
-        slidingLayout.openPane();
     }
 
     @Override
@@ -73,14 +77,22 @@ public class MainActivity extends FragmentActivity implements SlidingPaneLayout.
     @Override
     protected void onResume() {
         super.onResume();
-        if(slidingLayout.isOpen()){
+        if(slidingMenu.isMenuShowing()){
             threadList.setMenuVisibility(true);
             threadView.setMenuVisibility(false);
+            Spanned title = threadList.getTitle();
+            if(title != null && title.length() > 0){
+                setTitle(title);
+            }
         }else{
             threadList.setMenuVisibility(false);
             threadView.setMenuVisibility(true);
+            Spanned title = threadView.getTitle();
+            if(title != null && title.length() > 0){
+                setTitle(title);
+            }
         }
-        slidingLayout.setTouchSlidable(threadView.hasThreadLoaded());
+        slidingMenu.setSlidingEnabled(threadView.hasThreadLoaded());
     }
 
     @Override
@@ -98,7 +110,7 @@ public class MainActivity extends FragmentActivity implements SlidingPaneLayout.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                slidingLayout.openPane();
+                slidingMenu.showMenu();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -106,8 +118,8 @@ public class MainActivity extends FragmentActivity implements SlidingPaneLayout.
 
     @Override
     public void onBackPressed() {
-        if(!slidingLayout.isOpen()){
-            slidingLayout.openPane();
+        if(!slidingMenu.isMenuShowing()){
+            slidingMenu.showMenu();
         }else if(getFragmentManager().getBackStackEntryCount() > 0){
             getFragmentManager().popBackStack();
         }else{
@@ -116,30 +128,33 @@ public class MainActivity extends FragmentActivity implements SlidingPaneLayout.
     }
 
     @Override
-    public void onPanelSlide(View view, float v) {
-
+    public void onClosed() {
+        if(threadView != null){
+            Spanned title = threadView.getTitle();
+            if(title != null && title.length() > 0){
+                setTitle(title);
+            }
+            threadView.onPaneRevealed();
+            threadView.setMenuVisibility(true);
+        }
+        if(threadList != null){
+            threadList.setMenuVisibility(false);
+        }
     }
 
     @Override
-    public void onPanelOpened(View view) {
-        Spanned title = threadList.getTitle();
-        if(title != null && title.length() > 0){
-            setTitle(title);
+    public void onOpened() {
+        if(threadList != null){
+            Spanned title = threadList.getTitle();
+            if(title != null && title.length() > 0){
+                setTitle(title);
+            }
+            threadList.setMenuVisibility(true);
         }
-        threadView.onPaneObscured();
-        threadView.setMenuVisibility(false);
-        threadList.setMenuVisibility(true);
-    }
-
-    @Override
-    public void onPanelClosed(View view) {
-        Spanned title = threadView.getTitle();
-        if(title != null && title.length() > 0){
-            setTitle(title);
+        if(threadView != null){
+            threadView.onPaneObscured();
+            threadView.setMenuVisibility(false);
         }
-        threadView.onPaneRevealed();
-        threadView.setMenuVisibility(true);
-        threadList.setMenuVisibility(false);
     }
 
     public void showThread(int id) {
@@ -147,13 +162,13 @@ public class MainActivity extends FragmentActivity implements SlidingPaneLayout.
     }
 
     public void showThread(int id, int page) {
-        slidingLayout.setTouchSlidable(true);
-        slidingLayout.closePane();
+        slidingMenu.setSlidingEnabled(true);
+        slidingMenu.showContent();
         threadView.loadThread(id, page);
     }
 
     public void showForum(int id) {
-        slidingLayout.openPane();
+        slidingMenu.showMenu();
         if(getFragmentManager().getBackStackEntryCount() > 0){
             getFragmentManager().popBackStackImmediate();
         }
@@ -162,13 +177,13 @@ public class MainActivity extends FragmentActivity implements SlidingPaneLayout.
 
     public void showForumList(){
         FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
-        trans.replace(R.id.list_container, new ForumListFragment(), "forum_list");
+        trans.replace(R.id.ptr_container, new ForumListFragment(), "forum_list");
         trans.addToBackStack("open_forum_list");
         trans.commit();
     }
 
     public void onThreadPageLoaded(int threadId, int unreadDiff) {
-        slidingLayout.setTouchSlidable(true);
+        slidingMenu.setSlidingEnabled(true);
         threadList.onThreadPageLoaded(threadId, unreadDiff);
     }
 }
