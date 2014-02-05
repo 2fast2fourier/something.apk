@@ -1,6 +1,6 @@
 package com.salvadordalvik.something.list;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.widget.AbsListView;
 
 import com.salvadordalvik.fastlibrary.list.FastItem;

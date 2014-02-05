@@ -1,13 +1,12 @@
 package com.salvadordalvik.something;
 
-import android.app.Activity;
-
 import android.app.ActionBar;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SlidingPaneLayout;
 import android.text.Spanned;
 import android.view.MenuItem;
@@ -15,10 +14,9 @@ import android.view.View;
 import android.view.Window;
 
 import com.salvadordalvik.fastlibrary.widget.ToggleSlidingPaneLayout;
-import com.salvadordalvik.something.util.OkHttpStack;
 import com.salvadordalvik.something.util.SomePreferences;
 
-public class MainActivity extends Activity implements SlidingPaneLayout.PanelSlideListener {
+public class MainActivity extends FragmentActivity implements SlidingPaneLayout.PanelSlideListener {
     private ToggleSlidingPaneLayout slidingLayout;
 
     private ThreadListFragment threadList;
@@ -30,13 +28,13 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
         requestWindowFeature(Window.FEATURE_PROGRESS);
         setContentView(R.layout.activity_main);
         setProgressBarVisibility(false);
-        threadView = (ThreadViewFragment) getFragmentManager().findFragmentById(R.id.threadview_fragment);
-        Fragment threads = getFragmentManager().findFragmentByTag("thread_list");
+        threadView = (ThreadViewFragment) getSupportFragmentManager().findFragmentById(R.id.threadview_fragment);
+        Fragment threads = getSupportFragmentManager().findFragmentByTag("thread_list");
         if(threads instanceof ThreadListFragment){
             threadList = (ThreadListFragment) threads;
         }else{
             threadList = new ThreadListFragment();
-            getFragmentManager().beginTransaction().add(R.id.list_container, threadList, "thread_list").commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.list_container, threadList, "thread_list").commit();
         }
         configureActionbar();
         configureSlidingLayout();
@@ -145,7 +143,7 @@ public class MainActivity extends Activity implements SlidingPaneLayout.PanelSli
     }
 
     public void showForumList(){
-        FragmentTransaction trans = getFragmentManager().beginTransaction();
+        FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
         trans.replace(R.id.list_container, new ForumListFragment(), "forum_list");
         trans.addToBackStack("open_forum_list");
         trans.commit();

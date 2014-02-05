@@ -42,7 +42,6 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:1.3.0'
     compile 'com.samskivert:jmustache:1.8'
     compile 'com.google.guava:guava:16.0'
-    compile project(':volley')
     compile project(':FastLibrary')
     compile project(':SlidingMenu:library')
 }

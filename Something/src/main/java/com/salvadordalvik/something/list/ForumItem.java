@@ -1,10 +1,10 @@
 package com.salvadordalvik.something.list;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.View;

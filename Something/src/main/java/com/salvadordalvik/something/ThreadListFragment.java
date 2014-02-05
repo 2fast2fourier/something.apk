@@ -1,9 +1,9 @@
 package com.salvadordalvik.something;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.Spanned;
 import android.text.SpannedString;
 import android.util.Log;
@@ -114,7 +114,11 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
             adapter.setPageContent(response.page, response.threads);
             adapter.setMaxPage(response.maxPage);
             if(response.scrollTo){
-                scrollToThreads(response.page);
+                if(response.page == 1){
+                    scrollToThreads();
+                }else{
+                    scrollToThreads(response.page);
+                }
             }
             updateForumTitle();
         }

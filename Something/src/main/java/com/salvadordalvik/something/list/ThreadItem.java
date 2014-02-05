@@ -1,12 +1,11 @@
 package com.salvadordalvik.something.list;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.salvadordalvik.fastlibrary.list.BaseFastItem;
 import com.salvadordalvik.something.MainActivity;

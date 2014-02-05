@@ -1,7 +1,7 @@
 package com.salvadordalvik.something.list;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Html;
