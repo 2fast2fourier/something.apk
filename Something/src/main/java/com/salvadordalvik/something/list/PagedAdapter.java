@@ -86,7 +86,7 @@ public class PagedAdapter extends SectionFastAdapter implements AbsListView.OnSc
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if(firstVisibleItem + visibleItemCount + 10 > totalItemCount && totalItemCount > 20 && loadingPage < lastPage && lastPage <= maxPage){
+        if(firstVisibleItem + visibleItemCount + 10 > totalItemCount && totalItemCount > 20 && loadingPage < lastPage && lastPage < maxPage){
             loadingPage = lastPage+1;
             replaceSection(getPageSection(loadingPage), new LoadingItem("Loading Page "+loadingPage));
             callback.refreshPage(loadingPage);

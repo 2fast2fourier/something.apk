@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 
+import com.bugsense.trace.BugSenseHandler;
 import com.salvadordalvik.fastlibrary.widget.ToggleSlidingPaneLayout;
 import com.salvadordalvik.something.util.SomePreferences;
 
@@ -25,6 +26,7 @@ public class MainActivity extends FragmentActivity implements SlidingPaneLayout.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BugSenseHandler.initAndStartSession(this, "cd75dfa8");
         requestWindowFeature(Window.FEATURE_PROGRESS);
         setContentView(R.layout.activity_main);
         setProgressBarVisibility(false);
@@ -45,6 +47,10 @@ public class MainActivity extends FragmentActivity implements SlidingPaneLayout.
         }
     }
 
+    private void configureSlidingMenu(){
+
+    }
+
     private void configureActionbar(){
         ActionBar bar = getActionBar();
         bar.setHomeButtonEnabled(true);
@@ -56,6 +62,12 @@ public class MainActivity extends FragmentActivity implements SlidingPaneLayout.
         slidingLayout.setShadowResource(R.drawable.right_divider);
         slidingLayout.setPanelSlideListener(this);
         slidingLayout.openPane();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        BugSenseHandler.startSession(this);
     }
 
     @Override
@@ -74,6 +86,12 @@ public class MainActivity extends FragmentActivity implements SlidingPaneLayout.
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        BugSenseHandler.closeSession(this);
     }
 
     @Override

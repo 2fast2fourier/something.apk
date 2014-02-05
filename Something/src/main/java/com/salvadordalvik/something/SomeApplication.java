@@ -3,6 +3,7 @@ package com.salvadordalvik.something;
 import android.app.Application;
 import android.webkit.CookieSyncManager;
 
+import com.bugsense.trace.BugSenseHandler;
 import com.salvadordalvik.fastlibrary.request.FastVolley;
 import com.salvadordalvik.something.data.SomeDatabase;
 import com.salvadordalvik.something.util.MustCache;
