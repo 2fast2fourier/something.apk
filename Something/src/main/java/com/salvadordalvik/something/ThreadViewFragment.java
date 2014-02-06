@@ -1,6 +1,9 @@
 package com.salvadordalvik.something;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,6 +11,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +28,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.salvadordalvik.fastlibrary.FastFragment;
 import com.salvadordalvik.fastlibrary.alert.FastAlert;
+import com.salvadordalvik.fastlibrary.list.FastItem;
 import com.salvadordalvik.fastlibrary.request.FastRequest;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
 import com.salvadordalvik.something.request.BookmarkRequest;
@@ -86,6 +91,55 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         threadView.addJavascriptInterface(new SomeJavascriptInterface(), "listener");
 
         threadView.setBackgroundColor(Color.BLACK);
+
+        registerForContextMenu(threadView);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        WebView.HitTestResult result = threadView.getHitTestResult();
+        final String targetUrl = result.getExtra();
+
+        switch (result.getType()){
+            case WebView.HitTestResult.IMAGE_TYPE:
+            case WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE:
+                menu.add(R.string.menu_save_image).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Toast.makeText(getActivity(), "Image Saving not implemented yet!", Toast.LENGTH_LONG).show();
+                        //TODO save image link
+                        FastUtils.startUrlIntent(getActivity(), targetUrl);
+                        return true;
+                    }
+                });
+            case WebView.HitTestResult.SRC_ANCHOR_TYPE:
+                menu.setHeaderTitle(result.getExtra());
+                menu.add(R.string.menu_open_link).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        FastUtils.startUrlIntent(getActivity(), targetUrl);
+                        return true;
+                    }
+                });
+                menu.add(R.string.menu_copy_url).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        FastAlert.custom(getActivity(), getView(), getString(R.string.url_copied), null, R.drawable.ic_menu_link);
+                        ClipboardManager clipman = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                        clipman.setPrimaryClip(ClipData.newPlainText(threadTitle.toString(), targetUrl));
+                        return true;
+                    }
+                });
+                menu.add(R.string.menu_share_link).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        FastUtils.showSimpleShareChooser(getActivity(), threadTitle.toString(), targetUrl, getString(R.string.menu_share_link));
+                        return true;
+                    }
+                });
+                break;
+        }
     }
 
     @Override

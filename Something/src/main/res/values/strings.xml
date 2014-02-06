@@ -30,5 +30,10 @@
     <string name="menu_forum_home">Open Favorite Forum</string>
     <string name="page_divider_text">Page 9999/9999</string>
     <string name="loading_item_message">Loading Page</string>
+    <string name="menu_copy_url">Copy URL</string>
+    <string name="menu_share_link">Share Link...</string>
+    <string name="menu_open_link">Open Link...</string>
+    <string name="menu_save_image">Save Image</string>
+    <string name="url_copied">Copied!</string>
 
 </resources>
