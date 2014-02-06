@@ -144,6 +144,11 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
         }else{
             new FastQueryTask<ForumItem>(SomeDatabase.getDatabase(), new FastQueryTask.QueryResultCallback<ForumItem>() {
                 @Override
+                public int[] findColumns(Cursor data) {
+                    return FastQueryTask.findColumnIndicies(data, ForumItem.DB_COLUMNS);
+                }
+
+                @Override
                 public void queryResult(List<ForumItem> results) {
                     Activity act = getActivity();
                     if(results.size() > 0 && act != null){
@@ -156,8 +161,8 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
                 }
 
                 @Override
-                public ForumItem createItem(Cursor data) {
-                    return new ForumItem(data, false);
+                public ForumItem createItem(Cursor data, int[] columns) {
+                    return new ForumItem(data, false, columns);
                 }
             }).query(SomeDatabase.VIEW_FORUMS, null, "forum_id=?", Integer.toString(forumId));
         }
@@ -222,14 +227,19 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
     }
 
     @Override
+    public int[] findColumns(Cursor data) {
+        return FastQueryTask.findColumnIndicies(data, ForumItem.DB_COLUMNS);
+    }
+
+    @Override
     public void queryResult(List<ForumItem> results) {
         adapter.clearSection(1);
         adapter.addItems(1, results);
     }
 
     @Override
-    public ForumItem createItem(Cursor data) {
-        return new ForumItem(data, false);
+    public ForumItem createItem(Cursor data, int[] columnIndex) {
+        return new ForumItem(data, false, columnIndex);
     }
 
     public Spanned getTitle(){

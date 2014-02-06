@@ -52,14 +52,19 @@ public class ForumListFragment extends FastFragment implements FastQueryTask.Que
     }
 
     @Override
+    public int[] findColumns(Cursor data) {
+        return FastQueryTask.findColumnIndicies(data, ForumItem.DB_COLUMNS);
+    }
+
+    @Override
     public void queryResult(List<ForumItem> results) {
         adapter.clearList();
         adapter.addItems(results);
     }
 
     @Override
-    public ForumItem createItem(Cursor data) {
-        return new ForumItem(data, true);
+    public ForumItem createItem(Cursor data, int[] columns) {
+        return new ForumItem(data, true, columns);
     }
 
     @Override

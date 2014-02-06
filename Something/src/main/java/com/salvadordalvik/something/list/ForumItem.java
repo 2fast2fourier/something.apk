@@ -20,15 +20,16 @@ import com.salvadordalvik.something.data.SomeDatabase;
  * Created by matthewshepard on 1/22/14.
  */
 public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
+    public static final String[] DB_COLUMNS = {"forum_id", "forum_name", "parent_forum_id", "forum_starred"};
     private Spanned title;
     private int parentId;
     private boolean starred, indent;
 
-    public ForumItem(Cursor data, boolean indentSubforums) {
-        super(R.layout.forum_item, data.getInt(data.getColumnIndex("forum_id")), true);
-        title = Html.fromHtml(data.getString(data.getColumnIndex("forum_name")));
-        parentId = data.getInt(data.getColumnIndex("parent_forum_id"));
-        starred = !data.isNull(data.getColumnIndex("forum_starred"));
+    public ForumItem(Cursor data, boolean indentSubforums, int[] columns) {
+        super(R.layout.forum_item, data.getInt(columns[0]), true);
+        title = Html.fromHtml(data.getString(columns[1]));
+        parentId = data.getInt(columns[2]);
+        starred = !data.isNull(columns[3]);
         indent = indentSubforums;
     }
 
