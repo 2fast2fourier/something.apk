@@ -45,7 +45,9 @@ public class PageDividerItem extends BaseFastItem<PageDividerItem.DividerHolder>
     }
 
     @Override
-    public void onItemClick(Activity act, Fragment fragment) {}
+    public boolean onItemClick(Activity act, Fragment fragment) {
+        return false;
+    }
 
     protected static class DividerHolder implements View.OnClickListener{
         public PagedAdapter.PagedCallbacks delegate;

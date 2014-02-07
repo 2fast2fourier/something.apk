@@ -63,12 +63,13 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
     }
 
     @Override
-    public void onItemClick(Activity act, Fragment fragment) {
+    public boolean onItemClick(Activity act, Fragment fragment) {
         if(unread >= 0){
             ((MainActivity)act).showThread(id);
         }else{
             ((MainActivity)act).showThread(id, 1);
         }
+        return false;
     }
 
     @Override

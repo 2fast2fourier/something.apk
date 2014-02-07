@@ -44,8 +44,8 @@ public class PostItem extends BaseFastItem<PostItem.PostHolder> implements Html.
     }
 
     @Override
-    public void onItemClick(Activity act, Fragment fragment) {
-
+    public boolean onItemClick(Activity act, Fragment fragment) {
+        return false;
     }
 
     @Override

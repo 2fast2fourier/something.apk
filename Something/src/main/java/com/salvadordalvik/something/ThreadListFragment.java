@@ -45,8 +45,9 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
 
         adapter.addItems(0, new MenuItem("Forums", R.drawable.ic_menu_bookmarks) {
             @Override
-            public void onItemClick(Activity act, Fragment fragment) {
+            public boolean onItemClick(Activity act, Fragment fragment) {
                 ((MainActivity) act).showForumList();
+                return false;
             }
 
             @Override

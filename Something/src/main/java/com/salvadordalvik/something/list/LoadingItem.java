@@ -31,8 +31,8 @@ public class LoadingItem extends BaseFastItem<LoadingItem.LoadingHolder> {
     }
 
     @Override
-    public void onItemClick(Activity act, Fragment fragment) {
-
+    public boolean onItemClick(Activity act, Fragment fragment) {
+        return false;
     }
 
     protected static class LoadingHolder{

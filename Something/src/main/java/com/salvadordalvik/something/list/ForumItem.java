@@ -51,8 +51,9 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
     }
 
     @Override
-    public void onItemClick(Activity act, Fragment fragment) {
+    public boolean onItemClick(Activity act, Fragment fragment) {
         ((MainActivity)act).showForum(id);
+        return false;
     }
 
     public Spanned getTitle() {
