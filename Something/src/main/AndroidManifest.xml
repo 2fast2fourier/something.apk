@@ -20,6 +20,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".PrivateMessageListActivity" android:label="@string/private_messages"/>
         <activity android:name=".LoginActivity" android:label="@string/login_activity_title"/>
     </application>
 

@@ -37,7 +37,7 @@ public class PageDividerItem extends BaseFastItem<PageDividerItem.DividerHolder>
         holder.delegate = delegate;
         holder.pageNumber = page;
         holder.maxPage = parent.getMaxPage();
-        holder.page.setText("Page "+page+"/"+parent.getMaxPage()+"...");
+        holder.page.setText("Page "+page+"/"+parent.getMaxPage()+(holder.maxPage > 1 ? "..." : ""));
         if(page != parent.getLoadingPage()){
             holder.refresh.clearAnimation();
         }

@@ -35,5 +35,8 @@
     <string name="menu_open_link">Open Link...</string>
     <string name="menu_save_image">Save Image</string>
     <string name="url_copied">Copied!</string>
+    <string name="loading_failed">Network Error</string>
+    <string name="private_messages">Private Messages</string>
+    <string name="menu_private_messages">Private Messages</string>
 
 </resources>

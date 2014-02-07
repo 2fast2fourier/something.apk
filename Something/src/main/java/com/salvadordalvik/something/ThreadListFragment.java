@@ -1,6 +1,7 @@
 package com.salvadordalvik.something;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -201,6 +202,9 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
             case R.id.menu_forum_home:
                 showForum(SomePreferences.favoriteForumId);
                 return true;
+            case R.id.menu_private_messages:
+                startActivity(new Intent(getActivity(), PrivateMessageListActivity.class));
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -260,7 +264,9 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
 
     @Override
     public void showPageSelectDialog(int page, int maxPage) {
-        PageSelectDialogFragment.newInstance(page, maxPage, this).show(getFragmentManager(), "page_select");
+        if(maxPage > 1){
+            PageSelectDialogFragment.newInstance(page, maxPage, this).show(getFragmentManager(), "page_select");
+        }
 
     }
 
