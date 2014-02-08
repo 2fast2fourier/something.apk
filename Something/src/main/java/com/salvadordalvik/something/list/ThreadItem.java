@@ -1,6 +1,8 @@
 package com.salvadordalvik.something.list;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.support.v4.app.Fragment;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -17,14 +19,16 @@ import com.salvadordalvik.something.R;
 public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements Parcelable{
     private String threadTitle, author, lastPost;
     private int unread, replies;
+    private boolean bookmarked;
 
-    public ThreadItem(int id, String title, int unreadCount, int replies, String author, String lastPost) {
+    public ThreadItem(int id, String title, int unreadCount, int replies, String author, String lastPost, boolean bookmarked) {
         super(R.layout.thread_item, id, true);
         this.threadTitle = title;
         this.unread = unreadCount;
         this.replies = replies;
         this.author = author;
         this.lastPost = lastPost;
+        this.bookmarked = bookmarked;
     }
 
     public ThreadItem(Parcel source) {
@@ -55,10 +59,17 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         }else{
             holder.unread.setVisibility(View.GONE);
         }
-        if(unread >= 0){
-            holder.subtext.setText("Pages: "+(replies/40+1)+" - Killed: "+lastPost);
+        GradientDrawable unreadBackground = (GradientDrawable) holder.unread.getBackground();
+        if(bookmarked){
+            unreadBackground.setColor(Color.argb(255,53,102,147));
         }else{
-            holder.subtext.setText("Pages: "+(replies/40+1)+" - Author: "+author);
+            unreadBackground.setColor(Color.argb(255,0,0,0));
+        }
+        holder.unread.setAlpha(unread > 0 ? 1.0f : 0.5f);
+        if(unread >= 0){
+            holder.subtext.setText(" "+(replies/40+1)+" - Killed: "+lastPost);
+        }else{
+            holder.subtext.setText(" "+(replies/40+1)+" - Author: "+author);
         }
     }
 

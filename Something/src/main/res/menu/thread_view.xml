@@ -2,8 +2,15 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menu_thread_bookmark"
-        android:title="@string/menu_thread_bookmark"
-        android:icon="@drawable/star_empty"
-        android:showAsAction="always"/>
+        android:id="@+id/menu_thread_dropdown"
+        android:title="@string/menu_thread_menu"
+        android:icon="@drawable/ic_menu_dropdown"
+        android:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/menu_thread_bookmark"
+                android:title="@string/menu_thread_bookmark"
+                android:icon="@drawable/star_empty"/>
+        </menu>
+    </item>
 </menu>

@@ -38,5 +38,7 @@
     <string name="loading_failed">Network Error</string>
     <string name="private_messages">Private Messages</string>
     <string name="menu_private_messages">Private Messages</string>
+    <string name="menu_thread_menu">Thread Menu</string>
+    <string name="menu_thread_unbookmark">Unbookmark</string>
 
 </resources>

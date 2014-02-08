@@ -10,7 +10,7 @@
         android:id="@+id/menu_forum_star"
         android:title="@string/menu_forum_star"
         android:icon="@drawable/star_empty"
-        android:showAsAction="always"/>
+        android:showAsAction="never"/>
     <item
         android:id="@+id/menu_private_messages"
         android:title="@string/menu_private_messages"

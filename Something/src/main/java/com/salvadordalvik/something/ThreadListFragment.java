@@ -181,10 +181,12 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
         star.setVisible(forumId != Constants.BOOKMARK_FORUMID);
         star.setIcon(starred ? R.drawable.star : R.drawable.star_empty);
 
+        boolean viewingFavorite = forumId == SomePreferences.favoriteForumId;
+
         android.view.MenuItem home = menu.findItem(R.id.menu_forum_home);
-        home.setVisible(forumId != SomePreferences.favoriteForumId);
+        home.setVisible(!(viewingFavorite && SomePreferences.favoriteForumId == Constants.BOOKMARK_FORUMID));
         //TODO find better home icon
-        home.setIcon(SomePreferences.favoriteForumId == Constants.BOOKMARK_FORUMID ? R.drawable.ic_menu_bookmarks : R.drawable.ic_menu_home);
+        home.setIcon(SomePreferences.favoriteForumId == Constants.BOOKMARK_FORUMID || viewingFavorite ? R.drawable.ic_menu_bookmarks : R.drawable.ic_menu_home);
     }
 
     @Override
@@ -200,7 +202,11 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
                 updateStarredForums();
                 return true;
             case R.id.menu_forum_home:
-                showForum(SomePreferences.favoriteForumId);
+                if(SomePreferences.favoriteForumId == forumId){
+                    showForum(Constants.BOOKMARK_FORUMID);
+                }else{
+                    showForum(SomePreferences.favoriteForumId);
+                }
                 return true;
             case R.id.menu_private_messages:
                 startActivity(new Intent(getActivity(), PrivateMessageListActivity.class));

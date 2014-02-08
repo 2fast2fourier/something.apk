@@ -24,7 +24,9 @@
         android:id="@+id/thread_item_subtext"
         android:layout_below="@+id/thread_item_title"
         android:paddingTop="2dp"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        android:drawableLeft="@drawable/pages"
+        android:layout_marginLeft="2dp" />
 
     <TextView
         android:layout_width="wrap_content"

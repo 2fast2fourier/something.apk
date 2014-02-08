@@ -191,7 +191,11 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.menu_thread_bookmark).setIcon(bookmarked ? R.drawable.star : R.drawable.star_empty);
+        MenuItem bookmark = menu.findItem(R.id.menu_thread_bookmark);
+        if(bookmark != null){
+            bookmark.setIcon(bookmarked ? R.drawable.star : R.drawable.star_empty);
+            bookmark.setTitle(bookmarked ? R.string.menu_thread_unbookmark : R.string.menu_thread_bookmark);
+        }
     }
 
     @Override
