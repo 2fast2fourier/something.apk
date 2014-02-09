@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -24,12 +25,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.salvadordalvik.fastlibrary.FastFragment;
 import com.salvadordalvik.fastlibrary.alert.FastAlert;
 import com.salvadordalvik.fastlibrary.list.FastItem;
 import com.salvadordalvik.fastlibrary.request.FastRequest;
+import com.salvadordalvik.fastlibrary.request.FastVolley;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
 import com.salvadordalvik.something.request.BookmarkRequest;
 import com.salvadordalvik.something.request.MarkLastReadRequest;
@@ -50,6 +54,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
 
     private ImageView navPrev, navNext;
     private TextView navPageBar;
+    private boolean disableNavLoading = false;
 
     public ThreadViewFragment() {
         super(R.layout.thread_pageview, R.menu.thread_view);
@@ -183,9 +188,10 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
     }
 
     private void updateNavbar() {
-        navPrev.setEnabled(page > 1);
+        navPrev.setEnabled(page > 1 && !disableNavLoading);
         navPageBar.setText("Page "+page+"/"+maxPage);
-        navNext.setImageResource(page < maxPage ? R.drawable.ic_menu_arrowright : R.drawable.ic_menu_load);
+        navNext.setImageResource(page < maxPage ? R.drawable.arrowright : R.drawable.ic_menu_load);
+        navNext.setEnabled(!disableNavLoading || page == maxPage);
     }
 
     @Override
@@ -221,15 +227,32 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         return super.onOptionsItemSelected(item);
     }
 
+    //Must be a common string, volley uses direct equality when comparing tags.
+    private static final String THREAD_REQUEST_TAG = "thread_page_request";
     @Override
     public void refreshData(boolean pullToRefresh, boolean staleRefresh) {
         threadView.stopLoading();
-        queueRequest(new ThreadPageRequest(threadId, page, pageListener, null));
+        disableNavLoading = true;
+        updateNavbar();
+        FastVolley.cancelRequestByTag(THREAD_REQUEST_TAG);
+        queueRequest(new ThreadPageRequest(threadId, page, pageListener, errorListener), THREAD_REQUEST_TAG);
+        getHandler().postDelayed(enableNavigation, 1000);
     }
+
+    private Runnable enableNavigation = new Runnable() {
+        @Override
+        public void run() {
+            if(disableNavLoading){
+                disableNavLoading = false;
+                updateNavbar();
+            }
+        }
+    };
 
     private Response.Listener<ThreadPageRequest.ThreadPage> pageListener = new Response.Listener<ThreadPageRequest.ThreadPage>() {
         @Override
         public void onResponse(ThreadPageRequest.ThreadPage response) {
+            disableNavLoading = false;
             page = response.pageNum;
             maxPage = response.maxPageNum;
             if (!TextUtils.isEmpty(response.threadTitle)) {
@@ -246,6 +269,14 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
             }
             updateNavbar();
             invalidateOptionsMenu();
+        }
+    };
+
+    private Response.ErrorListener errorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError volleyError) {
+            disableNavLoading = false;
+            updateNavbar();
         }
     };
 
