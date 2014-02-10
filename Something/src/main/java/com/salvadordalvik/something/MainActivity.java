@@ -151,6 +151,7 @@ public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpen
         }
         if(threadList != null){
             threadList.setMenuVisibility(false);
+            threadList.onPaneObscured();
         }
     }
 
@@ -162,6 +163,7 @@ public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpen
                 setTitle(title);
             }
             threadList.setMenuVisibility(true);
+            threadList.onPaneRevealed();
         }
         if(threadView != null){
             threadView.onPaneObscured();

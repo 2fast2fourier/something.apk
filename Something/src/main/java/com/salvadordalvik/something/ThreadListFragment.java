@@ -92,6 +92,15 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
         }
     }
 
+    public void onPaneObscured() {
+    }
+
+    public void onPaneRevealed() {
+        if(isResumed()){
+            startRefreshIfStale();
+        }
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
