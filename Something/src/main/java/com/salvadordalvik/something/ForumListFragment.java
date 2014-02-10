@@ -1,5 +1,6 @@
 package com.salvadordalvik.something;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.salvadordalvik.fastlibrary.list.FastAdapter;
 import com.salvadordalvik.something.list.ForumItem;
 import com.salvadordalvik.something.data.SomeDatabase;
 import com.salvadordalvik.something.request.ForumListRequest;
+import com.salvadordalvik.something.util.SomePreferences;
 
 import java.util.List;
 
@@ -38,7 +40,11 @@ public class ForumListFragment extends FastFragment implements FastQueryTask.Que
     @Override
     public void onResume() {
         super.onResume();
-        startRefreshIfStale();
+        if(SomePreferences.lastForumUpdate < System.currentTimeMillis() - 86400000){
+            startRefresh();
+        }
+        refreshForumList();
+        setTitle(getString(R.string.forum_title));
     }
 
     @Override
@@ -75,5 +81,14 @@ public class ForumListFragment extends FastFragment implements FastQueryTask.Que
     @Override
     public void onResponse(Void response) {
         refreshForumList();
+        SomePreferences.setLong(SomePreferences.LAST_FORUM_UPDATE, System.currentTimeMillis());
+    }
+
+    @Override
+    protected void setTitle(CharSequence title) {
+        Activity act = getActivity();
+        if(act instanceof MainActivity){
+            ((MainActivity)act).setTitle(title, this);
+        }
     }
 }

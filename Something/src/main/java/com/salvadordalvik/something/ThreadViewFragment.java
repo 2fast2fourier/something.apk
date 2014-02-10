@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.SpannedString;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -48,7 +49,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
     private WebView threadView;
 
     private int threadId, page, maxPage;
-    private Spanned threadTitle;
+    private CharSequence threadTitle;
     private String pageHtml, rawThreadTitle;
     private boolean bookmarked;
 
@@ -263,10 +264,11 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
             rawThreadTitle = response.threadTitle;
             bookmarked = response.bookmarked;
             Activity act = getActivity();
-            if (act != null) {
-                act.setTitle(threadTitle);
-                ((MainActivity) act).onThreadPageLoaded(response.threadId, response.unreadDiff);
+            if (act instanceof MainActivity) {
+                MainActivity main = (MainActivity) act;
+                main.onThreadPageLoaded(response.threadId, response.unreadDiff);
             }
+            setTitle(threadTitle);
             updateNavbar();
             invalidateOptionsMenu();
         }
@@ -285,7 +287,8 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         this.page = page;
         this.maxPage = 0;
         this.bookmarked = false;
-        setTitle(getString(R.string.thread_view_loading));
+        this.threadTitle = new SpannedString(getString(R.string.thread_view_loading));
+        setTitle(threadTitle);
         invalidateOptionsMenu();
         updateNavbar();
         startRefresh();
@@ -303,7 +306,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         return pageHtml != null;
     }
 
-    public Spanned getTitle() {
+    public CharSequence getTitle() {
         return threadTitle;
     }
 
@@ -428,6 +431,14 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
             }else{
                 throw new RuntimeException("Invalid postIndex in onLastReadClick: "+postIndex);
             }
+        }
+    }
+
+    @Override
+    protected void setTitle(CharSequence title) {
+        Activity act = getActivity();
+        if(act instanceof MainActivity){
+            ((MainActivity)act).setTitle(title, this);
         }
     }
 }

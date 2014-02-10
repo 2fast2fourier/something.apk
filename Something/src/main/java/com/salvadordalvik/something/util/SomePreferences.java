@@ -28,6 +28,10 @@ public class SomePreferences {
     public static final String LOGIN_COOKIE_STRING = "login_cookie_string";
     public static String cookieString;
 
+
+    public static final String LAST_FORUM_UPDATE = "last_forum_update";
+    public static long lastForumUpdate;
+
     private synchronized static void updatePreferences(SharedPreferences newPrefs){
         //Update cached preferences here:
         //exampleVariable = newPrefs.getInt(EXAMPLE_VARIABLE_NAME, 0);
@@ -36,6 +40,8 @@ public class SomePreferences {
 
         cookieString = newPrefs.getString(LOGIN_COOKIE_STRING, null);
         loggedIn = !TextUtils.isEmpty(cookieString) && cookieString.contains("bbuserid");
+
+        lastForumUpdate = newPrefs.getLong(LAST_FORUM_UPDATE, 0);
     }
 
 

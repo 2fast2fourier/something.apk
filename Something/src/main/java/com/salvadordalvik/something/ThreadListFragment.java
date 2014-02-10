@@ -157,7 +157,7 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
                         ForumItem forum = results.get(0);
                         forumTitle = forum.getTitle();
                         starred = forum.isStarred();
-                        act.setTitle(forumTitle);
+                        setTitle(forumTitle);
                         invalidateOptionsMenu();
                     }
                 }
@@ -289,5 +289,13 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
     @Override
     public void goToPage(int page) {
         loadPage(page, true);
+    }
+
+    @Override
+    protected void setTitle(CharSequence title) {
+        Activity act = getActivity();
+        if(act instanceof MainActivity){
+            ((MainActivity)act).setTitle(title, this);
+        }
     }
 }

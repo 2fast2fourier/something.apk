@@ -40,5 +40,6 @@
     <string name="menu_private_messages">Private Messages</string>
     <string name="menu_thread_menu">Thread Menu</string>
     <string name="menu_thread_unbookmark">Unbookmark</string>
+    <string name="forum_title">Forums</string>
 
 </resources>

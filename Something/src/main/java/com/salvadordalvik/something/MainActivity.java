@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.Window;
@@ -22,6 +23,7 @@ public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpen
 
     private ThreadListFragment threadList;
     private ThreadViewFragment threadView;
+    private ForumListFragment forumList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,14 +87,18 @@ public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpen
         if(slidingMenu.isMenuShowing()){
             threadList.setMenuVisibility(true);
             threadView.setMenuVisibility(false);
-            Spanned title = threadList.getTitle();
-            if(title != null && title.length() > 0){
-                setTitle(title);
+            if(forumList != null){
+                setTitle(R.string.forum_title);
+            }else{
+                Spanned title = threadList.getTitle();
+                if(title != null && title.length() > 0){
+                    setTitle(title);
+                }
             }
         }else{
             threadList.setMenuVisibility(false);
             threadView.setMenuVisibility(true);
-            Spanned title = threadView.getTitle();
+            CharSequence title = threadView.getTitle();
             if(title != null && title.length() > 0){
                 setTitle(title);
             }
@@ -127,6 +133,7 @@ public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpen
             slidingMenu.showMenu();
         }else if(getSupportFragmentManager().getBackStackEntryCount() > 0){
             getSupportFragmentManager().popBackStack();
+            forumList = null;
         }else{
             super.onBackPressed();
         }
@@ -135,7 +142,7 @@ public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpen
     @Override
     public void onClosed() {
         if(threadView != null){
-            Spanned title = threadView.getTitle();
+            CharSequence title = threadView.getTitle();
             if(title != null && title.length() > 0){
                 setTitle(title);
             }
@@ -177,13 +184,15 @@ public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpen
         FragmentManager fragMan = getSupportFragmentManager();
         if(fragMan.getBackStackEntryCount() > 0){
             fragMan.popBackStackImmediate();
+            forumList = null;
         }
         threadList.showForum(id);
     }
 
     public void showForumList(){
         FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
-        trans.replace(R.id.ptr_container, new ForumListFragment(), "forum_list");
+        forumList = new ForumListFragment();
+        trans.replace(R.id.ptr_container, forumList, "forum_list");
         trans.addToBackStack("open_forum_list");
         trans.commit();
     }
@@ -197,5 +206,19 @@ public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpen
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         updateSlidingMenuOffset();
+    }
+
+    public void setTitle(CharSequence title, Fragment requestor){
+        if(!TextUtils.isEmpty(title) && isFragmentFocused(requestor)){
+            setTitle(title);
+        }
+    }
+
+    public boolean isFragmentFocused(Fragment fragment){
+        if(slidingMenu.isMenuShowing()){
+            return forumList == fragment || (forumList == null && fragment == threadList);
+        }else{
+            return fragment == threadView;
+        }
     }
 }
