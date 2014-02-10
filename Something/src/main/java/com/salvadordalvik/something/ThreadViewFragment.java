@@ -393,8 +393,11 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
 
     @Override
     public void onPullFromBottom(View view) {
-        Toast.makeText(getActivity(), "PULL FROM BOTTOM", Toast.LENGTH_SHORT).show();
-        onRefreshCompleted();
+        if(page < maxPage){
+            goToPage(page+1);
+        }else{
+            startRefresh();
+        }
     }
 
     public class SomeJavascriptInterface {
