@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Spanned;
 import android.util.DisplayMetrics;
@@ -124,8 +125,8 @@ public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpen
     public void onBackPressed() {
         if(!slidingMenu.isMenuShowing()){
             slidingMenu.showMenu();
-        }else if(getFragmentManager().getBackStackEntryCount() > 0){
-            getFragmentManager().popBackStack();
+        }else if(getSupportFragmentManager().getBackStackEntryCount() > 0){
+            getSupportFragmentManager().popBackStack();
         }else{
             super.onBackPressed();
         }
@@ -173,8 +174,9 @@ public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpen
 
     public void showForum(int id) {
         slidingMenu.showMenu();
-        if(getFragmentManager().getBackStackEntryCount() > 0){
-            getFragmentManager().popBackStackImmediate();
+        FragmentManager fragMan = getSupportFragmentManager();
+        if(fragMan.getBackStackEntryCount() > 0){
+            fragMan.popBackStackImmediate();
         }
         threadList.showForum(id);
     }
