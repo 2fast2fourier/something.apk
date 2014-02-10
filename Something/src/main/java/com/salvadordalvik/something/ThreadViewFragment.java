@@ -7,9 +7,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Looper;
 import android.text.Html;
-import android.text.Spanned;
 import android.text.SpannedString;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,14 +24,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.salvadordalvik.fastlibrary.FastFragment;
 import com.salvadordalvik.fastlibrary.alert.FastAlert;
-import com.salvadordalvik.fastlibrary.list.FastItem;
-import com.salvadordalvik.fastlibrary.request.FastRequest;
 import com.salvadordalvik.fastlibrary.request.FastVolley;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
 import com.salvadordalvik.something.request.BookmarkRequest;
@@ -42,10 +36,14 @@ import com.salvadordalvik.something.request.ThreadPageRequest;
 import com.salvadordalvik.something.util.Constants;
 import com.salvadordalvik.something.widget.PageSelectDialogFragment;
 
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnPullFromBottomListener;
+
 /**
  * Created by matthewshepard on 1/19/14.
  */
-public class ThreadViewFragment extends FastFragment implements PageSelectDialogFragment.PageSelectable, View.OnClickListener {
+public class ThreadViewFragment extends FastFragment implements PageSelectDialogFragment.PageSelectable, View.OnClickListener, OnPullFromBottomListener {
     private WebView threadView;
 
     private int threadId, page, maxPage;
@@ -88,6 +86,11 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         }
 
         updateNavbar();
+    }
+
+    @Override
+    protected void setupPullToRefresh(PullToRefreshLayout ptr) {
+        ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable().addPullFromBottomListener(this).listener(this).setup(ptr);
     }
 
     private void initWebview() {
@@ -386,6 +389,12 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
 
     private void displayPageSelect(){
         PageSelectDialogFragment.newInstance(page, maxPage, ThreadViewFragment.this).show(getFragmentManager(), "page_select");
+    }
+
+    @Override
+    public void onPullFromBottom(View view) {
+        Toast.makeText(getActivity(), "PULL FROM BOTTOM", Toast.LENGTH_SHORT).show();
+        onRefreshCompleted();
     }
 
     public class SomeJavascriptInterface {

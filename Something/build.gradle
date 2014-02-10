@@ -47,7 +47,7 @@ dependencies {
     compile 'com.samskivert:jmustache:1.8'
     compile 'com.google.guava:guava:16.0'
     compile 'com.bugsense.trace:bugsense:3.4'
+    compile project(':ActionBar-PullToRefresh:library')
     compile project(':FastLibrary')
     compile project(':SlidingMenu:library')
-    compile project(':ActionBar-PullToRefresh:library')
 }
