@@ -41,5 +41,7 @@
     <string name="menu_thread_menu">Thread Menu</string>
     <string name="menu_thread_unbookmark">Unbookmark</string>
     <string name="forum_title">Forums</string>
+    <string name="pull_bottom_nextpage">Pull for next page...</string>
+    <string name="pull_bottom_release_nexpage">Release for next page...</string>
 
 </resources>

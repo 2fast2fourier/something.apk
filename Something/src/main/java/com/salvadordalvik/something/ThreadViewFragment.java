@@ -37,6 +37,8 @@ import com.salvadordalvik.something.util.Constants;
 import com.salvadordalvik.something.widget.PageSelectDialogFragment;
 
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
+import uk.co.senab.actionbarpulltorefresh.library.Options;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnPullFromBottomListener;
 
@@ -54,6 +56,8 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
     private ImageView navPrev, navNext;
     private TextView navPageBar;
     private boolean disableNavLoading = false;
+
+    private DefaultHeaderTransformer headerTransformer;
 
     public ThreadViewFragment() {
         super(R.layout.thread_pageview, R.menu.thread_view);
@@ -90,7 +94,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
 
     @Override
     protected void setupPullToRefresh(PullToRefreshLayout ptr) {
-        ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable().addPullFromBottomListener(this).listener(this).setup(ptr);
+        ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable().options(generatePullToRefreshOptions()).addPullFromBottomListener(this).listener(this).setup(ptr);
     }
 
     private void initWebview() {
@@ -196,6 +200,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         navPageBar.setText("Page "+page+"/"+maxPage);
         navNext.setImageResource(page < maxPage ? R.drawable.arrowright : R.drawable.ic_menu_load);
         navNext.setEnabled(!disableNavLoading || page == maxPage);
+        updateHeader();
     }
 
     @Override
@@ -389,6 +394,19 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
 
     private void displayPageSelect(){
         PageSelectDialogFragment.newInstance(page, maxPage, ThreadViewFragment.this).show(getFragmentManager(), "page_select");
+    }
+
+    @Override
+    protected Options generatePullToRefreshOptions() {
+        headerTransformer = new DefaultHeaderTransformer();
+        return Options.create().headerTransformer(headerTransformer).build();
+    }
+
+    private void updateHeader(){
+        if(headerTransformer != null){
+            headerTransformer.setPullFromBottomText(getString(page < maxPage ? R.string.pull_bottom_nextpage : R.string.pull_to_refresh_pull_label));
+            headerTransformer.setPullFromBottomReleaseText(getString(page < maxPage ? R.string.pull_bottom_release_nexpage : R.string.pull_to_refresh_release_label));
+        }
     }
 
     @Override
