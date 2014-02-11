@@ -8,20 +8,26 @@ import android.support.v4.app.Fragment;
 import android.text.Spanned;
 import android.text.SpannedString;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.salvadordalvik.fastlibrary.FastFragment;
+import com.salvadordalvik.fastlibrary.alert.FastAlert;
 import com.salvadordalvik.fastlibrary.data.FastQueryTask;
+import com.salvadordalvik.fastlibrary.list.FastItem;
 import com.salvadordalvik.something.data.SomeDatabase;
 import com.salvadordalvik.something.list.ForumItem;
 import com.salvadordalvik.something.list.MenuItem;
 import com.salvadordalvik.something.list.PagedAdapter;
 import com.salvadordalvik.something.list.StubItem;
+import com.salvadordalvik.something.list.ThreadItem;
+import com.salvadordalvik.something.request.BookmarkRequest;
 import com.salvadordalvik.something.request.ThreadListRequest;
 import com.salvadordalvik.something.util.Constants;
 import com.salvadordalvik.something.util.SomePreferences;
@@ -81,6 +87,8 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
         threadList.setAdapter(adapter);
         threadList.setOnItemClickListener(adapter);
         threadList.setOnScrollListener(adapter);
+
+        registerForContextMenu(threadList);
     }
 
     @Override
@@ -112,6 +120,9 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
         loadPage(1, true);
         updateStarredForums();
         updateForumTitle();
+        if(pullToRefresh){
+            adapter.clearPagesAfter(1);
+        }
     }
 
     private void loadPage(int page, boolean scrollTo){
@@ -142,7 +153,28 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
             adapter.loadingPageFailed();
         }
     };
-    
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        FastItem item = adapter.getItem(info.position);
+        if(item instanceof ThreadItem){
+            final ThreadItem thread = (ThreadItem) item;
+            menu.add(thread.isBookmarked() ? R.string.menu_thread_bookmark : R.string.menu_thread_unbookmark).setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(android.view.MenuItem item) {
+
+                    //TODO better integrate this request into fragment, display true indeterminate message.
+                    queueRequest(new BookmarkRequest(thread.getId(), !thread.isBookmarked(), null, null));
+                    thread.setBookmarked(!thread.isBookmarked());
+                    adapter.notifyDataSetChanged();
+                    FastAlert.process(getActivity(), getView(), getString(R.string.bookmarking_thread_started));
+                    return true;
+                }
+            });
+        }
+    }
 
     private void updateStarredForums(){
         new FastQueryTask<ForumItem>(SomeDatabase.getDatabase(), this).query(SomeDatabase.VIEW_STARRED_FORUMS, null, "forum_id!=?", Integer.toString(forumId));

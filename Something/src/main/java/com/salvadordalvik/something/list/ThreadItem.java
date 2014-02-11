@@ -19,9 +19,9 @@ import com.salvadordalvik.something.R;
 public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements Parcelable{
     private String threadTitle, author, lastPost;
     private int unread, replies;
-    private boolean bookmarked;
+    private boolean bookmarked, closed;
 
-    public ThreadItem(int id, String title, int unreadCount, int replies, String author, String lastPost, boolean bookmarked) {
+    public ThreadItem(int id, String title, int unreadCount, int replies, String author, String lastPost, boolean bookmarked, boolean closed) {
         super(R.layout.thread_item, id, true);
         this.threadTitle = title;
         this.unread = unreadCount;
@@ -29,6 +29,7 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         this.author = author;
         this.lastPost = lastPost;
         this.bookmarked = bookmarked;
+        this.closed = closed;
     }
 
     public ThreadItem(Parcel source) {
@@ -38,6 +39,8 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         this.replies = source.readInt();
         this.author = source.readString();
         this.lastPost = source.readString();
+        this.bookmarked = source.readByte() > 0;
+        this.closed = source.readByte() > 0;
     }
 
     @Override
@@ -48,6 +51,8 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         dest.writeInt(replies);
         dest.writeString(author);
         dest.writeString(lastPost);
+        dest.writeInt(bookmarked ? 1 : 0);
+        dest.writeInt(closed ? 1 : 0);
     }
 
     @Override
@@ -71,6 +76,7 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         }else{
             holder.subtext.setText(" "+(replies/40+1)+" - Author: "+author);
         }
+        view.setAlpha(closed ? 0.5f : 1f);
     }
 
     @Override
@@ -94,6 +100,14 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
 
     private static int pageToIndex(int page, int perPage) {
         return (page-1)*perPage+1;
+    }
+
+    public boolean isBookmarked() {
+        return bookmarked;
+    }
+
+    public void setBookmarked(boolean bookmarked) {
+        this.bookmarked = bookmarked;
     }
 
     protected static class ThreadHolder{

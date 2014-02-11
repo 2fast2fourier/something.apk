@@ -43,5 +43,9 @@
     <string name="forum_title">Forums</string>
     <string name="pull_bottom_nextpage">Pull for next page...</string>
     <string name="pull_bottom_release_nexpage">Release for next page...</string>
+    <string name="post_reply">POST</string>
+    <string name="reply_submit">Post</string>
+    <string name="reply_preview">Preview</string>
+    <string name="reply_activity">Reply</string>
 
 </resources>
