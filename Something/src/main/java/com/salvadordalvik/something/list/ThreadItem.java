@@ -6,6 +6,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.support.v4.app.Fragment;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -94,12 +95,13 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         return new ThreadHolder(view);
     }
 
-    public void updateUnreadCount(int unreadDiff) {
-        unread = Math.max(0, unread+unreadDiff);
+    public void updateUnreadCount(int currentPage, int maxPage, int perPage) {
+        replies = Math.max(replies, pageToIndex(maxPage, perPage));
+        unread = Math.max(0, replies - pageToIndex(currentPage+1, perPage) + 1);
     }
 
     private static int pageToIndex(int page, int perPage) {
-        return (page-1)*perPage+1;
+        return (page-1)*perPage;
     }
 
     public boolean isBookmarked() {

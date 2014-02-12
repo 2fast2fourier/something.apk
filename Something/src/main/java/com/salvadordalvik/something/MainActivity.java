@@ -199,9 +199,9 @@ public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpen
         trans.commit();
     }
 
-    public void onThreadPageLoaded(int threadId, int unreadDiff) {
+    public void onThreadPageLoaded(int threadId) {
         slidingMenu.setSlidingEnabled(true);
-        threadList.onThreadPageLoaded(threadId, unreadDiff);
+        threadList.onThreadPageLoaded(threadId);
     }
 
     @Override

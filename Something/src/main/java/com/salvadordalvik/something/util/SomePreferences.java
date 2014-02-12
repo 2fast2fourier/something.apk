@@ -32,6 +32,9 @@ public class SomePreferences {
     public static final String LAST_FORUM_UPDATE = "last_forum_update";
     public static long lastForumUpdate;
 
+    //TODO postperpage
+    public static int threadPostPerPage = 40;
+
     private synchronized static void updatePreferences(SharedPreferences newPrefs){
         //Update cached preferences here:
         //exampleVariable = newPrefs.getInt(EXAMPLE_VARIABLE_NAME, 0);

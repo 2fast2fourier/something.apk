@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.text.SpannedString;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -274,7 +275,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
             Activity act = getActivity();
             if (act instanceof MainActivity) {
                 MainActivity main = (MainActivity) act;
-                main.onThreadPageLoaded(response.threadId, response.unreadDiff);
+                main.onThreadPageLoaded(response.threadId);
             }
             setTitle(threadTitle);
             updateNavbar();
@@ -399,7 +400,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
     @Override
     protected Options generatePullToRefreshOptions() {
         headerTransformer = new DefaultHeaderTransformer();
-        return Options.create().headerTransformer(headerTransformer).build();
+        return Options.create().headerTransformer(headerTransformer).scrollDistance(FastUtils.calculateScrollDistance(getActivity(), 2)).build();
     }
 
     private void updateHeader(){

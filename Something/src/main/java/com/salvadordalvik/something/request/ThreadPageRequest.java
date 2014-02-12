@@ -6,7 +6,9 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
+import com.salvadordalvik.something.data.ThreadManager;
 import com.salvadordalvik.something.list.PostItem;
+import com.salvadordalvik.something.list.ThreadItem;
 import com.salvadordalvik.something.util.MustCache;
 import com.salvadordalvik.something.util.SomePreferences;
 
@@ -32,6 +34,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         }else{
             addParam("goto", "newpost");
         }
+        addParam("perpage", SomePreferences.threadPostPerPage);
     }
 
     @Override
@@ -79,6 +82,11 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         }
 
         MustCache.applyFooterTemplate(builder, null);
+
+        ThreadItem cachedThread = ThreadManager.getThread(threadId);
+        if(cachedThread != null){
+            cachedThread.updateUnreadCount(currentPage, maxPage, SomePreferences.threadPostPerPage);
+        }
 
         return new ThreadPage(builder.toString(), currentPage, maxPage, threadId, forumId, threadTitle, -unread, bookmarked);
 

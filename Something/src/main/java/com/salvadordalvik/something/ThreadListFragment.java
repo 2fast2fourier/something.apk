@@ -21,6 +21,7 @@ import com.salvadordalvik.fastlibrary.FastFragment;
 import com.salvadordalvik.fastlibrary.alert.FastAlert;
 import com.salvadordalvik.fastlibrary.data.FastQueryTask;
 import com.salvadordalvik.fastlibrary.list.FastItem;
+import com.salvadordalvik.fastlibrary.util.FastUtils;
 import com.salvadordalvik.something.data.SomeDatabase;
 import com.salvadordalvik.something.list.ForumItem;
 import com.salvadordalvik.something.list.MenuItem;
@@ -34,6 +35,9 @@ import com.salvadordalvik.something.util.SomePreferences;
 import com.salvadordalvik.something.widget.PageSelectDialogFragment;
 
 import java.util.List;
+
+import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
+import uk.co.senab.actionbarpulltorefresh.library.Options;
 
 /**
  * Created by matthewshepard on 1/16/14.
@@ -79,6 +83,11 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
                 forumId = SomePreferences.favoriteForumId;
             }
         }
+    }
+
+    @Override
+    protected Options generatePullToRefreshOptions() {
+        return Options.create().scrollDistance(FastUtils.calculateScrollDistance(getActivity(), 2)).build();
     }
 
     @Override
@@ -298,15 +307,8 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
         return forumTitle;
     }
 
-    public void onThreadPageLoaded(int threadId, int unreadDiff) {
-        //TODO handle this better
-//        if(threadData != null){
-//            ThreadItem item = threadData.threadArray.get(threadId);
-//            if(item != null){
-//                item.updateUnreadCount(unreadDiff);
-//                adapter.notifyDataSetChanged();
-//            }
-//        }
+    public void onThreadPageLoaded(int threadId) {
+        adapter.notifyDataSetChanged();
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
 import com.salvadordalvik.something.data.ForumProcessTask;
+import com.salvadordalvik.something.data.ThreadManager;
 import com.salvadordalvik.something.list.ThreadItem;
 import com.salvadordalvik.something.util.Constants;
 
@@ -87,24 +88,20 @@ public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListR
             maxPage = FastUtils.safeParseInt(lastPage.attr("value"), 1);
         }
 
-        SparseArray<ThreadItem> array = new SparseArray<ThreadItem>();
-        for(ThreadItem item : threads){
-            array.put(item.getId(), item);
-        }
-        return new ThreadListResponse(threads, array, currentPage, maxPage, scrollTo);
+        ThreadManager.putThreadList(threads);
+
+        return new ThreadListResponse(threads, currentPage, maxPage, scrollTo);
     }
 
     public static class ThreadListResponse{
         public final ArrayList<ThreadItem> threads;
-        public final SparseArray<ThreadItem> threadArray;
         public final int page, maxPage;
         public final boolean scrollTo;
 
-        public ThreadListResponse(ArrayList<ThreadItem> threads, SparseArray<ThreadItem> threadArray, int page, int maxPage, boolean scrollTo){
+        public ThreadListResponse(ArrayList<ThreadItem> threads, int page, int maxPage, boolean scrollTo){
             this.threads = threads;
             this.page = page;
             this.maxPage = maxPage;
-            this.threadArray = threadArray;
             this.scrollTo = scrollTo;
         }
     }
