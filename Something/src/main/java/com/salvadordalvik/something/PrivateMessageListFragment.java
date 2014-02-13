@@ -58,4 +58,12 @@ public class PrivateMessageListFragment extends FastFragment implements Response
         folderId = id;
         startRefresh();
     }
+
+    public void onPaneObscured() {
+
+    }
+
+    public void onPaneRevealed() {
+
+    }
 }

@@ -48,5 +48,6 @@
     <string name="reply_preview">Preview</string>
     <string name="reply_activity">Reply</string>
     <string name="pm_activity">Private Message</string>
+    <string name="pm_reply">REPLY</string>
 
 </resources>

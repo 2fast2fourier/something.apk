@@ -30,10 +30,10 @@ import com.salvadordalvik.something.util.Constants;
 public class PrivateMessageFragment extends FastFragment implements Response.ErrorListener, Response.Listener<PrivateMessageRequest.PMData> {
     private WebView webview;
 
-    private int pmId;
+    private int pmId = 0;
 
     public PrivateMessageFragment() {
-        super(R.layout.ptr_generic_webview, R.menu.post_reply);
+        super(R.layout.ptr_generic_webview, R.menu.pm_reply);
     }
 
     @Override
@@ -47,7 +47,9 @@ public class PrivateMessageFragment extends FastFragment implements Response.Err
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        startRefresh();
+        if(pmId > 0){
+            startRefresh();
+        }
     }
 
     @Override
@@ -55,6 +57,20 @@ public class PrivateMessageFragment extends FastFragment implements Response.Err
         super.onResume();
         webview.onResume();
         webview.resumeTimers();
+    }
+
+    public void onPaneRevealed() {
+        if(isResumed()){
+            webview.onResume();
+            webview.resumeTimers();
+        }
+    }
+
+    public void onPaneObscured() {
+        if(isResumed()){
+            webview.pauseTimers();
+            webview.onPause();
+        }
     }
 
     @Override
@@ -67,6 +83,11 @@ public class PrivateMessageFragment extends FastFragment implements Response.Err
     @Override
     public void refreshData(boolean pullToRefresh, boolean staleRefresh) {
         queueRequest(new PrivateMessageRequest(pmId, this, this));
+    }
+
+    public void showPM(int pmId){
+        this.pmId = pmId;
+        startRefresh();
     }
 
     private void initWebview() {
@@ -191,5 +212,9 @@ public class PrivateMessageFragment extends FastFragment implements Response.Err
     @Override
     public void onResponse(PrivateMessageRequest.PMData pmData) {
         webview.loadDataWithBaseURL(Constants.BASE_URL, pmData.htmlData, "text/html", "utf-8", null);
+    }
+
+    public boolean hasPMLoaded() {
+        return pmId > 0;
     }
 }

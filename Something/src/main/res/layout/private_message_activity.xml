@@ -9,6 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:name="com.salvadordalvik.something.PrivateMessageFragment"
-        android:id="@+id/fragment"
+        android:id="@+id/pm_fragment"
         tools:layout="@layout/ptr_generic_webview" />
 </LinearLayout>

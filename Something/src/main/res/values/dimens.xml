@@ -9,4 +9,8 @@
     <dimen name="nav_list_width_cutoff">400dp</dimen>
     <dimen name="nav_list_width">360dp</dimen>
     <dimen name="nav_list_offset">40dp</dimen>
+
+    <dimen name="pm_list_width_cutoff">340dp</dimen>
+    <dimen name="pm_list_width">300dp</dimen>
+    <dimen name="pm_list_offset">40dp</dimen>
 </resources>

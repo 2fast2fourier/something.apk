@@ -5,10 +5,9 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.salvadordalvik.fastlibrary.list.BaseFastItem;
-import com.salvadordalvik.something.PrivateMessageActivity;
+import com.salvadordalvik.something.PrivateMessageListActivity;
 import com.salvadordalvik.something.R;
 
 /**
@@ -38,7 +37,11 @@ public class PrivateMessageItem extends BaseFastItem<PrivateMessageItem.PMHolder
 
     @Override
     public boolean onItemClick(Activity act, Fragment fragment) {
-        act.startActivity(new Intent(act, PrivateMessageActivity.class).putExtra("pm_id", getId()));
+        if(act instanceof PrivateMessageListActivity){
+            ((PrivateMessageListActivity)act).showPM(getId());
+        }else{
+            act.startActivity(new Intent(act, PrivateMessageListActivity.class).putExtra("pm_id", getId()));
+        }
         return false;
     }
 
