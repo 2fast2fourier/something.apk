@@ -21,6 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".PrivateMessageListActivity" android:label="@string/private_messages"/>
+        <activity android:name=".PrivateMessageActivity" android:label="@string/pm_activity"/>
         <activity android:name=".LoginActivity" android:label="@string/login_activity_title"/>
         <activity android:name=".ReplyActivity" android:label="@string/reply_activity"/>
     </application>

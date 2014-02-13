@@ -1,4 +1,4 @@
-<article class="{{ seen }} {{# isMarked }}marked{{/isMarked }} {{# isOP }}op{{/isOP }} {{# isSelf }}self{{/isSelf }}"  id="post{{ postID }}">
+<article class="unread" >
 	<header class="postheader">
      	<section  class="postinfo">
  			{{# avatarURL }}
@@ -12,26 +12,8 @@
  			<time class="postinfo-postdate">{{ postDate }}</time>
 			<aside class="postinfo-title">{{{ avatarText }}}</aside>
 		</section >
-		<nav class="postmenu"></nav>
+        <nav class="pmreply"></nav>
     </header>
-		<ul  class="postoptions">
-			<li class="more" username="{{ username }}" userid="{{ userID }}">
-				more
-			</li>
-			<li class="lastread" lastreadid="{{ postIndex }}">
-				last read
-			</li>
-			{{# notOnProbation }}
-				{{# editable }}
-					<li class="edit">
-						edit
-					</li>
-	        	{{/editable }}
-				<li class="quote">
-					quote
-				</li>
-			{{/notOnProbation }}
-		</ul >
 	<section  class="postcontent">
 		{{{ postcontent }}}
 	</section >

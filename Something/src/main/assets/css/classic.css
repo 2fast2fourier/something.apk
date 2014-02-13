@@ -207,6 +207,18 @@ padding:0 5px 0 0;
 margin-right:10px;
 }
 
+nav.pmreply {
+float:right;
+font-weight:bolder;
+font-size:1.5em;
+width:32px;
+height:32px;
+background-repeat:no-repeat;
+background-size:32px 32px;
+background-image:url(file:///android_asset/images/ic_menu_reply.png);
+padding:0 0 0 0;
+}
+
 ul.postoptions {
 background-color:#006699;
 color:#FFF;

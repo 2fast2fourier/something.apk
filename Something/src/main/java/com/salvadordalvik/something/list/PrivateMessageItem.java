@@ -1,12 +1,14 @@
 package com.salvadordalvik.something.list;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.salvadordalvik.fastlibrary.list.BaseFastItem;
+import com.salvadordalvik.something.PrivateMessageActivity;
 import com.salvadordalvik.something.R;
 
 /**
@@ -30,19 +32,23 @@ public class PrivateMessageItem extends BaseFastItem<PrivateMessageItem.PMHolder
     @Override
     public void updateViewFromHolder(View view, PMHolder holder) {
         holder.title.setText(title);
+        holder.subtext.setText(author);
+        holder.date.setText(date);
     }
 
     @Override
     public boolean onItemClick(Activity act, Fragment fragment) {
-        Toast.makeText(act, "PM: "+getId(), Toast.LENGTH_SHORT).show();
+        act.startActivity(new Intent(act, PrivateMessageActivity.class).putExtra("pm_id", getId()));
         return false;
     }
 
     protected static class PMHolder{
-        private TextView title;
+        private final TextView title, subtext, date;
 
         public PMHolder(View view) {
             title = (TextView) view.findViewById(R.id.pm_item_title);
+            subtext = (TextView) view.findViewById(R.id.pm_item_author);
+            date = (TextView) view.findViewById(R.id.pm_item_date);
         }
     }
 }
