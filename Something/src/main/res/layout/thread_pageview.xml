@@ -10,41 +10,49 @@
         android:id="@+id/ptr_webview"
         android:layout_above="@+id/threadview_navbar"
         android:layout_marginBottom="48dp"/>
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:orientation="horizontal"
         android:id="@+id/threadview_navbar"
         android:layout_gravity="bottom">
         <ImageView
-            android:layout_width="0px"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/threadview_prev"
             android:src="@drawable/arrowleft"
-            android:gravity="center_horizontal"
-            android:padding="8dp"
-            android:contentDescription="@string/threadview_navbar_prev"
-            android:layout_weight="1"/>
+            android:layout_toLeftOf="@+id/threadview_page"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
+            android:contentDescription="@string/threadview_navbar_prev" />
         <TextView
-            android:layout_width="0px"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/threadview_navbar_page"
             android:gravity="center"
             android:id="@+id/threadview_page"
-            android:padding="8dp"
-            android:layout_weight="2"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
+            android:minWidth="200dp"
             android:textSize="18sp"
             android:textColor="#FFFFFF"
             android:textStyle="bold" />
         <ImageView
-            android:layout_width="0px"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/threadview_next"
             android:src="@drawable/arrowright"
-            android:gravity="center_horizontal"
-            android:padding="8dp"
-            android:layout_weight="1"
+            android:layout_toRightOf="@+id/threadview_page"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
             android:contentDescription="@string/threadview_navbar_next" />
-    </LinearLayout>
+    </RelativeLayout>
 
 </uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>

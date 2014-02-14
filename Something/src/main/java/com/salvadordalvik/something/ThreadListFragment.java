@@ -87,7 +87,12 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
 
     @Override
     protected Options generatePullToRefreshOptions() {
-        return Options.create().scrollDistance(FastUtils.calculateScrollDistance(getActivity(), 2)).build();
+        return Options.create().scrollDistance(getScrollDistance()).build();
+    }
+
+    private float getScrollDistance(){
+        Log.e("thread", "scroll distance: "+FastUtils.calculateScrollDistance(getActivity(), 2.5f));
+        return Math.max(Math.min(FastUtils.calculateScrollDistance(getActivity(), 2.5f), 0.666f), 0.333f);
     }
 
     @Override
@@ -170,10 +175,9 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
         FastItem item = adapter.getItem(info.position);
         if(item instanceof ThreadItem){
             final ThreadItem thread = (ThreadItem) item;
-            menu.add(thread.isBookmarked() ? R.string.menu_thread_bookmark : R.string.menu_thread_unbookmark).setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
+            menu.add(thread.isBookmarked() ? R.string.menu_thread_unbookmark : R.string.menu_thread_bookmark).setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(android.view.MenuItem item) {
-
                     //TODO better integrate this request into fragment, display true indeterminate message.
                     queueRequest(new BookmarkRequest(thread.getId(), !thread.isBookmarked(), null, null));
                     thread.setBookmarked(!thread.isBookmarked());
@@ -229,14 +233,10 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
 
         android.view.MenuItem star = menu.findItem(R.id.menu_forum_star);
         star.setVisible(forumId != Constants.BOOKMARK_FORUMID);
-        star.setIcon(starred ? R.drawable.star : R.drawable.star_empty);
-
-        boolean viewingFavorite = forumId == SomePreferences.favoriteForumId;
+        star.setChecked(starred);
 
         android.view.MenuItem home = menu.findItem(R.id.menu_forum_home);
-        home.setVisible(!(viewingFavorite && SomePreferences.favoriteForumId == Constants.BOOKMARK_FORUMID));
-        //TODO find better home icon
-        home.setIcon(SomePreferences.favoriteForumId == Constants.BOOKMARK_FORUMID || viewingFavorite ? R.drawable.ic_menu_bookmarks : R.drawable.ic_menu_home);
+        home.setVisible(forumId == SomePreferences.favoriteForumId && forumId != Constants.BOOKMARK_FORUMID);
     }
 
     @Override

@@ -301,6 +301,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         invalidateOptionsMenu();
         updateNavbar();
         startRefresh();
+        threadView.loadUrl("about:blank");
     }
 
     public void goToPage(int pageNum){
@@ -400,7 +401,11 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
     @Override
     protected Options generatePullToRefreshOptions() {
         headerTransformer = new DefaultHeaderTransformer();
-        return Options.create().headerTransformer(headerTransformer).scrollDistance(FastUtils.calculateScrollDistance(getActivity(), 2)).build();
+        return Options.create().headerTransformer(headerTransformer).scrollDistance(getScrollDistance()).build();
+    }
+
+    private float getScrollDistance(){
+        return Math.max(Math.min(FastUtils.calculateScrollDistance(getActivity(), 2.5f), 0.666f), 0.333f);
     }
 
     private void updateHeader(){

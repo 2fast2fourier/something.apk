@@ -156,7 +156,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
                 postData.put("username", author);
                 postData.put("avatarText", avTitle);
-                postData.put("avatarURL", avatarUrl);
+                postData.put("avatarURL", avatarUrl.length() > 0 ? avatarUrl : null);//mustache doesn't recognize an empty string
                 postData.put("postcontent", postContent);
                 postData.put("postDate", postDate);
                 postData.put("userID", userId);

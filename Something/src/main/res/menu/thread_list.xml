@@ -4,17 +4,18 @@
     <item
         android:id="@+id/menu_forum_home"
         android:title="@string/menu_forum_home"
-        android:icon="@drawable/ic_menu_bookmarks"
+        android:icon="@drawable/ic_menu_home"
         android:showAsAction="always"/>
     <item
         android:id="@+id/menu_forum_star"
+        android:checkable="true"
         android:title="@string/menu_forum_star"
-        android:icon="@drawable/star_empty"
         android:showAsAction="never"/>
     <item
         android:id="@+id/menu_private_messages"
         android:title="@string/menu_private_messages"
-        android:showAsAction="never"/>
+        android:icon="@drawable/ic_menu_mail"
+        android:showAsAction="always"/>
     <item
         android:id="@+id/menu_forum_pin"
         android:checkable="true"

@@ -121,8 +121,15 @@ public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                slidingMenu.showMenu();
-                return true;
+                if(slidingMenu.isMenuShowing()){
+                    if(getSupportFragmentManager().getBackStackEntryCount() > 0){
+                        getSupportFragmentManager().popBackStack();
+                        return true;
+                    }
+                }else{
+                    slidingMenu.showMenu();
+                    return true;
+                }
         }
         return super.onOptionsItemSelected(item);
     }

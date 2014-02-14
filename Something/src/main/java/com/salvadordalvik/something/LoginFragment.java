@@ -1,6 +1,8 @@
 package com.salvadordalvik.something;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -13,14 +15,16 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.salvadordalvik.fastlibrary.FastFragment;
 import com.salvadordalvik.fastlibrary.alert.FastAlert;
+import com.salvadordalvik.fastlibrary.request.FastVolley;
 import com.salvadordalvik.something.request.LoginRequest;
 
 /**
  * Created by matthewshepard on 1/31/14.
  */
-public class LoginFragment extends FastFragment implements TextWatcher, View.OnClickListener {
+public class LoginFragment extends FastFragment implements TextWatcher, View.OnClickListener, DialogInterface.OnCancelListener {
     private EditText username, password;
     private Button loginButton;
+    private ProgressDialog dialog;
 
     public LoginFragment() {
         super(R.layout.login_fragment);
@@ -40,6 +44,7 @@ public class LoginFragment extends FastFragment implements TextWatcher, View.OnC
 
     private void attemptLogin(){
         if(hasLogin()){
+            dialog = ProgressDialog.show(getActivity(), getString(R.string.login_started_title), getString(R.string.login_started_message), true, true, this);
             queueRequest(new LoginRequest(username.getText().toString(), password.getText().toString(), new Response.Listener<Boolean>() {
                 @Override
                 public void onResponse(Boolean response) {
@@ -55,7 +60,16 @@ public class LoginFragment extends FastFragment implements TextWatcher, View.OnC
                 public void onErrorResponse(VolleyError error) {
                     FastAlert.error(getActivity(), getView(), getString(R.string.login_failed));
                 }
-            }));
+            }), this);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(dialog != null){
+            dialog.dismiss();
+            dialog = null;
         }
     }
 
@@ -88,5 +102,11 @@ public class LoginFragment extends FastFragment implements TextWatcher, View.OnC
                 attemptLogin();
                 break;
         }
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialogInterface) {
+        dialog = null;
+        FastVolley.cancelRequestByTag(this);
     }
 }

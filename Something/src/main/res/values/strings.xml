@@ -49,5 +49,7 @@
     <string name="reply_activity">Reply</string>
     <string name="pm_activity">Private Message</string>
     <string name="pm_reply">REPLY</string>
+    <string name="login_started_title">Logging In</string>
+    <string name="login_started_message">Please wait...</string>
 
 </resources>
