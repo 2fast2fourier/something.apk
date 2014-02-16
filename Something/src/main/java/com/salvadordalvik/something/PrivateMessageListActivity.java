@@ -34,7 +34,6 @@ public class PrivateMessageListActivity extends FragmentActivity implements Slid
         slidingMenu.setOnClosedListener(this);
         slidingMenu.setOnOpenedListener(this);
         slidingMenu.setMode(SlidingMenu.LEFT);
-        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
         updateSlidingMenuOffset();
         slidingMenu.showMenu();
     }

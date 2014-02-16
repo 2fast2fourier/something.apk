@@ -57,7 +57,7 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
         adapter.addItems(0, new MenuItem("Forums", R.drawable.ic_menu_bookmarks) {
             @Override
             public boolean onItemClick(Activity act, Fragment fragment) {
-                ((MainActivity) act).showForumList();
+                ((MainActivity) act).showForumList(forumId);
                 return false;
             }
 
@@ -66,8 +66,6 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
                 ((MainActivity)getActivity()).showForum(Constants.BOOKMARK_FORUMID);
             }
         });
-
-        adapter.addItems(2, new StubItem(R.layout.divider_item));
     }
 
     @Override
@@ -190,7 +188,7 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
     }
 
     private void updateStarredForums(){
-        new FastQueryTask<ForumItem>(SomeDatabase.getDatabase(), this).query(SomeDatabase.VIEW_STARRED_FORUMS, null, "forum_id!=?", Integer.toString(forumId));
+        new FastQueryTask<ForumItem>(SomeDatabase.getDatabase(), this).query(SomeDatabase.VIEW_STARRED_FORUMS, null);
     }
 
     private void updateForumTitle() {
@@ -218,7 +216,7 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
 
                 @Override
                 public ForumItem createItem(Cursor data, int[] columns) {
-                    return new ForumItem(data, false, columns);
+                    return new ForumItem(data, false, columns, forumId);
                 }
             }).query(SomeDatabase.VIEW_FORUMS, null, "forum_id=?", Integer.toString(forumId));
         }
@@ -300,7 +298,7 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
 
     @Override
     public ForumItem createItem(Cursor data, int[] columnIndex) {
-        return new ForumItem(data, false, columnIndex);
+        return new ForumItem(data, false, columnIndex, forumId);
     }
 
     public Spanned getTitle(){

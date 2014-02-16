@@ -97,7 +97,7 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
 
     public void updateUnreadCount(int currentPage, int maxPage, int perPage) {
         replies = Math.max(replies, pageToIndex(maxPage, perPage));
-        unread = Math.max(0, replies - pageToIndex(currentPage+1, perPage) + 1);
+        unread = Math.min(unread, Math.max(0, replies - pageToIndex(currentPage+1, perPage) + 1));
     }
 
     private static int pageToIndex(int page, int perPage) {

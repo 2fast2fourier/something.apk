@@ -198,9 +198,9 @@ public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpen
         threadList.showForum(id);
     }
 
-    public void showForumList(){
+    public void showForumList(int currentForumId){
         FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
-        forumList = new ForumListFragment();
+        forumList = ForumListFragment.newInstance(currentForumId);
         trans.replace(R.id.ptr_container, forumList, "forum_list");
         trans.addToBackStack("open_forum_list");
         trans.commit();

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.Spanned;
@@ -21,16 +22,28 @@ import com.salvadordalvik.something.data.SomeDatabase;
  */
 public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
     public static final String[] DB_COLUMNS = {"forum_id", "forum_name", "parent_forum_id", "forum_starred"};
-    private Spanned title;
-    private int parentId;
-    private boolean starred, indent;
+    private final Spanned title;
+    private final int parentId;
+    private final boolean starred, indent, selected, showStar;
 
-    public ForumItem(Cursor data, boolean indentSubforums, int[] columns) {
+    public ForumItem(Cursor data, boolean indentSubforums, int[] columns, int selectedForumId) {
         super(R.layout.forum_item, data.getInt(columns[0]), true);
-        title = Html.fromHtml(data.getString(columns[1]));
-        parentId = data.getInt(columns[2]);
-        starred = !data.isNull(columns[3]);
-        indent = indentSubforums;
+        this.title = Html.fromHtml(data.getString(columns[1]));
+        this.parentId = data.getInt(columns[2]);
+        this.starred = !data.isNull(columns[3]);
+        this.indent = indentSubforums;
+        this.selected = id == selectedForumId;
+        this.showStar = true;
+    }
+
+    public ForumItem(int id, String title, int parentId, boolean showStar, boolean starred, boolean indentSubforums, int selectedForumId) {
+        super(R.layout.forum_item, id, true);
+        this.title = Html.fromHtml(title);
+        this.parentId = parentId;
+        this.starred = starred;
+        this.indent = indentSubforums;
+        this.selected = id == selectedForumId;
+        this.showStar = showStar;
     }
 
     @Override
@@ -47,7 +60,17 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
         }else{
             holder.indent.setVisibility(View.GONE);
         }
-        holder.star.setImageResource(starred ? R.drawable.star : R.drawable.star_empty);
+        if(showStar){
+            holder.star.setVisibility(View.VISIBLE);
+            holder.star.setImageResource(starred ? R.drawable.star : R.drawable.star_empty);
+        }else{
+            holder.star.setVisibility(View.GONE);
+        }
+        if(selected){
+            view.setBackgroundColor(Color.rgb(11,11,11));
+        }else{
+            view.setBackgroundResource(0);
+        }
     }
 
     @Override

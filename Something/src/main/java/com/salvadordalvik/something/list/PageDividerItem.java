@@ -1,6 +1,7 @@
 package com.salvadordalvik.something.list;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.animation.Animation;
@@ -42,6 +43,11 @@ public class PageDividerItem extends BaseFastItem<PageDividerItem.DividerHolder>
             holder.refresh.clearAnimation();
         }
         holder.jump.setVisibility(page > 1 ? View.VISIBLE : View.INVISIBLE);
+        if(page == 1){
+            view.setBackgroundResource(R.drawable.page_divider_background);
+        }else{
+            view.setBackgroundColor(Color.BLACK);
+        }
     }
 
     @Override
