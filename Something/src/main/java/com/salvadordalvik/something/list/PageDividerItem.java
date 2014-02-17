@@ -46,7 +46,7 @@ public class PageDividerItem extends BaseFastItem<PageDividerItem.DividerHolder>
         if(page == 1){
             view.setBackgroundResource(R.drawable.page_divider_background);
         }else{
-            view.setBackgroundColor(Color.BLACK);
+            view.setBackgroundColor(Color.rgb(45,47,51));
         }
     }
 

@@ -73,6 +73,7 @@ public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpen
     private void configureActionbar(){
         ActionBar bar = getActionBar();
         bar.setHomeButtonEnabled(true);
+        bar.setDisplayShowHomeEnabled(false);
     }
 
     @Override
