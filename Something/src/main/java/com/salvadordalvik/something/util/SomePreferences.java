@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 /**
  * Created by matthewshepard on 1/17/14.
@@ -43,6 +44,7 @@ public class SomePreferences {
 
         cookieString = newPrefs.getString(LOGIN_COOKIE_STRING, null);
         loggedIn = !TextUtils.isEmpty(cookieString) && cookieString.contains("bbuserid");
+        Log.e("cookie",cookieString);
 
         lastForumUpdate = newPrefs.getLong(LAST_FORUM_UPDATE, 0);
     }

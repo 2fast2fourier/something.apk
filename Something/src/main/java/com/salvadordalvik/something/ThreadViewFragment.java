@@ -17,6 +17,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.ConsoleMessage;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -35,7 +37,11 @@ import com.salvadordalvik.something.request.BookmarkRequest;
 import com.salvadordalvik.something.request.MarkLastReadRequest;
 import com.salvadordalvik.something.request.ThreadPageRequest;
 import com.salvadordalvik.something.util.Constants;
+import com.salvadordalvik.something.util.SomePreferences;
 import com.salvadordalvik.something.widget.PageSelectDialogFragment;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
@@ -91,6 +97,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         }
 
         updateNavbar();
+        loadSessionCookie();
     }
 
     @Override
@@ -262,6 +269,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
     private Response.Listener<ThreadPageRequest.ThreadPage> pageListener = new Response.Listener<ThreadPageRequest.ThreadPage>() {
         @Override
         public void onResponse(ThreadPageRequest.ThreadPage response) {
+            loadSessionCookie();
             disableNavLoading = false;
             page = response.pageNum;
             maxPage = response.maxPageNum;
@@ -302,6 +310,18 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         updateNavbar();
         startRefresh();
         threadView.loadUrl("about:blank");
+    }
+
+    private void loadSessionCookie(){
+        CookieSyncManager.createInstance(getActivity());
+        CookieManager cookieMstr = CookieManager.getInstance();
+        Matcher cookieCutter = Pattern.compile("(\\w+)=(\\w+)").matcher(SomePreferences.cookieString);
+        while(cookieCutter.find()){
+            String name = cookieCutter.group(1);
+            String value = cookieCutter.group(2);
+            cookieMstr.setCookie("forums.somethingawful.com", name+"="+value+"; domain=forums.somethingawful.com");
+        }
+        CookieSyncManager.getInstance().sync();
     }
 
     public void goToPage(int pageNum){
