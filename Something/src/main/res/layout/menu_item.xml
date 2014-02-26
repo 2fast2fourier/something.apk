@@ -10,7 +10,7 @@
         android:id="@+id/menu_item_title"
         android:padding="12dp"
         android:textSize="20sp"
-        android:textColor="#FFFFFF"
+        android:textColor="?attr/listHeaderTextColor"
         android:textStyle="bold" />
 
     <ImageView

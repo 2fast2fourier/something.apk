@@ -52,7 +52,7 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
     private Spanned forumTitle;
 
     public ThreadListFragment() {
-        super(R.layout.ptr_generic_listview, R.menu.thread_list);
+        super(R.layout.generic_listview, R.menu.thread_list);
         adapter = new PagedAdapter(this, 3, 6, this);
 
         adapter.addItems(0, new MenuItem("Forums", R.drawable.ic_menu_bookmarks) {
@@ -96,7 +96,7 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
 
     @Override
     public void viewCreated(View frag, Bundle savedInstanceState) {
-        threadList = (ListView) frag.findViewById(R.id.ptr_listview);
+        threadList = (ListView) frag.findViewById(R.id.listview);
         threadList.setAdapter(adapter);
         threadList.setOnItemClickListener(adapter);
         threadList.setOnScrollListener(adapter);

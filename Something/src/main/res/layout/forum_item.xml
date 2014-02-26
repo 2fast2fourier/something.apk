@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:text="Forum Name"
         android:id="@+id/forum_item_title"
-        android:textColor="#FFFFFF"
+        android:textColor="?attr/listHeaderTextColor"
         android:textSize="16sp"
         android:layout_weight="1"
         android:paddingTop="8dp"

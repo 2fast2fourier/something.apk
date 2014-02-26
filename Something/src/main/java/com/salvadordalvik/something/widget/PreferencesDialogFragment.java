@@ -8,16 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.common.io.CharStreams;
+import com.google.common.io.Closeables;
 import com.salvadordalvik.fastlibrary.FastDialogFragment;
-import com.salvadordalvik.fastlibrary.util.FastUtils;
 import com.salvadordalvik.something.R;
 import com.salvadordalvik.something.util.SomePreferences;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,10 +25,10 @@ import java.util.regex.Pattern;
  * Created by matthewshepard on 2/1/14.
  */
 public class PreferencesDialogFragment extends FastDialogFragment implements View.OnClickListener {
-    private String[] themes;// = {"default", "dark", "yospos", "amberpos", "fyad"};
-    private int[] themeColors;// = {Color.WHITE, Color.GRAY, Color.rgb(87, 255, 87), Color.rgb(232, 188, 68), Color.rgb(255, 174, 255)};
-    private String[] friendlyThemeNames;
+    private String[] themes, systemThemes, friendlyThemeNames;
+    private int[] themeColors;
     private LinearLayout primaryThemes;
+    private TextView themeTitle;
 
     public PreferencesDialogFragment() {
         super(R.layout.preference_dialog, R.string.preference_dialog_title);
@@ -39,19 +38,20 @@ public class PreferencesDialogFragment extends FastDialogFragment implements Vie
         try {
             String[] themeList = getResources().getAssets().list("css");
             themes = new String[themeList.length];
-            themeColors = new int[themeList.length];
+            systemThemes = new String[themeList.length];
             friendlyThemeNames = new String[themeList.length];
+            themeColors = new int[themeList.length];
             for(int ix=0;ix<themeList.length;ix++){
                 themes[ix] = themeList[ix].replace(".css", "");
                 loadThemeIconColor(themeList[ix], ix);
-                Log.e("theme", themeList[ix] + " - " + themes[ix]+" - "+friendlyThemeNames[ix]);
+                Log.e("theme", themeList[ix] +" - "+friendlyThemeNames[ix]+" - SysTheme: "+systemThemes[ix]);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private final static Pattern cssHeaderPattern = Pattern.compile("/\\*\\s*([\\w\\s]*)\\s*([#0-9a-fA-F]+)\\s*\\*/");
+    private final static Pattern cssHeaderPattern = Pattern.compile("/\\*\\s*name:\\s*([\\w\\s]*)\\s*icon:\\s*([#0-9a-fA-F]+)\\s*systheme:\\s*([\\w\\s]*)\\*/");
 
     private void loadThemeIconColor(String themeName, int position){
         try {
@@ -61,7 +61,9 @@ public class PreferencesDialogFragment extends FastDialogFragment implements Vie
             if(match.find()){
                 friendlyThemeNames[position] = match.group(1).trim();
                 themeColors[position] = Color.parseColor(match.group(2).trim());
+                systemThemes[position] = match.group(3).trim();
             }
+            Closeables.close(in, true);
         } catch (IOException e) {
             e.printStackTrace();
             friendlyThemeNames[position] = "Unknown";
@@ -72,6 +74,8 @@ public class PreferencesDialogFragment extends FastDialogFragment implements Vie
     @Override
     public void viewCreated(View frag, Bundle savedInstanceState) {
         loadThemeList();
+
+        themeTitle = (TextView) frag.findViewById(R.id.preferences_theme);
 
         primaryThemes = (LinearLayout) frag.findViewById(R.id.preference_theme_container);
         for(int ix=0;ix<themes.length;ix++){
@@ -92,14 +96,15 @@ public class PreferencesDialogFragment extends FastDialogFragment implements Vie
 
     @Override
     public void onClick(View v) {
-        selectTheme(themes[(Integer) v.getTag()]);
+        int theme = (Integer) v.getTag();
+        selectTheme(themes[theme], systemThemes[theme]);
     }
 
     @Override
     public void refreshData(boolean pullToRefresh) {}
 
-    private void selectTheme(String theme){
-        SomePreferences.setTheme(theme);
+    private void selectTheme(String theme, String systemTheme){
+        SomePreferences.setTheme(theme, systemTheme);
         updateThemeIcons();
     }
 
@@ -115,6 +120,7 @@ public class PreferencesDialogFragment extends FastDialogFragment implements Vie
                     selectedColor.mutate();
                     selectedColor.setColor(themeColors[themeId]);
                     theme.setImageDrawable(selectedColor);
+                    themeTitle.setText("Theme: "+friendlyThemeNames[themeId]);
                 }else{
                     GradientDrawable selectedColor = (GradientDrawable) getResources().getDrawable(R.drawable.preference_theme_icon);
                     selectedColor.mutate();

@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.salvadordalvik.something.R;
 import com.salvadordalvik.something.widget.PreferencesDialogFragment;
 
 /**
@@ -24,7 +25,10 @@ public class SomePreferences {
 
     //TODO theme stuff
     public static final String PRIMARY_THEME = "primary_theme";
+    public static final String SYSTEM_THEME = "system_theme";
     public static String selectedTheme;
+    private static String selectedSysTheme;
+    public static int systemTheme;
     public static boolean forceTheme = false;
     public static String yosTheme = "yospos";
     public static String fyadTheme = "fyad";
@@ -50,6 +54,9 @@ public class SomePreferences {
         loggedIn = !TextUtils.isEmpty(cookieString) && cookieString.contains("bbuserid");
 
         selectedTheme = newPrefs.getString(PRIMARY_THEME, "default");
+        selectedSysTheme = newPrefs.getString(SYSTEM_THEME, "light");
+
+        systemTheme = getSystemTheme(selectedSysTheme);
 
         lastForumUpdate = newPrefs.getLong(LAST_FORUM_UPDATE, 0);
     }
@@ -88,7 +95,24 @@ public class SomePreferences {
         updatePreferences(preferenceStore);
     }
 
-    public static void setTheme(String theme) {
+    public static void setTheme(String theme, String systemTheme) {
         setString(PRIMARY_THEME, theme);
+        setString(SYSTEM_THEME, systemTheme);
+    }
+
+    private static int getSystemTheme(String sysTheme){
+        if("light".equalsIgnoreCase(sysTheme)){
+            return R.style.Something_Light;
+        }
+        if("dark".equalsIgnoreCase(sysTheme)){
+            return R.style.Something_Dark;
+        }
+        if("yospos".equalsIgnoreCase(sysTheme)){
+            return R.style.Something_YOSPOS;
+        }
+        if("amberpos".equalsIgnoreCase(sysTheme)){
+            return R.style.Something_AmberPOS;
+        }
+        return R.style.Something_Light;
     }
 }

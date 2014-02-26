@@ -27,6 +27,7 @@ public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(SomePreferences.systemTheme);
         super.onCreate(savedInstanceState);
         BugSenseHandler.initAndStartSession(this, "cd75dfa8");
         requestWindowFeature(Window.FEATURE_PROGRESS);
