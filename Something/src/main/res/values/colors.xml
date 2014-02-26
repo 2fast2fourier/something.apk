@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="page_divider_normal">#2D2F33</color>
+    <color name="theme_checked">#aa0000</color>
 </resources>

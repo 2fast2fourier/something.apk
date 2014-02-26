@@ -21,4 +21,8 @@
         android:checkable="true"
         android:title="@string/menu_forum_pin"
         android:showAsAction="never"/>
+    <item
+        android:id="@+id/menu_preferences"
+        android:title="@string/menu_preferences"
+        android:showAsAction="never"/>
 </menu>

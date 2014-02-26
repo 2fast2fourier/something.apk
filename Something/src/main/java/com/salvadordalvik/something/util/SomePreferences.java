@@ -6,6 +6,8 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.salvadordalvik.something.widget.PreferencesDialogFragment;
+
 /**
  * Created by matthewshepard on 1/17/14.
  */
@@ -21,9 +23,11 @@ public class SomePreferences {
     public static int favoriteForumId;
 
     //TODO theme stuff
+    public static final String PRIMARY_THEME = "primary_theme";
+    public static String selectedTheme;
     public static boolean forceTheme = false;
-    public static String selectedTheme = "dark";
-    public static boolean amberYos = false;
+    public static String yosTheme = "yospos";
+    public static String fyadTheme = "fyad";
 
     public static boolean loggedIn;
     public static final String LOGIN_COOKIE_STRING = "login_cookie_string";
@@ -44,12 +48,11 @@ public class SomePreferences {
 
         cookieString = newPrefs.getString(LOGIN_COOKIE_STRING, null);
         loggedIn = !TextUtils.isEmpty(cookieString) && cookieString.contains("bbuserid");
-        Log.e("cookie",cookieString);
+
+        selectedTheme = newPrefs.getString(PRIMARY_THEME, "default");
 
         lastForumUpdate = newPrefs.getLong(LAST_FORUM_UPDATE, 0);
     }
-
-
 
 
     private static SharedPreferences preferenceStore;
@@ -83,5 +86,9 @@ public class SomePreferences {
     public synchronized static void setBoolean(String key, boolean value){
         preferenceStore.edit().putBoolean(key, value).commit();
         updatePreferences(preferenceStore);
+    }
+
+    public static void setTheme(String theme) {
+        setString(PRIMARY_THEME, theme);
     }
 }

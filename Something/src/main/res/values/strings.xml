@@ -51,5 +51,9 @@
     <string name="pm_reply">REPLY</string>
     <string name="login_started_title">Logging In</string>
     <string name="login_started_message">Please wait...</string>
+    <string name="preference_dialog_title">Preferences</string>
+    <string name="preference_theme">Theme</string>
+    <string name="preference_theme_select_mark">●</string>
+    <string name="menu_preferences">Preferences</string>
 
 </resources>

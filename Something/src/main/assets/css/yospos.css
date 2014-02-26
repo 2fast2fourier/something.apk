@@ -3,7 +3,7 @@ color:#5e5e5e;
 }
 
 a {
-color:#0F0;
+color:#57FF57;
 }
 
 body {
@@ -51,14 +51,14 @@ max-height:100px;
 
 article {
 background-color:#000;
-color:#0F0;
+color:#57FF57;
 margin:10px 5px;
 padding:15px;
-border: 1px solid #0F0;
+border: 1px solid #57FF57;
 }
 
 article.read {
-background-color:#002211;
+background-color:#114211;
 }
 
 article.op {
@@ -83,7 +83,7 @@ word-wrap: break-word;
 }
 
 section.postcontent .bbc-block {
-border-left:2px solid #0F0;
+border-left:2px solid #57FF57;
 margin:5px 0;
 padding:5px 10px 5px 20px;
 }
@@ -93,7 +93,7 @@ background-color: #1A4000;
 }
 
 section.postcontent .usernameHighlight {
-color: #0F0;
+color: #57FF57;
 }
 
 section.postcontent .bbc-block h4 {
@@ -115,7 +115,7 @@ max-width: 100% !important;
 }
 
 section.postcontent img.timg{
-border: 2px solid #0F0;
+border: 2px solid #57FF57;
 width: 20%;
 }
 
@@ -136,7 +136,7 @@ visibility: hidden;
 
 section.postcontent .bbc-spoiler.spoiled {
 background-color: transparent;
-color: #0F0;
+color: #57FF57;
 box-shadow: none;
 }
 
@@ -145,7 +145,7 @@ visibility: visible;
 }
 
 section.postcontent .signature {
-border-top: 2px solid #0F0;
+border-top: 2px solid #57FF57;
 padding-top: 10px;
 }
 
@@ -154,7 +154,7 @@ vertical-align:top;
 clear:left;
 overflow:hidden;
 border:0;
-border-bottom:2px solid #0F0;
+border-bottom:2px solid #57FF57;
 margin:0 0 10px;
 padding:0 0 10px;
 }
@@ -212,7 +212,7 @@ padding:0 0 0 0;
 
 ul.postoptions {
 background-color:#000;
-color:#0F0;
+color:#57FF57;
 height:35px;
 display:none;
 padding-left:15px;

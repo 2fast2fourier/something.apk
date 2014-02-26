@@ -98,9 +98,9 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         }else{
             switch (forumId){
                 case 219:
-                    return SomePreferences.amberYos ? "amberpos" : "yospos";
+                    return SomePreferences.yosTheme;
                 case 26:
-                    return "fyad";
+                    return SomePreferences.fyadTheme;
                 default:
                     return SomePreferences.selectedTheme;
             }

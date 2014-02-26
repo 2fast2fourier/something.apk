@@ -33,6 +33,7 @@ import com.salvadordalvik.something.request.ThreadListRequest;
 import com.salvadordalvik.something.util.Constants;
 import com.salvadordalvik.something.util.SomePreferences;
 import com.salvadordalvik.something.widget.PageSelectDialogFragment;
+import com.salvadordalvik.something.widget.PreferencesDialogFragment;
 
 import java.util.List;
 
@@ -255,6 +256,9 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
                 }else{
                     showForum(SomePreferences.favoriteForumId);
                 }
+                return true;
+            case R.id.menu_preferences:
+                new PreferencesDialogFragment().show(getFragmentManager(), "preferences");
                 return true;
             case R.id.menu_private_messages:
                 startActivity(new Intent(getActivity(), PrivateMessageListActivity.class));
