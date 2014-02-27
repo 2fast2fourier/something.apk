@@ -66,11 +66,7 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
         }else{
             holder.star.setVisibility(View.GONE);
         }
-        if(selected){
-            view.setBackgroundColor(Color.rgb(73,77,84));
-        }else{
-            view.setBackgroundResource(0);
-        }
+        view.setActivated(selected);
     }
 
     @Override

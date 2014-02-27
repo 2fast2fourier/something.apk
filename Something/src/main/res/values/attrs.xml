@@ -8,6 +8,7 @@
     <attr name="listSubTextColor" format="color|reference"/>
     <attr name="webviewBackgroundColor" format="color|reference"/>
 
+    <attr name="listActivatedBackground" format="reference"/>
     <!-- icons -->
     <attr name="inlineBookmarkIcon" format="reference"/>
 </resources>

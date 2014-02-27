@@ -15,19 +15,28 @@
         android:layout_toLeftOf="@+id/thread_item_unread"
         android:layout_alignParentLeft="true"
         android:layout_marginRight="8dp"
+        android:layout_marginBottom="2dp"
         android:textColor="?attr/listHeaderTextColor" />
-
+    <com.android.volley.toolbox.NetworkImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/thread_item_tagimg"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:layout_marginRight="4dp"
+        android:layout_alignTop="@+id/thread_item_subtext"
+        android:layout_alignBottom="@+id/thread_item_subtext"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Thread Subtext"
         android:id="@+id/thread_item_subtext"
         android:layout_below="@+id/thread_item_title"
-        android:paddingTop="2dp"
         android:textSize="12sp"
         android:textColor="?attr/listSubTextColor"
         android:drawableLeft="@drawable/pages"
-        android:layout_marginLeft="2dp" />
+        android:layout_marginLeft="2dp"
+        android:layout_toRightOf="@id/thread_item_tagimg"/>
 
     <TextView
         android:layout_width="wrap_content"

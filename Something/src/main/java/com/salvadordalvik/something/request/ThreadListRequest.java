@@ -67,13 +67,18 @@ public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListR
 
             Elements authors = thread.getElementsByClass("author");
 
-            String author, lastPost = null;
+            String author, tagUrl = null, lastPost = null;
             author = authors.first().text();
             if(authors.size() > 1){
                 lastPost = authors.last().text();
             }
 
-            threads.add(new ThreadItem(id, getFirstTextByClass(thread, "thread_title", "Thread Title"), unread, replies, author, lastPost, bookmarked, closed));
+            Element tag = thread.getElementsByClass("icon").first();
+            if(tag != null){
+                tagUrl = tag.getElementsByTag("img").attr("src");
+            }
+
+            threads.add(new ThreadItem(id, getFirstTextByClass(thread, "thread_title", "Thread Title"), unread, replies, author, lastPost, bookmarked, closed, tagUrl));
         }
         if(forumId != Constants.BOOKMARK_FORUMID){
             //bookmark page doesn't have forum shortcut list

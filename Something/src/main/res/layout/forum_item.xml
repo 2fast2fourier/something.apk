@@ -2,7 +2,8 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?listActivatedBackground"
     android:paddingLeft="8dp">
 
     <ImageView
@@ -20,7 +21,7 @@
         android:layout_height="wrap_content"
         android:text="Forum Name"
         android:id="@+id/forum_item_title"
-        android:textColor="?attr/listHeaderTextColor"
+        android:textColor="?listHeaderTextColor"
         android:textSize="16sp"
         android:layout_weight="1"
         android:paddingTop="8dp"

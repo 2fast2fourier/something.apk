@@ -37,7 +37,7 @@ public class ForumListFragment extends FastFragment implements FastQueryTask.Que
     }
 
     public ForumListFragment() {
-        super(R.layout.ptr_generic_listview);
+        super(R.layout.generic_listview);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ForumListFragment extends FastFragment implements FastQueryTask.Que
         currentlySelectedForumId = getArguments().getInt("forum_id_hint", 0);
 
         adapter = new FastAdapter(this, 1);
-        forumList = (ListView) frag.findViewById(R.id.ptr_listview);
+        forumList = (ListView) frag.findViewById(R.id.listview);
         forumList.setAdapter(adapter);
         forumList.setOnItemClickListener(adapter);
     }

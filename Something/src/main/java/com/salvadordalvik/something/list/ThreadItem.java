@@ -6,23 +6,27 @@ import android.graphics.drawable.GradientDrawable;
 import android.support.v4.app.Fragment;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.NetworkImageView;
 import com.salvadordalvik.fastlibrary.list.BaseFastItem;
+import com.salvadordalvik.fastlibrary.request.FastVolley;
 import com.salvadordalvik.something.MainActivity;
 import com.salvadordalvik.something.R;
+import com.salvadordalvik.something.util.SomePreferences;
 
 /**
  * Created by matthewshepard on 1/17/14.
  */
 public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements Parcelable{
-    private String threadTitle, author, lastPost;
+    private String threadTitle, author, lastPost, tagUrl;
     private int unread, replies;
     private boolean bookmarked, closed;
 
-    public ThreadItem(int id, String title, int unreadCount, int replies, String author, String lastPost, boolean bookmarked, boolean closed) {
+    public ThreadItem(int id, String title, int unreadCount, int replies, String author, String lastPost, boolean bookmarked, boolean closed, String tagUrl) {
         super(R.layout.thread_item, id, true);
         this.threadTitle = title;
         this.unread = unreadCount;
@@ -31,6 +35,7 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         this.lastPost = lastPost;
         this.bookmarked = bookmarked;
         this.closed = closed;
+        this.tagUrl = tagUrl;
     }
 
     public ThreadItem(Parcel source) {
@@ -42,6 +47,7 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         this.lastPost = source.readString();
         this.bookmarked = source.readByte() > 0;
         this.closed = source.readByte() > 0;
+        this.tagUrl = source.readString();
     }
 
     @Override
@@ -54,6 +60,7 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         dest.writeString(lastPost);
         dest.writeInt(bookmarked ? 1 : 0);
         dest.writeInt(closed ? 1 : 0);
+        dest.writeString(tagUrl);
     }
 
     @Override
@@ -77,6 +84,13 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         }else{
             holder.subtext.setText(" "+(replies/40+1)+" - Author: "+author);
         }
+        if(!TextUtils.isEmpty(tagUrl)){
+            holder.tagImage.setImageUrl(tagUrl, FastVolley.getImageLoader());
+            holder.tagImage.setVisibility(View.VISIBLE);
+        }else{
+            holder.tagImage.setVisibility(View.GONE);
+        }
+
         view.setAlpha(closed ? 0.5f : 1f);
     }
 
@@ -114,10 +128,12 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
 
     protected static class ThreadHolder{
         public TextView title, subtext, unread;
+        public NetworkImageView tagImage;
         private ThreadHolder(View view){
             title = (TextView) view.findViewById(R.id.thread_item_title);
             subtext = (TextView) view.findViewById(R.id.thread_item_subtext);
             unread = (TextView) view.findViewById(R.id.thread_item_unread);
+            tagImage = (NetworkImageView) view.findViewById(R.id.thread_item_tagimg);
         }
     }
 
