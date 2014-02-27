@@ -12,6 +12,7 @@ import android.text.SpannedString;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -111,7 +112,10 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         threadView.setWebViewClient(webClient);
         threadView.addJavascriptInterface(new SomeJavascriptInterface(), "listener");
 
-        threadView.setBackgroundColor(Color.BLACK);
+        TypedValue val = new TypedValue();
+        if(getActivity().getTheme().resolveAttribute(R.attr.webviewBackgroundColor, val, true)){
+            threadView.setBackgroundColor(val.data);
+        }
 
         registerForContextMenu(threadView);
     }

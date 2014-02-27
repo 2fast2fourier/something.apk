@@ -1,17 +1,12 @@
 <resources>
 
-    <style name="Something.Light" parent="android:Theme.Holo.Light.DarkActionBar">
-        <item name="listBackground">#FBF7FC</item>
-        <item name="footerBackground">#3E4147</item>
-        <item name="listHeaderTextColor">#000000</item>
-        <item name="listSubTextColor">#444444</item>
-    </style>
-
     <style name="Something.Dark" parent="android:Theme.Holo">
         <item name="listBackground">#3E4147</item>
         <item name="footerBackground">#3E4147</item>
+        <item name="listDividerBackground">#2D2F33</item>
         <item name="listHeaderTextColor">#FFFFFF</item>
         <item name="listSubTextColor">#888888</item>
+        <item name="webviewBackgroundColor">#000000</item>
     </style>
 
     <style name="Something.YOSPOS" parent="Something.Dark">

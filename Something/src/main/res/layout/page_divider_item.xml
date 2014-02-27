@@ -1,35 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/more_divider_background">
-
-    <ImageView
-        android:layout_width="0px"
+    android:background="?attr/listDividerBackground">
+    <LinearLayout
+        android:orientation="horizontal" android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/page_divider_scroll"
-        android:src="@drawable/ic_menu_dropdown_up"
-        android:layout_weight="1"
-        android:padding="8dp" />
+        android:id="@+id/page_divider_container"
+        android:background="@drawable/more_divider_background">
 
-    <TextView
-        android:layout_width="0px"
-        android:layout_height="match_parent"
-        android:text="@string/page_divider_text"
-        android:id="@+id/page_divider_page"
-        android:layout_weight="2"
-        android:gravity="center"
-        android:padding="12dp"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        <ImageView
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:id="@+id/page_divider_scroll"
+            android:src="@drawable/ic_menu_dropdown_up"
+            android:layout_weight="1"
+            android:padding="8dp" />
 
-    <ImageView
-        android:layout_width="0px"
-        android:layout_height="wrap_content"
-        android:id="@+id/page_divider_refresh"
-        android:src="@drawable/ic_menu_load"
-        android:layout_weight="1"
-        android:padding="8dp" />
+        <TextView
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:text="@string/page_divider_text"
+            android:id="@+id/page_divider_page"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:padding="12dp"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:id="@+id/page_divider_refresh"
+            android:src="@drawable/ic_menu_load"
+            android:layout_weight="1"
+            android:padding="8dp" />
+    </LinearLayout>
 </LinearLayout>

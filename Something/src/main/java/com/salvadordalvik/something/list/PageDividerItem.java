@@ -43,11 +43,7 @@ public class PageDividerItem extends BaseFastItem<PageDividerItem.DividerHolder>
             holder.refresh.clearAnimation();
         }
         holder.jump.setVisibility(page > 1 ? View.VISIBLE : View.INVISIBLE);
-        if(page == 1){
-            view.setBackgroundResource(R.drawable.page_divider_background);
-        }else{
-            view.setBackgroundColor(Color.rgb(45,47,51));
-        }
+        holder.container.setBackgroundResource(page == 1 ? R.drawable.more_divider_background : 0);
     }
 
     @Override
@@ -60,6 +56,7 @@ public class PageDividerItem extends BaseFastItem<PageDividerItem.DividerHolder>
         public int pageNumber, maxPage;
         public TextView page;
         public ImageView refresh, jump;
+        public View container;
         private DividerHolder(View view){
             page = (TextView) view.findViewById(R.id.page_divider_page);
             page.setOnClickListener(this);
@@ -67,6 +64,7 @@ public class PageDividerItem extends BaseFastItem<PageDividerItem.DividerHolder>
             refresh.setOnClickListener(this);
             jump = (ImageView) view.findViewById(R.id.page_divider_scroll);
             jump.setOnClickListener(this);
+            container = view.findViewById(R.id.page_divider_container);
         }
 
         @Override
