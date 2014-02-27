@@ -5,11 +5,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:id="@id/pulltorefresh_layout"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/right_divider">
     <ListView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/listview"
+        android:divider="?attr/listDividerColor"
+        android:dividerHeight="1px"
         android:background="?attr/listBackground"
         android:cacheColorHint="?attr/listBackground"/>
 </uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>

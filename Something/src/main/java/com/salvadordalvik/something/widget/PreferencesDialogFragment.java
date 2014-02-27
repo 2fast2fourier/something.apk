@@ -1,13 +1,14 @@
 package com.salvadordalvik.something.widget;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.common.io.CharStreams;
@@ -27,8 +28,9 @@ import java.util.regex.Pattern;
 public class PreferencesDialogFragment extends FastDialogFragment implements View.OnClickListener {
     private String[] themes, systemThemes, friendlyThemeNames;
     private int[] themeColors;
-    private LinearLayout primaryThemes;
+    private GridLayout primaryThemes;
     private TextView themeTitle;
+    private boolean restartRequired = false;
 
     public PreferencesDialogFragment() {
         super(R.layout.preference_dialog, R.string.preference_dialog_title);
@@ -77,7 +79,7 @@ public class PreferencesDialogFragment extends FastDialogFragment implements Vie
 
         themeTitle = (TextView) frag.findViewById(R.id.preferences_theme);
 
-        primaryThemes = (LinearLayout) frag.findViewById(R.id.preference_theme_container);
+        primaryThemes = (GridLayout) frag.findViewById(R.id.preference_theme_container);
         for(int ix=0;ix<themes.length;ix++){
             ImageView theme = new ImageView(getActivity());
             GradientDrawable selectedColor = (GradientDrawable) getResources().getDrawable(R.drawable.preference_theme_icon_checked);
@@ -86,24 +88,39 @@ public class PreferencesDialogFragment extends FastDialogFragment implements Vie
             theme.setImageDrawable(selectedColor);
             theme.setTag(ix);
             theme.setOnClickListener(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.setMargins(16, 0, 16, 0);
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.setMargins(16, 16, 16, 16);
             primaryThemes.addView(theme, params);
         }
 
         updateThemeIcons();
+
+        frag.findViewById(R.id.preference_apply).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        int theme = (Integer) v.getTag();
-        selectTheme(themes[theme], systemThemes[theme]);
+        if(v.getId() == R.id.preference_apply){
+            dismiss();
+        }else{
+            int theme = (Integer) v.getTag();
+            selectTheme(themes[theme], systemThemes[theme]);
+        }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if(restartRequired){
+            getActivity().recreate();
+        }
     }
 
     @Override
     public void refreshData(boolean pullToRefresh) {}
 
     private void selectTheme(String theme, String systemTheme){
+        restartRequired = !SomePreferences.selectedTheme.equalsIgnoreCase(theme);
         SomePreferences.setTheme(theme, systemTheme);
         updateThemeIcons();
     }

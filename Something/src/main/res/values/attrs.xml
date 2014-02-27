@@ -2,8 +2,12 @@
 <resources>
     <attr name="listBackground" format="color|reference"/>
     <attr name="footerBackground" format="color|reference"/>
-    <attr name="listDividerBackground" format="color|reference"/>
+    <attr name="listPageDividerBackground" format="color|reference"/>
+    <attr name="listDividerColor" format="color|reference"/>
     <attr name="listHeaderTextColor" format="color|reference"/>
     <attr name="listSubTextColor" format="color|reference"/>
     <attr name="webviewBackgroundColor" format="color|reference"/>
+
+    <!-- icons -->
+    <attr name="inlineBookmarkIcon" format="reference"/>
 </resources>

@@ -10,14 +10,14 @@
         android:id="@+id/menu_item_title"
         android:padding="12dp"
         android:textSize="20sp"
-        android:textColor="?attr/listHeaderTextColor"
+        android:textColor="?listHeaderTextColor"
         android:textStyle="bold" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/menu_item_bookmarks"
-        android:src="@drawable/ic_menu_bookmarks"
+        android:src="?inlineBookmarkIcon"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/menu_item_title"
         android:layout_alignBottom="@+id/menu_item_title"

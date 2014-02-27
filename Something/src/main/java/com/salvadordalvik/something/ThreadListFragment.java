@@ -55,7 +55,7 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
         super(R.layout.generic_listview, R.menu.thread_list);
         adapter = new PagedAdapter(this, 3, 6, this);
 
-        adapter.addItems(0, new MenuItem("Forums", R.drawable.ic_menu_bookmarks) {
+        adapter.addItems(0, new MenuItem("Forums") {
             @Override
             public boolean onItemClick(Activity act, Fragment fragment) {
                 ((MainActivity) act).showForumList(forumId);
@@ -162,7 +162,9 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
     private Response.ErrorListener errorResponse =  new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
-            Toast.makeText(getActivity(), "Failed to load!", Toast.LENGTH_LONG).show();
+            if(getActivity() != null){
+                Toast.makeText(getActivity(), "Failed to load!", Toast.LENGTH_LONG).show();
+            }
             adapter.loadingPageFailed();
         }
     };

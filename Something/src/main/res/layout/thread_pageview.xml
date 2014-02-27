@@ -39,7 +39,7 @@
             android:paddingBottom="8dp"
             android:paddingRight="16dp"
             android:paddingLeft="16dp"
-            android:minWidth="200dp"
+            android:minWidth="192dp"
             android:textSize="18sp"
             android:textColor="#FFFFFF"
             android:textStyle="bold" />

@@ -226,7 +226,7 @@ public class MainActivity extends FragmentActivity implements SlidingMenu.OnOpen
     }
 
     public boolean isFragmentFocused(Fragment fragment){
-        if(slidingMenu.isMenuShowing()){
+        if(slidingMenu != null && slidingMenu.isMenuShowing()){
             return forumList == fragment || (forumList == null && fragment == threadList);
         }else{
             return fragment == threadView;
