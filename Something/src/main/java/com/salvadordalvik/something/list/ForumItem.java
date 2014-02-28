@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -61,8 +62,11 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
             holder.indent.setVisibility(View.GONE);
         }
         if(showStar){
-            holder.star.setVisibility(View.VISIBLE);
-            holder.star.setImageResource(starred ? R.drawable.star : R.drawable.star_empty);
+            TypedValue star = new TypedValue();
+            if(view.getContext().getTheme().resolveAttribute(starred ? R.attr.inlineStarIcon : R.attr.inlineEmptyStarIcon, star, false)){
+                holder.star.setVisibility(View.VISIBLE);
+                holder.star.setImageResource(star.data);
+            }
         }else{
             holder.star.setVisibility(View.GONE);
         }
@@ -97,10 +101,9 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
         @Override
         public void onClick(View v) {
             if(forumId > 0){
-                if(toggleStar(forumId)){
-                    star.setImageResource(R.drawable.star);
-                }else{
-                    star.setImageResource(R.drawable.star_empty);
+                TypedValue starVal = new TypedValue();
+                if(v.getContext().getTheme().resolveAttribute(toggleStar(forumId) ? R.attr.inlineStarIcon : R.attr.inlineEmptyStarIcon, starVal, false)){
+                    star.setImageResource(starVal.data);
                 }
             }
         }

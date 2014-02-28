@@ -9,6 +9,9 @@
     <attr name="webviewBackgroundColor" format="color|reference"/>
 
     <attr name="listActivatedBackground" format="reference"/>
+
     <!-- icons -->
     <attr name="inlineBookmarkIcon" format="reference"/>
+    <attr name="inlineStarIcon" format="reference"/>
+    <attr name="inlineEmptyStarIcon" format="reference"/>
 </resources>

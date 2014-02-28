@@ -12,6 +12,8 @@
         <item name="listActivatedBackground">@drawable/activated_background_dark</item>
 
         <item name="inlineBookmarkIcon">@drawable/ic_menu_bookmarks</item>
+        <item name="inlineStarIcon">@drawable/inline_menu_bookmark</item>
+        <item name="inlineEmptyStarIcon">@drawable/inline_menu_unbookmark</item>
     </style>
 
     <style name="Something.YOSPOS" parent="Something.Dark">
