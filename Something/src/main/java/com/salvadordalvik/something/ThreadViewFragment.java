@@ -170,8 +170,10 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
     @Override
     public void onResume() {
         super.onResume();
-        threadView.onResume();
-        threadView.resumeTimers();
+        if(((MainActivity)getActivity()).isFragmentFocused(this)){
+            threadView.onResume();
+            threadView.resumeTimers();
+        }
     }
 
     public void onPaneObscured() {
