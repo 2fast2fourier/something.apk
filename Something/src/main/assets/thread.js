@@ -39,6 +39,10 @@ function pageinit() {
     // hide-old posts
     if($('.toggleread').length > 0){
         $('.read').hide();
+    }else{
+        $('.seenimg').each(function(index, item){
+            item.src = item.getAttribute('hideimg');
+        });
     }
     $('.toggleread').click(function(event) {
         $('.read').show();
