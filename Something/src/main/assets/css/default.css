@@ -173,6 +173,18 @@ margin:0 0 10px;
 padding:0 0 10px;
 }
 
+section.pmtitle {
+font-size:1.2em;
+float:left;
+width:100%;
+overflow:hidden;
+display:inline-block;
+border:0;
+border-bottom:2px solid #eae9ea;
+margin:0 0 10px;
+padding:0 0 10px;
+}
+
 section.postinfo {
 font-size:1.1em;
 float:left;

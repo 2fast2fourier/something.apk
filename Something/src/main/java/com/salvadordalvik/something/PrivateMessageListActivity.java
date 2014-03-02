@@ -106,8 +106,8 @@ public class PrivateMessageListActivity extends SomeActivity implements SlidingM
         }
     }
 
-    public void showPM(int id) {
-        messageFragment.showPM(id);
+    public void showPM(int id, String title) {
+        messageFragment.showPM(id, title);
         slidingMenu.setSlidingEnabled(true);
         slidingMenu.showContent();
     }

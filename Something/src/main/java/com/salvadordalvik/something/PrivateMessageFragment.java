@@ -3,6 +3,7 @@ package com.salvadordalvik.something;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ public class PrivateMessageFragment extends FastFragment implements Response.Err
     private WebView webview;
 
     private int pmId = 0;
+    private String pmTitle;
 
     public PrivateMessageFragment() {
         super(R.layout.ptr_generic_webview, R.menu.pm_reply);
@@ -39,7 +41,9 @@ public class PrivateMessageFragment extends FastFragment implements Response.Err
 
     @Override
     public void viewCreated(View frag, Bundle savedInstanceState) {
-        pmId = getActivity().getIntent().getIntExtra("pm_id", 0);
+        Intent intent = getActivity().getIntent();
+        pmId = intent.getIntExtra("pm_id", 0);
+        pmTitle = intent.getStringExtra("pm_title");
 
         webview = (WebView) frag.findViewById(R.id.ptr_webview);
         initWebview();
@@ -83,11 +87,12 @@ public class PrivateMessageFragment extends FastFragment implements Response.Err
 
     @Override
     public void refreshData(boolean pullToRefresh, boolean staleRefresh) {
-        queueRequest(new PrivateMessageRequest(pmId, this, this));
+        queueRequest(new PrivateMessageRequest(pmId, pmTitle, this, this));
     }
 
-    public void showPM(int pmId){
+    public void showPM(int pmId, String pmTitle){
         this.pmId = pmId;
+        this.pmTitle = pmTitle;
         startRefresh();
     }
 

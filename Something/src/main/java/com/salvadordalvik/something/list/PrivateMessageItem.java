@@ -38,9 +38,9 @@ public class PrivateMessageItem extends BaseFastItem<PrivateMessageItem.PMHolder
     @Override
     public boolean onItemClick(Activity act, Fragment fragment) {
         if(act instanceof PrivateMessageListActivity){
-            ((PrivateMessageListActivity)act).showPM(getId());
+            ((PrivateMessageListActivity)act).showPM(getId(), title);
         }else{
-            act.startActivity(new Intent(act, PrivateMessageListActivity.class).putExtra("pm_id", getId()));
+            act.startActivity(new Intent(act, PrivateMessageListActivity.class).putExtra("pm_id", getId()).putExtra("pm_title", title));
         }
         return false;
     }
