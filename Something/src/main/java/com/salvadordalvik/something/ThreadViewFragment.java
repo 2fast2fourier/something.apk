@@ -317,7 +317,6 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
     }
 
     private void loadSessionCookie(){
-        CookieSyncManager.createInstance(getActivity());
         CookieManager cookieMstr = CookieManager.getInstance();
         Matcher cookieCutter = Pattern.compile("(\\w+)=(\\w+)").matcher(SomePreferences.cookieString);
         while(cookieCutter.find()){

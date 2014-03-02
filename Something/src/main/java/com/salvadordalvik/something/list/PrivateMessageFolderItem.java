@@ -31,11 +31,7 @@ public class PrivateMessageFolderItem extends BaseFastItem<PrivateMessageFolderI
     @Override
     public void updateViewFromHolder(View view, PMFolderHolder holder) {
         holder.title.setText(title);
-        if(selected){
-            view.setBackgroundColor(Color.argb(40,255,255,255));
-        }else{
-            view.setBackgroundResource(0);
-        }
+        view.setActivated(selected);
     }
 
     @Override

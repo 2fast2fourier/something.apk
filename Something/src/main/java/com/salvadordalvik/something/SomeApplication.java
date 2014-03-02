@@ -33,5 +33,6 @@ public class SomeApplication extends Application {
         FastVolley.init(this, new OkHttpStack());
         SomePreferences.init(this);
         MustCache.init(this);
+        CookieSyncManager.createInstance(this);
     }
 }

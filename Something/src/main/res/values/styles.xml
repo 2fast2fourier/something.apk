@@ -14,6 +14,7 @@
         <item name="inlineBookmarkIcon">@drawable/ic_menu_bookmarks</item>
         <item name="inlineStarIcon">@drawable/inline_menu_bookmark</item>
         <item name="inlineEmptyStarIcon">@drawable/inline_menu_unbookmark</item>
+        <item name="inlineFolderIcon">@drawable/ic_action_collection</item>
     </style>
 
     <style name="Something.YOSPOS" parent="Something.Dark">

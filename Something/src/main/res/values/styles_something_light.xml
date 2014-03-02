@@ -34,6 +34,7 @@
         <item name="inlineBookmarkIcon">@drawable/ic_menu_bookmarks_light</item>
         <item name="inlineStarIcon">@drawable/inline_menu_bookmark_light</item>
         <item name="inlineEmptyStarIcon">@drawable/inline_menu_unbookmark_light</item>
+        <item name="inlineFolderIcon">@drawable/ic_action_collection_light</item>
 
         <item name="android:actionBarStyle">@style/ActionBar.Solid.Something_light</item>
     </style>

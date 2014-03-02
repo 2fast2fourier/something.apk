@@ -13,7 +13,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 /**
  * Created by matthewshepard on 2/7/14.
  */
-public class PrivateMessageListActivity extends FragmentActivity implements SlidingMenu.OnClosedListener, SlidingMenu.OnOpenedListener {
+public class PrivateMessageListActivity extends SomeActivity implements SlidingMenu.OnClosedListener, SlidingMenu.OnOpenedListener {
     private SlidingMenu slidingMenu;
     private PrivateMessageListFragment listFragment;
     private PrivateMessageFragment messageFragment;

@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -94,9 +95,11 @@ public class PrivateMessageFragment extends FastFragment implements Response.Err
         webview.getSettings().setJavaScriptEnabled(true);
         webview.setWebChromeClient(chromeClient);
         webview.setWebViewClient(webClient);
-//        webview.addJavascriptInterface(new ReplyJavascriptInterface(), "listener");
 
-        webview.setBackgroundColor(Color.BLACK);
+        TypedValue val = new TypedValue();
+        if(getActivity().getTheme().resolveAttribute(R.attr.webviewBackgroundColor, val, true)){
+            webview.setBackgroundColor(val.data);
+        }
 
         registerForContextMenu(webview);
     }

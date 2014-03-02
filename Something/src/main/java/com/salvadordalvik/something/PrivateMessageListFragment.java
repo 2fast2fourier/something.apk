@@ -21,12 +21,12 @@ public class PrivateMessageListFragment extends FastFragment implements Response
     private int folderId = 0;
 
     public PrivateMessageListFragment() {
-        super(R.layout.ptr_generic_listview);
+        super(R.layout.generic_listview);
     }
 
     @Override
     public void viewCreated(View frag, Bundle savedInstanceState) {
-        pmList = (ListView) frag.findViewById(R.id.ptr_listview);
+        pmList = (ListView) frag.findViewById(R.id.listview);
         adapter = new SectionFastAdapter(this, 2);
         pmList.setAdapter(adapter);
         pmList.setOnItemClickListener(adapter);
