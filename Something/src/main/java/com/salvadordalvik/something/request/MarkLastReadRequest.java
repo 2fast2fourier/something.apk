@@ -3,6 +3,7 @@ package com.salvadordalvik.something.request;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.salvadordalvik.something.util.SomePreferences;
 
 import org.jsoup.nodes.Document;
 
@@ -19,6 +20,6 @@ public class MarkLastReadRequest extends HTMLRequest<ThreadPageRequest.ThreadPag
 
     @Override
     public ThreadPageRequest.ThreadPage parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
-        return ThreadPageRequest.processThreadPage(document);
+        return ThreadPageRequest.processThreadPage(document, SomePreferences.hideAllImages, SomePreferences.hidePreviouslyReadPosts);
     }
 }

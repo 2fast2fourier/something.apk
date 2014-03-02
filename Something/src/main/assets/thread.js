@@ -42,8 +42,11 @@ function pageinit() {
     }
     $('.toggleread').click(function(event) {
         $('.read').show();
-          $('.toggleread').hide();
-          window.setTimeout(scrollLastRead, 200);
+        $('.seenimg').each(function(index, item){
+            item.src = item.getAttribute('hideimg');
+        });
+        $('.toggleread').hide();
+        window.setTimeout(scrollLastRead, 200);
     });
     
     $('.postinfo').on('click',function(){

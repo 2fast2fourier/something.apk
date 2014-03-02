@@ -95,7 +95,7 @@ public class ForumListFragment extends FastFragment implements FastQueryTask.Que
     @Override
     public void onResponse(Void response) {
         refreshForumList();
-        SomePreferences.setLong(SomePreferences.LAST_FORUM_UPDATE, System.currentTimeMillis());
+        SomePreferences.setLong(SomePreferences.LAST_FORUM_UPDATE_LONG, System.currentTimeMillis());
     }
 
     @Override

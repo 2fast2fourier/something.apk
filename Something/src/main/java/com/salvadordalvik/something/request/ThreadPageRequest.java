@@ -39,15 +39,15 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
     @Override
     public ThreadPage parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
-        return processThreadPage(document);
+        return processThreadPage(document, SomePreferences.hideAllImages, SomePreferences.hidePreviouslyReadPosts);
     }
 
-    public static ThreadPage processThreadPage(Document document){
+    public static ThreadPage processThreadPage(Document document, boolean hideAllImages, boolean hidePreviouslyReadImages){
         ArrayList<HashMap<String, String>> posts = new ArrayList<HashMap<String, String>>();
 
         int currentPage, maxPage = 1, threadId, forumId, unread;
 
-        unread = parsePosts(document, posts);
+        unread = parsePosts(document, posts, hideAllImages, hidePreviouslyReadImages);
 
         Element pages = document.getElementsByClass("pages").first();
         currentPage = FastUtils.safeParseInt(pages.getElementsByAttribute("selected").attr("value"), 1);
@@ -126,7 +126,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
     private static Pattern userJumpPattern = Pattern.compile("userid=(\\d+)");
 
-    private static int parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray){
+    private static int parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray, boolean hideImages, boolean hideSeenImages){
         int unread = 0;
         Elements posts = doc.getElementsByClass("post");
         for(Element post : posts){
@@ -138,7 +138,6 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 Element title = post.getElementsByClass("title").first();
                 String avTitle = title.text();
                 String avatarUrl = title.getElementsByTag("img").attr("src");
-                String postContent = post.getElementsByClass("postbody").html();
                 String postDate = post.getElementsByClass("postdate").text().replaceAll("[#?]", "").trim();
                 String postIndex = post.attr("data-idx");
 
@@ -153,6 +152,16 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 if(!previouslyRead){
                     unread++;
                 }
+
+                Element postBody = post.getElementsByClass("postbody").first();
+                if(hideImages || (hideSeenImages && previouslyRead)){
+                    for(Element imageNode : postBody.getElementsByTag("img")){
+                        imageNode.addClass("seenimg");
+                        imageNode.attr("hideimg", imageNode.attr("src"));
+                        imageNode.removeAttr("src");
+                    }
+                }
+                String postContent = postBody.html();
 
                 postData.put("username", author);
                 postData.put("avatarText", avTitle);
