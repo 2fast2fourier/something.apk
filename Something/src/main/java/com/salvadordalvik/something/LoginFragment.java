@@ -7,21 +7,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.salvadordalvik.fastlibrary.FastFragment;
 import com.salvadordalvik.fastlibrary.alert.FastAlert;
 import com.salvadordalvik.fastlibrary.request.FastVolley;
+import com.salvadordalvik.fastlibrary.util.FastUtils;
 import com.salvadordalvik.something.request.LoginRequest;
 
 /**
  * Created by matthewshepard on 1/31/14.
  */
-public class LoginFragment extends FastFragment implements TextWatcher, View.OnClickListener, DialogInterface.OnCancelListener {
+public class LoginFragment extends FastFragment implements TextWatcher, View.OnClickListener, DialogInterface.OnCancelListener, TextView.OnEditorActionListener {
     private EditText username, password;
     private Button loginButton;
     private ProgressDialog dialog;
@@ -40,6 +44,7 @@ public class LoginFragment extends FastFragment implements TextWatcher, View.OnC
         loginButton.setOnClickListener(this);
         username.addTextChangedListener(this);
         password.addTextChangedListener(this);
+        password.setOnEditorActionListener(this);
     }
 
     private void attemptLogin(){
@@ -48,6 +53,10 @@ public class LoginFragment extends FastFragment implements TextWatcher, View.OnC
             queueRequest(new LoginRequest(username.getText().toString(), password.getText().toString(), new Response.Listener<Boolean>() {
                 @Override
                 public void onResponse(Boolean response) {
+                    if(dialog != null){
+                        dialog.dismiss();
+                        dialog = null;
+                    }
                     FastAlert.notice(getActivity(), getView(), getString(R.string.login_success));
                     Activity act = getActivity();
                     if(act != null){
@@ -58,6 +67,10 @@ public class LoginFragment extends FastFragment implements TextWatcher, View.OnC
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    if(dialog != null){
+                        dialog.dismiss();
+                        dialog = null;
+                    }
                     FastAlert.error(getActivity(), getView(), getString(R.string.login_failed));
                 }
             }), this);
@@ -108,5 +121,13 @@ public class LoginFragment extends FastFragment implements TextWatcher, View.OnC
     public void onCancel(DialogInterface dialogInterface) {
         dialog = null;
         FastVolley.cancelRequestByTag(this);
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if(actionId == EditorInfo.IME_ACTION_DONE || FastUtils.isKeyEnter(event)){
+            attemptLogin();
+        }
+        return false;
     }
 }

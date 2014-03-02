@@ -319,14 +319,16 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
     }
 
     private void loadSessionCookie(){
-        CookieManager cookieMstr = CookieManager.getInstance();
-        Matcher cookieCutter = Pattern.compile("(\\w+)=(\\w+)").matcher(SomePreferences.cookieString);
-        while(cookieCutter.find()){
-            String name = cookieCutter.group(1);
-            String value = cookieCutter.group(2);
-            cookieMstr.setCookie("forums.somethingawful.com", name+"="+value+"; domain=forums.somethingawful.com");
+        if(SomePreferences.loggedIn){
+            CookieManager cookieMstr = CookieManager.getInstance();
+            Matcher cookieCutter = Pattern.compile("(\\w+)=(\\w+)").matcher(SomePreferences.cookieString);
+            while(cookieCutter.find()){
+                String name = cookieCutter.group(1);
+                String value = cookieCutter.group(2);
+                cookieMstr.setCookie("forums.somethingawful.com", name+"="+value+"; domain=forums.somethingawful.com");
+            }
+            CookieSyncManager.getInstance().sync();
         }
-        CookieSyncManager.getInstance().sync();
     }
 
     public void goToPage(int pageNum){

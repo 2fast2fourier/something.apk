@@ -25,4 +25,8 @@
         android:id="@+id/menu_preferences"
         android:title="@string/menu_preferences"
         android:showAsAction="never"/>
+    <item
+        android:id="@+id/menu_logout"
+        android:title="@string/menu_logout"
+        android:showAsAction="never"/>
 </menu>

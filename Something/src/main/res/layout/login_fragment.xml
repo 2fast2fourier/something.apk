@@ -10,7 +10,7 @@
         android:id="@+id/login_title"
         android:textSize="24sp"
         android:padding="8dp"
-        android:textColor="#FFFFFF"
+        android:textColor="?listHeaderTextColor"
         android:layout_marginLeft="14dp" />
 
     <EditText

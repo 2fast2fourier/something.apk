@@ -262,6 +262,11 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
             case R.id.menu_preferences:
                 new PreferencesDialogFragment().show(getFragmentManager(), "preferences");
                 return true;
+            case R.id.menu_logout:
+                SomePreferences.setString(SomePreferences.LOGIN_COOKIE_STRING, null);
+                startActivity(new Intent(getActivity(), LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                getActivity().finish();
+                return true;
             case R.id.menu_private_messages:
                 startActivity(new Intent(getActivity(), PrivateMessageListActivity.class));
                 return true;
