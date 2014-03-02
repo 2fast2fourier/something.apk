@@ -1,10 +1,7 @@
 package com.salvadordalvik.something;
 
-import android.app.ActionBar;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.text.Spanned;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 
@@ -23,7 +20,6 @@ public class PrivateMessageListActivity extends SomeActivity implements SlidingM
         super.onCreate(savedInstanceState);
         setContentView(R.layout.private_message_activity);
         configureSlidingMenu();
-        configureActionbar();
         listFragment = (PrivateMessageListFragment) getSupportFragmentManager().findFragmentById(R.id.pm_list_fragment);
         messageFragment = (PrivateMessageFragment) getSupportFragmentManager().findFragmentById(R.id.pm_fragment);
     }
@@ -68,11 +64,6 @@ public class PrivateMessageListActivity extends SomeActivity implements SlidingM
             messageFragment.setMenuVisibility(true);
         }
         slidingMenu.setSlidingEnabled(messageFragment.hasPMLoaded());
-    }
-
-    private void configureActionbar(){
-        ActionBar bar = getActionBar();
-        bar.setHomeButtonEnabled(true);
     }
 
     @Override

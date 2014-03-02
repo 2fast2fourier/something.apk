@@ -1,11 +1,9 @@
 package com.salvadordalvik.something;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Spanned;
@@ -32,7 +30,6 @@ public class MainActivity extends SomeActivity implements SlidingMenu.OnOpenedLi
         requestWindowFeature(Window.FEATURE_PROGRESS);
         setContentView(R.layout.activity_main);
         configureSlidingMenu();
-        configureActionbar();
         setProgressBarVisibility(false);
         threadView = (ThreadViewFragment) getSupportFragmentManager().findFragmentById(R.id.threadview_fragment);
         Fragment threads = getSupportFragmentManager().findFragmentByTag("thread_list");
@@ -68,12 +65,6 @@ public class MainActivity extends SomeActivity implements SlidingMenu.OnOpenedLi
         }else{
             slidingMenu.setBehindWidthRes(R.dimen.nav_list_width);
         }
-    }
-
-    private void configureActionbar(){
-        ActionBar bar = getActionBar();
-        bar.setHomeButtonEnabled(true);
-        bar.setDisplayShowHomeEnabled(false);
     }
 
     @Override
