@@ -49,7 +49,7 @@ public class LoginFragment extends FastFragment implements TextWatcher, View.OnC
 
     private void attemptLogin(){
         if(hasLogin()){
-            dialog = ProgressDialog.show(getActivity(), getString(R.string.login_started_title), getString(R.string.login_started_message), true, true, this);
+            dialog = ProgressDialog.show(getActivity(), getSafeString(R.string.login_started_title), getSafeString(R.string.login_started_message), true, true, this);
             queueRequest(new LoginRequest(username.getText().toString(), password.getText().toString(), new Response.Listener<Boolean>() {
                 @Override
                 public void onResponse(Boolean response) {
@@ -57,7 +57,7 @@ public class LoginFragment extends FastFragment implements TextWatcher, View.OnC
                         dialog.dismiss();
                         dialog = null;
                     }
-                    FastAlert.notice(getActivity(), getView(), getString(R.string.login_success));
+                    FastAlert.notice(getActivity(), getView(), getSafeString(R.string.login_success));
                     Activity act = getActivity();
                     if(act != null){
                         act.startActivity(new Intent(getActivity(), MainActivity.class));
@@ -71,7 +71,7 @@ public class LoginFragment extends FastFragment implements TextWatcher, View.OnC
                         dialog.dismiss();
                         dialog = null;
                     }
-                    FastAlert.error(getActivity(), getView(), getString(R.string.login_failed));
+                    FastAlert.error(getActivity(), getView(), getSafeString(R.string.login_failed));
                 }
             }), this);
         }

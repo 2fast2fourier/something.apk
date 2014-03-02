@@ -51,7 +51,7 @@ public class PrivateMessageListFragment extends FastFragment implements Response
 
     @Override
     public void onErrorResponse(VolleyError volleyError) {
-        FastAlert.error(getActivity(), getView(), getString(R.string.loading_failed));
+        FastAlert.error(getActivity(), getView(), getSafeString(R.string.loading_failed));
     }
 
     public void showFolder(int id) {

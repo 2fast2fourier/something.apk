@@ -139,7 +139,7 @@ public class PrivateMessageFragment extends FastFragment implements Response.Err
                 menu.add(R.string.menu_copy_url).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        FastAlert.custom(getActivity(), getView(), getString(R.string.url_copied), null, R.drawable.ic_menu_link);
+                        FastAlert.custom(getActivity(), getView(), getSafeString(R.string.url_copied), null, R.drawable.ic_menu_link);
                         ClipboardManager clipman = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                         clipman.setPrimaryClip(ClipData.newPlainText(webview.toString(), targetUrl));
                         return true;
@@ -148,7 +148,7 @@ public class PrivateMessageFragment extends FastFragment implements Response.Err
                 menu.add(R.string.menu_share_link).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        FastUtils.showSimpleShareChooser(getActivity(), webview.toString(), targetUrl, getString(R.string.menu_share_link));
+                        FastUtils.showSimpleShareChooser(getActivity(), webview.toString(), targetUrl, getSafeString(R.string.menu_share_link));
                         return true;
                     }
                 });
@@ -214,7 +214,7 @@ public class PrivateMessageFragment extends FastFragment implements Response.Err
 
     @Override
     public void onErrorResponse(VolleyError volleyError) {
-        FastAlert.error(getActivity(), getView(), getString(R.string.loading_failed));
+        FastAlert.error(getActivity(), getView(), getSafeString(R.string.loading_failed));
     }
 
     @Override

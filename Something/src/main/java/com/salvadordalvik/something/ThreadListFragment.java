@@ -162,9 +162,7 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
     private Response.ErrorListener errorResponse =  new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
-            if(getActivity() != null){
-                Toast.makeText(getActivity(), "Failed to load!", Toast.LENGTH_LONG).show();
-            }
+            FastAlert.error(getActivity(), getView(), getSafeString(R.string.loading_failed));
             adapter.loadingPageFailed();
         }
     };
@@ -183,7 +181,7 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
                     queueRequest(new BookmarkRequest(thread.getId(), !thread.isBookmarked(), null, null));
                     thread.setBookmarked(!thread.isBookmarked());
                     adapter.notifyDataSetChanged();
-                    FastAlert.process(getActivity(), getView(), getString(R.string.bookmarking_thread_started));
+                    FastAlert.process(getActivity(), getView(), getSafeString(R.string.bookmarking_thread_started));
                     return true;
                 }
             });
@@ -196,7 +194,7 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
 
     private void updateForumTitle() {
         if(forumId == Constants.BOOKMARK_FORUMID){
-            forumTitle = new SpannedString(getString(R.string.bookmark_title));
+            forumTitle = new SpannedString(getSafeString(R.string.bookmark_title));
             setTitle(forumTitle);
         }else{
             new FastQueryTask<ForumItem>(SomeDatabase.getDatabase(), new FastQueryTask.QueryResultCallback<ForumItem>() {

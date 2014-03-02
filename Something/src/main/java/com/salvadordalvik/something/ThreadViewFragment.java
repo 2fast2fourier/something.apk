@@ -437,8 +437,8 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
 
     private void updateHeader(){
         if(headerTransformer != null){
-            headerTransformer.setPullFromBottomText(getString(page < maxPage ? R.string.pull_bottom_nextpage : R.string.pull_to_refresh_pull_label));
-            headerTransformer.setPullFromBottomReleaseText(getString(page < maxPage ? R.string.pull_bottom_release_nexpage : R.string.pull_to_refresh_release_label));
+            headerTransformer.setPullFromBottomText(getSafeString(page < maxPage ? R.string.pull_bottom_nextpage : R.string.pull_to_refresh_pull_label));
+            headerTransformer.setPullFromBottomReleaseText(getSafeString(page < maxPage ? R.string.pull_bottom_release_nexpage : R.string.pull_to_refresh_release_label));
         }
     }
 
@@ -475,17 +475,17 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        FastAlert.process(getActivity(), getView(), getString(R.string.mark_last_read_started));
+                        FastAlert.process(getActivity(), getView(), getSafeString(R.string.mark_last_read_started));
                         queueRequest(new MarkLastReadRequest(threadId, index, new Response.Listener<ThreadPageRequest.ThreadPage>() {
                             @Override
                             public void onResponse(ThreadPageRequest.ThreadPage response) {
-                                FastAlert.notice(getActivity(), getView(), getString(R.string.mark_last_read_success));
+                                FastAlert.notice(getActivity(), getView(), getSafeString(R.string.mark_last_read_success));
                                 pageListener.onResponse(response);
                             }
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                FastAlert.error(getActivity(), getView(), getString(R.string.mark_last_read_failure));
+                                FastAlert.error(getActivity(), getView(), getSafeString(R.string.mark_last_read_failure));
                             }
                         }
                         ));
