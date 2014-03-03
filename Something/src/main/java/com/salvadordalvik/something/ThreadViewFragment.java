@@ -53,7 +53,7 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnPullFromBottomList
 /**
  * Created by matthewshepard on 1/19/14.
  */
-public class ThreadViewFragment extends FastFragment implements PageSelectDialogFragment.PageSelectable, View.OnClickListener, OnPullFromBottomListener {
+public class ThreadViewFragment extends FastFragment implements PageSelectDialogFragment.PageSelectable, View.OnClickListener {
     private WebView threadView;
 
     private int threadId, page, maxPage;
@@ -64,8 +64,6 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
     private ImageView navPrev, navNext;
     private TextView navPageBar;
     private boolean disableNavLoading = false;
-
-    private DefaultHeaderTransformer headerTransformer;
 
     public ThreadViewFragment() {
         super(R.layout.thread_pageview, R.menu.thread_view);
@@ -103,7 +101,16 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
 
     @Override
     protected void setupPullToRefresh(PullToRefreshLayout ptr) {
-        ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable().options(generatePullToRefreshOptions()).addPullFromBottomListener(this).listener(this).setup(ptr);
+        ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable().options(generatePullToRefreshOptions()).listener(this).setup(ptr);
+    }
+
+    @Override
+    protected Options generatePullToRefreshOptions() {
+        return Options.create().scrollDistance(getScrollDistance()).build();
+    }
+
+    private float getScrollDistance(){
+        return Math.max(Math.min(FastUtils.calculateScrollDistance(getActivity(), 2.5f), 0.666f), 0.333f);
     }
 
     private void initWebview() {
@@ -214,7 +221,6 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         navPageBar.setText("Page "+page+"/"+maxPage);
         navNext.setImageResource(page < maxPage ? R.drawable.arrowright : R.drawable.ic_menu_load);
         navNext.setEnabled(!disableNavLoading || page == maxPage);
-        updateHeader();
     }
 
     @Override
@@ -423,32 +429,6 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
 
     private void displayPageSelect(){
         PageSelectDialogFragment.newInstance(page, maxPage, ThreadViewFragment.this).show(getFragmentManager(), "page_select");
-    }
-
-    @Override
-    protected Options generatePullToRefreshOptions() {
-        headerTransformer = new DefaultHeaderTransformer();
-        return Options.create().headerTransformer(headerTransformer).scrollDistance(getScrollDistance()).build();
-    }
-
-    private float getScrollDistance(){
-        return Math.max(Math.min(FastUtils.calculateScrollDistance(getActivity(), 2.5f), 0.666f), 0.333f);
-    }
-
-    private void updateHeader(){
-        if(headerTransformer != null){
-            headerTransformer.setPullFromBottomText(getSafeString(page < maxPage ? R.string.pull_bottom_nextpage : R.string.pull_to_refresh_pull_label));
-            headerTransformer.setPullFromBottomReleaseText(getSafeString(page < maxPage ? R.string.pull_bottom_release_nexpage : R.string.pull_to_refresh_release_label));
-        }
-    }
-
-    @Override
-    public void onPullFromBottom(View view) {
-        if(page < maxPage){
-            goToPage(page+1);
-        }else{
-            startRefresh();
-        }
     }
 
     public class SomeJavascriptInterface {

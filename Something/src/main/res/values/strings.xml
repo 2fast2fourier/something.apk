@@ -57,5 +57,6 @@
     <string name="menu_preferences">Preferences</string>
     <string name="preference_apply">Apply</string>
     <string name="menu_logout">Logout</string>
+    <string name="posting_failed_title">Posting Failed</string>
 
 </resources>

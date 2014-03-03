@@ -7,16 +7,17 @@ import android.widget.EditText;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.salvadordalvik.fastlibrary.FastFragment;
+import com.salvadordalvik.fastlibrary.alert.FastAlert;
 import com.salvadordalvik.something.request.ReplyDataRequest;
 
 /**
  * Created by matthewshepard on 2/10/14.
  */
 public class ReplyFragment extends FastFragment {
-    private enum REPLY_TYPE {REPLY, QUOTE, EDIT};
+    private enum REPLY_TYPE {REPLY, QUOTE, EDIT, PM_REPLY};
     private EditText replyContent;
 
-    private int threadId, postId;
+    private int threadId, postId, pmId;
     private REPLY_TYPE type;
 
     public ReplyFragment() {
@@ -43,6 +44,7 @@ public class ReplyFragment extends FastFragment {
     private Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError volleyError) {
+            FastAlert.error(ReplyFragment.this, R.string.posting_failed_title);
             //TODO display an aggressive retry/cancel screen
         }
     };

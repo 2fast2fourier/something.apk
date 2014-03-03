@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentActivity;
 /**
  * Created by matthewshepard on 2/10/14.
  */
-public class ReplyActivity extends FragmentActivity {
+public class ReplyActivity extends SomeActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
