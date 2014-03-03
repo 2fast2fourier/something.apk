@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="Something.Dark" parent="android:Theme.Holo">
         <item name="statusBarBackground">@color/actionbar_background_dark</item>
@@ -22,7 +22,7 @@
 
         <item name="actionbarBackgroundLayerList">@drawable/actionbar_background_dark</item>
 
-        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
     </style>
 
     <style name="ActionBar.Solid.Something_dark" parent="@android:style/Widget.Holo.ActionBar.Solid">

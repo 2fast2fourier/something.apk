@@ -17,7 +17,7 @@
      limitations under the License.
 -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="Something.Light" parent="android:Theme.Holo.Light.DarkActionBar">
         <!-- Actionbar color: #054D7C -->
@@ -42,7 +42,7 @@
 
         <item name="actionbarBackgroundLayerList">@drawable/actionbar_background_light</item>
 
-        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
     </style>
 
     <style name="ActionBar.Solid.Something_light" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
