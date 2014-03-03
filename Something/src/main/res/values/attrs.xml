@@ -12,6 +12,8 @@
 
     <attr name="listActivatedBackground" format="reference"/>
 
+    <attr name="actionbarBackgroundLayerList" format="reference"/>
+
     <!-- icons -->
     <attr name="inlineBookmarkIcon" format="reference"/>
     <attr name="inlineStarIcon" format="reference"/>

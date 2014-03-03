@@ -20,13 +20,15 @@
 
         <item name="android:actionBarStyle">@style/ActionBar.Solid.Something_dark</item>
 
+        <item name="actionbarBackgroundLayerList">@drawable/actionbar_background_dark</item>
+
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="ActionBar.Solid.Something_dark" parent="@android:style/Widget.Holo.ActionBar.Solid">
-        <item name="android:background">@drawable/actionbar_background_dark</item>
-        <item name="android:backgroundStacked">@drawable/actionbar_background_dark</item>
-        <item name="android:backgroundSplit">@drawable/actionbar_background_dark</item>
+        <item name="android:background">?actionbarBackgroundLayerList</item>
+        <item name="android:backgroundStacked">?actionbarBackgroundLayerList</item>
+        <item name="android:backgroundSplit">?actionbarBackgroundLayerList</item>
     </style>
 
     <style name="Something.YOSPOS" parent="Something.Dark">
@@ -34,6 +36,10 @@
     </style>
 
     <style name="Something.AmberPOS" parent="Something.Dark">
+
+    </style>
+
+    <style name="Something.FYAD" parent="Something.Light">
 
     </style>
 

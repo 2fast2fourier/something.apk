@@ -117,6 +117,9 @@ public class SomePreferences {
         if("amberpos".equalsIgnoreCase(sysTheme)){
             return R.style.Something_AmberPOS;
         }
+        if("fyad".equalsIgnoreCase(sysTheme)){
+            return R.style.Something_FYAD;
+        }
         return R.style.Something_Light;
     }
 }

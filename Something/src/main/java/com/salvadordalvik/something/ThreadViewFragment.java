@@ -39,6 +39,7 @@ import com.salvadordalvik.something.request.MarkLastReadRequest;
 import com.salvadordalvik.something.request.ThreadPageRequest;
 import com.salvadordalvik.something.util.Constants;
 import com.salvadordalvik.something.util.SomePreferences;
+import com.salvadordalvik.something.util.SomeTheme;
 import com.salvadordalvik.something.widget.PageSelectDialogFragment;
 
 import java.util.regex.Matcher;
@@ -56,7 +57,7 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnPullFromBottomList
 public class ThreadViewFragment extends FastFragment implements PageSelectDialogFragment.PageSelectable, View.OnClickListener {
     private WebView threadView;
 
-    private int threadId, page, maxPage;
+    private int threadId, page, maxPage, forumId;
     private CharSequence threadTitle;
     private String pageHtml, rawThreadTitle;
     private boolean bookmarked;
@@ -180,6 +181,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         if(((MainActivity)getActivity()).isFragmentFocused(this)){
             threadView.onResume();
             threadView.resumeTimers();
+            updateActionbarColor(forumId);
         }
     }
 
@@ -194,6 +196,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         if(isResumed()){
             threadView.onResume();
             threadView.resumeTimers();
+            updateActionbarColor(forumId);
         }
     }
 
@@ -300,6 +303,8 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
             setTitle(threadTitle);
             updateNavbar();
             invalidateOptionsMenu();
+            forumId = response.forumId;
+            updateActionbarColor(response.forumId);
         }
     };
 
@@ -315,6 +320,7 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         this.threadId = threadId;
         this.page = page;
         this.maxPage = 0;
+        this.forumId = 0;
         this.bookmarked = false;
         this.threadTitle = new SpannedString(getString(R.string.thread_view_loading));
         setTitle(threadTitle);
@@ -483,5 +489,17 @@ public class ThreadViewFragment extends FastFragment implements PageSelectDialog
         if(act instanceof MainActivity){
             ((MainActivity)act).setTitle(title, this);
         }
+    }
+
+    protected void updateActionbarColor(int forumId){
+        Activity act = getActivity();
+        if(forumId > 0 && act instanceof SomeActivity){
+            SomeActivity sact = (SomeActivity) act;
+            sact.setActionbarColor(SomeTheme.getActionbarColorForForum(forumId, sact.getActionbarDefaultColor()));
+        }
+    }
+
+    public int getForumId() {
+        return forumId;
     }
 }

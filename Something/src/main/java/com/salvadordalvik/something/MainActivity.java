@@ -2,6 +2,7 @@ package com.salvadordalvik.something;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,19 +10,26 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.Window;
 
 import com.bugsense.trace.BugSenseHandler;
+import com.jeremyfeinstein.slidingmenu.lib.CustomViewAbove;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.salvadordalvik.something.util.SomePreferences;
+import com.salvadordalvik.something.util.SomeTheme;
 
-public class MainActivity extends SomeActivity implements SlidingMenu.OnOpenedListener, SlidingMenu.OnClosedListener {
+public class MainActivity extends SomeActivity implements SlidingMenu.OnOpenedListener, SlidingMenu.OnClosedListener, CustomViewAbove.OnPageChangeListener {
     private SlidingMenu slidingMenu;
 
     private ThreadListFragment threadList;
     private ThreadViewFragment threadView;
     private ForumListFragment forumList;
+
+    private int[] startColor = new int[3], endColor = new int[3];
+    private float[] currentColor = new float[3];
+    private boolean sliderSettled = true, interpActionbarColor = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +59,7 @@ public class MainActivity extends SomeActivity implements SlidingMenu.OnOpenedLi
         slidingMenu.setMenu(R.layout.ptr_generic_container);
         slidingMenu.setOnClosedListener(this);
         slidingMenu.setOnOpenedListener(this);
+        slidingMenu.setOnPageChangeListener(this);
         slidingMenu.setMode(SlidingMenu.LEFT);
         slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
         updateSlidingMenuOffset();
@@ -152,6 +161,9 @@ public class MainActivity extends SomeActivity implements SlidingMenu.OnOpenedLi
             threadList.setMenuVisibility(false);
             threadList.onPaneObscured();
         }
+
+        interpActionbarColor = false;
+        sliderSettled = true;
     }
 
     @Override
@@ -168,6 +180,10 @@ public class MainActivity extends SomeActivity implements SlidingMenu.OnOpenedLi
             threadView.onPaneObscured();
             threadView.setMenuVisibility(false);
         }
+        setActionbarColorToDefault();
+
+        interpActionbarColor = false;
+        sliderSettled = true;
     }
 
     public void showThread(int id) {
@@ -221,5 +237,42 @@ public class MainActivity extends SomeActivity implements SlidingMenu.OnOpenedLi
         }else{
             return fragment == threadView;
         }
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        if(sliderSettled && threadView != null){
+            int start, end;
+            start = SomeTheme.getActionbarColorForForum(threadView.getForumId(), getActionbarDefaultColor());
+            end = getActionbarDefaultColor();
+            colorToRGB(start, startColor);
+            colorToRGB(end, endColor);
+            interpActionbarColor = start != end;
+            sliderSettled = false;
+        }
+        if(interpActionbarColor){
+            setActionbarColor(interpColor(startColor, endColor, currentColor, clampSlider(positionOffset)));
+        }
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+    }
+
+    private static int interpColor(int[] start, int[] end, float[] current, float percent){
+        current[0] = start[0]+((end[0]-start[0])*percent);
+        current[1] = start[1]+((end[1]-start[1])*percent);
+        current[2] = start[2]+((end[2]-start[2])*percent);
+        return Color.rgb((int) current[0], (int) current[1], (int) current[2]);
+    }
+
+    private static float clampSlider(float position){
+        return Math.min(Math.abs(position * 2f), 1f);
+    }
+      
+    private static void colorToRGB(int color, int[] rgb){
+        rgb[0] = Color.red(color);
+        rgb[1] = Color.green(color);
+        rgb[2] = Color.blue(color);
     }
 }

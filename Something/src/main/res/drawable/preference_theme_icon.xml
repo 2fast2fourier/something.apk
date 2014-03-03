@@ -12,4 +12,7 @@
         android:topRightRadius="4dp"/>
     <size android:height="@dimen/preference_theme_size"
         android:width="@dimen/preference_theme_size" />
+
+    <stroke android:color="@color/theme_unchecked"
+        android:width="@dimen/preference_theme_selected_line" />
 </shape>

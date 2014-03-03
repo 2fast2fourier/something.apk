@@ -9,6 +9,7 @@ import com.salvadordalvik.something.data.SomeDatabase;
 import com.salvadordalvik.something.util.MustCache;
 import com.salvadordalvik.something.util.OkHttpStack;
 import com.salvadordalvik.something.util.SomePreferences;
+import com.salvadordalvik.something.util.SomeTheme;
 
 import java.io.IOException;
 import java.net.CookieHandler;
@@ -34,5 +35,6 @@ public class SomeApplication extends Application {
         SomePreferences.init(this);
         MustCache.init(this);
         CookieSyncManager.createInstance(this);
+        SomeTheme.init(this);
     }
 }

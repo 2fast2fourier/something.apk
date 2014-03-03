@@ -6,4 +6,5 @@
     <color name="activated_background_disabled">#00000000</color>
     <color name="actionbar_background_light">#054D7C</color>
     <color name="actionbar_background_dark">#222222</color>
+    <color name="theme_unchecked">#888888</color>
 </resources>
