@@ -1,8 +1,10 @@
 <resources>
 
     <style name="Something.Dark" parent="android:Theme.Holo">
+        <item name="statusBarBackground">@color/actionbar_background_dark</item>
+        <item name="primaryBackground">#000000</item>
         <item name="listBackground">#3E4147</item>
-        <item name="footerBackground">#3E4147</item>
+        <item name="footerBackground">#2D2F33</item>
         <item name="listPageDividerBackground">#2D2F33</item>
         <item name="listHeaderTextColor">#FFFFFF</item>
         <item name="listSubTextColor">#999999</item>
@@ -15,6 +17,16 @@
         <item name="inlineStarIcon">@drawable/inline_menu_bookmark</item>
         <item name="inlineEmptyStarIcon">@drawable/inline_menu_unbookmark</item>
         <item name="inlineFolderIcon">@drawable/ic_action_collection</item>
+
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Something_dark</item>
+
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
+    <style name="ActionBar.Solid.Something_dark" parent="@android:style/Widget.Holo.ActionBar.Solid">
+        <item name="android:background">@drawable/actionbar_background_dark</item>
+        <item name="android:backgroundStacked">@drawable/actionbar_background_dark</item>
+        <item name="android:backgroundSplit">@drawable/actionbar_background_dark</item>
     </style>
 
     <style name="Something.YOSPOS" parent="Something.Dark">

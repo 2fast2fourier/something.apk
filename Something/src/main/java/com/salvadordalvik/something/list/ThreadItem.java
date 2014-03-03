@@ -80,9 +80,9 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         }
         holder.unread.setAlpha(unread > 0 ? 1.0f : 0.5f);
         if(unread >= 0){
-            holder.subtext.setText(" "+(replies/40+1)+" - Killed: "+lastPost);
+            holder.subtext.setText(" "+(replies/40+1)+" - Killed By: "+lastPost);
         }else{
-            holder.subtext.setText(" "+(replies/40+1)+" - Author: "+author);
+            holder.subtext.setText(" "+(replies/40+1)+" - OP: "+author);
         }
         if(!TextUtils.isEmpty(tagUrl)){
             holder.tagImage.setImageUrl(tagUrl, FastVolley.getImageLoader());

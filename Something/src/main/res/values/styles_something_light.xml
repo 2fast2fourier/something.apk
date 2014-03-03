@@ -21,13 +21,15 @@
 
     <style name="Something.Light" parent="android:Theme.Holo.Light.DarkActionBar">
         <!-- Actionbar color: #054D7C -->
-        <item name="listBackground">#DDDDDD</item>
+        <item name="statusBarBackground">@color/actionbar_background_light</item>
+        <item name="primaryBackground">#EEEEEE</item>
+        <item name="listBackground">#EEEEEE</item>
         <item name="listPageDividerBackground">#515151</item>
         <item name="footerBackground">#515151</item>
         <item name="listHeaderTextColor">#000000</item>
         <item name="listSubTextColor">#444444</item>
         <item name="listDividerColor">#808080</item>
-        <item name="webviewBackgroundColor">#EEEEEE</item>
+        <item name="webviewBackgroundColor">#DDDDDD</item>
 
         <item name="listActivatedBackground">@drawable/activated_background_light</item>
 
@@ -37,12 +39,14 @@
         <item name="inlineFolderIcon">@drawable/ic_action_collection_light</item>
 
         <item name="android:actionBarStyle">@style/ActionBar.Solid.Something_light</item>
+
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="ActionBar.Solid.Something_light" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@drawable/ab_solid_something_light</item>
-        <item name="android:backgroundStacked">@drawable/ab_stacked_solid_something_light</item>
-        <item name="android:backgroundSplit">@drawable/ab_bottom_solid_something_light</item>
+        <item name="android:background">@drawable/actionbar_background_light</item>
+        <item name="android:backgroundStacked">@drawable/actionbar_background_light</item>
+        <item name="android:backgroundSplit">@drawable/actionbar_background_light</item>
     </style>
 
 </resources>

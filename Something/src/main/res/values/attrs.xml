@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <attr name="statusBarBackground" format="color|reference"/>
+    <attr name="primaryBackground" format="color|reference"/>
     <attr name="listBackground" format="color|reference"/>
     <attr name="footerBackground" format="color|reference"/>
     <attr name="listPageDividerBackground" format="color|reference"/>

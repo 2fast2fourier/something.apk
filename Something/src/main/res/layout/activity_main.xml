@@ -4,12 +4,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/list_container"
-        tools:context=".MainActivity"
-    android:background="?attr/listBackground">
+        tools:context=".MainActivity">
     <fragment
         android:id="@+id/threadview_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:name="com.salvadordalvik.something.ThreadViewFragment"
-        tools:layout="@layout/ptr_generic_listview" />
+        tools:layout="@layout/thread_pageview" />
 </RelativeLayout>

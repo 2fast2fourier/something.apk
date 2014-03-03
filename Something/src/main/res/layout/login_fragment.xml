@@ -1,29 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/login_title"
-        android:id="@+id/login_title"
-        android:textSize="24sp"
-        android:padding="8dp"
-        android:textColor="?listHeaderTextColor"
-        android:layout_marginLeft="14dp" />
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?primaryBackground">
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/login_username"
-        android:layout_below="@+id/login_title"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
+        android:layout_margin="12dp"
         android:hint="@string/login_user_hint"
         android:nextFocusDown="@+id/login_password"
         android:imeOptions="actionNext"
-        android:inputType="textVisiblePassword" />
+        android:inputType="textVisiblePassword"
+        android:typeface="monospace" />
 
     <EditText
         android:layout_width="match_parent"
@@ -33,9 +24,9 @@
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
         android:hint="@string/login_pass_hint"
-        android:layout_marginTop="12dp"
         android:imeOptions="actionDone"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:typeface="monospace" />
 
     <Button
         android:layout_width="wrap_content"
