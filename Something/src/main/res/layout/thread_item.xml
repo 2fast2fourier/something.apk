@@ -2,9 +2,9 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:paddingLeft="12dp"
-    android:paddingTop="12dp"
-    android:paddingBottom="12dp"
+    android:paddingLeft="10dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
     android:paddingRight="8dp">
 
     <TextView
@@ -17,26 +17,32 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="2dp"
         android:textColor="?attr/listHeaderTextColor" />
-    <com.android.volley.toolbox.NetworkImageView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/thread_item_tagimg"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:layout_marginRight="4dp"
-        android:layout_alignTop="@+id/thread_item_subtext"
-        android:layout_alignBottom="@+id/thread_item_subtext"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Thread Subtext"
-        android:id="@+id/thread_item_subtext"
         android:layout_below="@+id/thread_item_title"
-        android:textSize="12sp"
-        android:textColor="?attr/listSubTextColor"
-        android:drawableLeft="@drawable/pages"
-        android:layout_marginLeft="2dp"
-        android:layout_toRightOf="@id/thread_item_tagimg"/>
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/thread_item_unread"
+        android:layout_marginRight="4dp"
+        android:orientation="horizontal">
+        <com.android.volley.toolbox.NetworkImageView
+            android:layout_width="@dimen/thread_tag_width"
+            android:layout_height="@dimen/thread_tag_height"
+            android:id="@+id/thread_item_tagimg"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center_vertical"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thread Subtext"
+            android:id="@+id/thread_item_subtext"
+            android:textSize="12sp"
+            android:layout_gravity="center_vertical"
+            android:textColor="?attr/listSubTextColor"
+            android:drawableLeft="@drawable/pages"
+            android:layout_marginLeft="8dp"/>
+        </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
