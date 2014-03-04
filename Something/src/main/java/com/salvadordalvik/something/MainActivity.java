@@ -1,27 +1,25 @@
 package com.salvadordalvik.something;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 
 import com.bugsense.trace.BugSenseHandler;
-import com.jeremyfeinstein.slidingmenu.lib.CustomViewAbove;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.salvadordalvik.something.util.SomePreferences;
 import com.salvadordalvik.something.util.SomeTheme;
 
-public class MainActivity extends SomeActivity implements SlidingMenu.OnOpenedListener, SlidingMenu.OnClosedListener, CustomViewAbove.OnPageChangeListener {
-    private SlidingMenu slidingMenu;
+public class MainActivity extends SomeActivity implements DrawerLayout.DrawerListener {
+    private DrawerLayout slidingMenu;
 
     private ThreadListFragment threadList;
     private ThreadViewFragment threadView;
@@ -37,6 +35,8 @@ public class MainActivity extends SomeActivity implements SlidingMenu.OnOpenedLi
         BugSenseHandler.initAndStartSession(this, "cd75dfa8");
         requestWindowFeature(Window.FEATURE_PROGRESS);
         setContentView(R.layout.activity_main);
+        slidingMenu = (DrawerLayout) findViewById(R.id.main_drawer);
+        slidingMenu.setFocusableInTouchMode(false);
         configureSlidingMenu();
         setProgressBarVisibility(false);
         threadView = (ThreadViewFragment) getSupportFragmentManager().findFragmentById(R.id.threadview_fragment);
@@ -45,7 +45,7 @@ public class MainActivity extends SomeActivity implements SlidingMenu.OnOpenedLi
             threadList = (ThreadListFragment) threads;
         }else{
             threadList = new ThreadListFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.ptr_container, threadList, "thread_list").commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.drawer_container, threadList, "thread_list").commit();
         }
 
         if(!SomePreferences.loggedIn){
@@ -55,25 +55,12 @@ public class MainActivity extends SomeActivity implements SlidingMenu.OnOpenedLi
     }
 
     private void configureSlidingMenu(){
-        slidingMenu = new SlidingMenu(this, SlidingMenu.SLIDING_CONTENT);
-        slidingMenu.setMenu(R.layout.ptr_generic_container);
-        slidingMenu.setOnClosedListener(this);
-        slidingMenu.setOnOpenedListener(this);
-        slidingMenu.setOnPageChangeListener(this);
-        slidingMenu.setMode(SlidingMenu.LEFT);
-        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
-        updateSlidingMenuOffset();
-        slidingMenu.showMenu();
+        slidingMenu.setDrawerListener(this);
+        slidingMenu.openDrawer(Gravity.LEFT);
     }
 
-    private void updateSlidingMenuOffset(){
-        DisplayMetrics met = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(met);
-        if(met.widthPixels < getResources().getDimension(R.dimen.nav_list_width_cutoff)){
-            slidingMenu.setBehindOffsetRes(R.dimen.nav_list_offset);
-        }else{
-            slidingMenu.setBehindWidthRes(R.dimen.nav_list_width);
-        }
+    private boolean isMenuShowing(){
+        return slidingMenu.isDrawerOpen(Gravity.LEFT);
     }
 
     @Override
@@ -85,7 +72,7 @@ public class MainActivity extends SomeActivity implements SlidingMenu.OnOpenedLi
     @Override
     protected void onResume() {
         super.onResume();
-        if(slidingMenu.isMenuShowing()){
+        if(isMenuShowing()){
             threadList.setMenuVisibility(true);
             threadView.setMenuVisibility(false);
             if(forumList != null){
@@ -104,7 +91,10 @@ public class MainActivity extends SomeActivity implements SlidingMenu.OnOpenedLi
                 setTitle(title);
             }
         }
-        slidingMenu.setSlidingEnabled(threadView.hasThreadLoaded());
+        slidingMenu.setDrawerLockMode(
+                threadView.hasThreadLoaded() ? DrawerLayout.LOCK_MODE_UNLOCKED : DrawerLayout.LOCK_MODE_LOCKED_OPEN,
+                Gravity.LEFT
+        );
     }
 
     @Override
@@ -122,13 +112,13 @@ public class MainActivity extends SomeActivity implements SlidingMenu.OnOpenedLi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                if(slidingMenu.isMenuShowing()){
+                if(isMenuShowing()){
                     if(getSupportFragmentManager().getBackStackEntryCount() > 0){
                         getSupportFragmentManager().popBackStack();
                         return true;
                     }
                 }else{
-                    slidingMenu.showMenu();
+                    slidingMenu.openDrawer(Gravity.LEFT);
                     return true;
                 }
         }
@@ -137,8 +127,8 @@ public class MainActivity extends SomeActivity implements SlidingMenu.OnOpenedLi
 
     @Override
     public void onBackPressed() {
-        if(!slidingMenu.isMenuShowing()){
-            slidingMenu.showMenu();
+        if(!isMenuShowing()){
+            slidingMenu.openDrawer(Gravity.LEFT);
         }else if(getSupportFragmentManager().getBackStackEntryCount() > 0){
             getSupportFragmentManager().popBackStack();
             forumList = null;
@@ -147,27 +137,84 @@ public class MainActivity extends SomeActivity implements SlidingMenu.OnOpenedLi
         }
     }
 
-    @Override
-    public void onClosed() {
-        if(threadView != null){
-            CharSequence title = threadView.getTitle();
-            if(title != null && title.length() > 0){
-                setTitle(title);
-            }
-            threadView.onPaneRevealed();
-            threadView.setMenuVisibility(true);
-        }
-        if(threadList != null){
-            threadList.setMenuVisibility(false);
-            threadList.onPaneObscured();
-        }
+    public void showThread(int id) {
+        showThread(id, 0);
+    }
 
-        interpActionbarColor = false;
-        sliderSettled = true;
+    public void showThread(int id, int page) {
+        slidingMenu.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
+        slidingMenu.closeDrawer(Gravity.LEFT);
+        threadView.loadThread(id, page);
+    }
+
+    public void showForum(int id) {
+        slidingMenu.openDrawer(Gravity.LEFT);
+        FragmentManager fragMan = getSupportFragmentManager();
+        if(fragMan.getBackStackEntryCount() > 0){
+            fragMan.popBackStackImmediate();
+            forumList = null;
+        }
+        threadList.showForum(id);
+    }
+
+    public void showForumList(int currentForumId){
+        FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+        forumList = ForumListFragment.newInstance(currentForumId);
+        trans.replace(R.id.drawer_container, forumList, "forum_list");
+        trans.addToBackStack("open_forum_list");
+        trans.commit();
+    }
+
+    public void onThreadPageLoaded(int threadId) {
+        slidingMenu.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
+        threadList.onThreadPageLoaded(threadId);
+    }
+
+    public void setTitle(CharSequence title, Fragment requestor){
+        if(!TextUtils.isEmpty(title) && isFragmentFocused(requestor)){
+            setTitle(title);
+        }
+    }
+
+    public boolean isFragmentFocused(Fragment fragment){
+        if(slidingMenu != null && isMenuShowing()){
+            return forumList == fragment || (forumList == null && fragment == threadList);
+        }else{
+            return fragment == threadView;
+        }
+    }
+
+    private static int interpColor(int[] start, int[] end, float[] current, float percent){
+        current[0] = start[0]+((end[0]-start[0])*percent);
+        current[1] = start[1]+((end[1]-start[1])*percent);
+        current[2] = start[2]+((end[2]-start[2])*percent);
+        return Color.rgb((int) current[0], (int) current[1], (int) current[2]);
+    }
+      
+    private static void colorToRGB(int color, int[] rgb){
+        rgb[0] = Color.red(color);
+        rgb[1] = Color.green(color);
+        rgb[2] = Color.blue(color);
     }
 
     @Override
-    public void onOpened() {
+    public void onDrawerSlide(View drawerView, float slideOffset) {
+        if(sliderSettled && threadView != null){
+            int start, end;
+            start = SomeTheme.getActionbarColorForForum(threadView.getForumId(), getActionbarDefaultColor());
+            end = getActionbarDefaultColor();
+            colorToRGB(start, startColor);
+            colorToRGB(end, endColor);
+            interpActionbarColor = start != end;
+            sliderSettled = false;
+        }
+        if(interpActionbarColor){
+            setActionbarColor(interpColor(startColor, endColor, currentColor, slideOffset));
+        }
+    }
+
+    @Override
+    public void onDrawerOpened(View drawerView) {
         if(threadList != null){
             Spanned title = threadList.getTitle();
             if(title != null && title.length() > 0){
@@ -186,93 +233,27 @@ public class MainActivity extends SomeActivity implements SlidingMenu.OnOpenedLi
         sliderSettled = true;
     }
 
-    public void showThread(int id) {
-        showThread(id, 0);
-    }
-
-    public void showThread(int id, int page) {
-        slidingMenu.setSlidingEnabled(true);
-        slidingMenu.showContent();
-        threadView.loadThread(id, page);
-    }
-
-    public void showForum(int id) {
-        slidingMenu.showMenu();
-        FragmentManager fragMan = getSupportFragmentManager();
-        if(fragMan.getBackStackEntryCount() > 0){
-            fragMan.popBackStackImmediate();
-            forumList = null;
+    @Override
+    public void onDrawerClosed(View drawerView) {
+        if(threadView != null){
+            CharSequence title = threadView.getTitle();
+            if(title != null && title.length() > 0){
+                setTitle(title);
+            }
+            threadView.onPaneRevealed();
+            threadView.setMenuVisibility(true);
         }
-        threadList.showForum(id);
-    }
+        if(threadList != null){
+            threadList.setMenuVisibility(false);
+            threadList.onPaneObscured();
+        }
 
-    public void showForumList(int currentForumId){
-        FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
-        forumList = ForumListFragment.newInstance(currentForumId);
-        trans.replace(R.id.ptr_container, forumList, "forum_list");
-        trans.addToBackStack("open_forum_list");
-        trans.commit();
-    }
-
-    public void onThreadPageLoaded(int threadId) {
-        slidingMenu.setSlidingEnabled(true);
-        threadList.onThreadPageLoaded(threadId);
+        interpActionbarColor = false;
+        sliderSettled = true;
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        updateSlidingMenuOffset();
-    }
+    public void onDrawerStateChanged(int newState) {
 
-    public void setTitle(CharSequence title, Fragment requestor){
-        if(!TextUtils.isEmpty(title) && isFragmentFocused(requestor)){
-            setTitle(title);
-        }
-    }
-
-    public boolean isFragmentFocused(Fragment fragment){
-        if(slidingMenu != null && slidingMenu.isMenuShowing()){
-            return forumList == fragment || (forumList == null && fragment == threadList);
-        }else{
-            return fragment == threadView;
-        }
-    }
-
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        if(sliderSettled && threadView != null){
-            int start, end;
-            start = SomeTheme.getActionbarColorForForum(threadView.getForumId(), getActionbarDefaultColor());
-            end = getActionbarDefaultColor();
-            colorToRGB(start, startColor);
-            colorToRGB(end, endColor);
-            interpActionbarColor = start != end;
-            sliderSettled = false;
-        }
-        if(interpActionbarColor){
-            setActionbarColor(interpColor(startColor, endColor, currentColor, clampSlider(positionOffset)));
-        }
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-    }
-
-    private static int interpColor(int[] start, int[] end, float[] current, float percent){
-        current[0] = start[0]+((end[0]-start[0])*percent);
-        current[1] = start[1]+((end[1]-start[1])*percent);
-        current[2] = start[2]+((end[2]-start[2])*percent);
-        return Color.rgb((int) current[0], (int) current[1], (int) current[2]);
-    }
-
-    private static float clampSlider(float position){
-        return Math.min(Math.abs(position * 2f), 1f);
-    }
-      
-    private static void colorToRGB(int color, int[] rgb){
-        rgb[0] = Color.red(color);
-        rgb[1] = Color.green(color);
-        rgb[2] = Color.blue(color);
     }
 }
