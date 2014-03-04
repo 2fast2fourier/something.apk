@@ -1,17 +1,16 @@
 package com.salvadordalvik.something;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.MenuItem;
-
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import android.view.View;
 
 /**
  * Created by matthewshepard on 2/7/14.
  */
-public class PrivateMessageListActivity extends SomeActivity implements SlidingMenu.OnClosedListener, SlidingMenu.OnOpenedListener {
-    private SlidingMenu slidingMenu;
+public class PrivateMessageListActivity extends SomeActivity implements DrawerLayout.DrawerListener {
+    private DrawerLayout slidingMenu;
     private PrivateMessageListFragment listFragment;
     private PrivateMessageFragment messageFragment;
 
@@ -19,71 +18,79 @@ public class PrivateMessageListActivity extends SomeActivity implements SlidingM
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.private_message_activity);
+        slidingMenu = (DrawerLayout) findViewById(R.id.main_drawer);
         configureSlidingMenu();
         listFragment = (PrivateMessageListFragment) getSupportFragmentManager().findFragmentById(R.id.pm_list_fragment);
         messageFragment = (PrivateMessageFragment) getSupportFragmentManager().findFragmentById(R.id.pm_fragment);
     }
 
     private void configureSlidingMenu(){
-        slidingMenu = new SlidingMenu(this, SlidingMenu.SLIDING_CONTENT);
-        slidingMenu.setMenu(R.layout.pm_list_activity);
-        slidingMenu.setOnClosedListener(this);
-        slidingMenu.setOnOpenedListener(this);
-        slidingMenu.setMode(SlidingMenu.LEFT);
-        updateSlidingMenuOffset();
-        slidingMenu.showMenu();
+        slidingMenu.setFocusableInTouchMode(false);
+        slidingMenu.setDrawerListener(this);
+        slidingMenu.openDrawer(Gravity.LEFT);
     }
 
-    private void updateSlidingMenuOffset(){
-        DisplayMetrics met = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(met);
-        if(met.widthPixels < getResources().getDimension(R.dimen.pm_list_width_cutoff)){
-            slidingMenu.setBehindOffsetRes(R.dimen.pm_list_offset);
-        }else{
-            slidingMenu.setBehindWidthRes(R.dimen.pm_list_width);
-        }
+    private boolean isMenuShowing(){
+        return slidingMenu.isDrawerOpen(Gravity.LEFT);
     }
 
     @Override
     public void onBackPressed() {
-        if(slidingMenu.isMenuShowing()){
+        if(isMenuShowing()){
             super.onBackPressed();
         }else{
-            slidingMenu.showMenu();
+            slidingMenu.openDrawer(Gravity.LEFT);
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(slidingMenu.isMenuShowing()){
+        if(isMenuShowing()){
             listFragment.setMenuVisibility(true);
             messageFragment.setMenuVisibility(false);
         }else{
             listFragment.setMenuVisibility(false);
             messageFragment.setMenuVisibility(true);
         }
-        slidingMenu.setSlidingEnabled(messageFragment.hasPMLoaded());
+        slidingMenu.setDrawerLockMode(messageFragment.hasPMLoaded() ? DrawerLayout.LOCK_MODE_UNLOCKED : DrawerLayout.LOCK_MODE_LOCKED_OPEN, Gravity.LEFT);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                slidingMenu.showMenu();
+                slidingMenu.openDrawer(Gravity.LEFT);
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        updateSlidingMenuOffset();
+    public void showPM(int id, String title) {
+        messageFragment.showPM(id, title);
+        slidingMenu.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
+        slidingMenu.closeDrawer(Gravity.LEFT);
     }
 
     @Override
-    public void onClosed() {
+    public void onDrawerSlide(View drawerView, float slideOffset) {
+
+    }
+
+    @Override
+    public void onDrawerOpened(View drawerView) {
+        if(listFragment != null){
+            listFragment.setMenuVisibility(true);
+            listFragment.onPaneRevealed();
+        }
+        if(messageFragment != null){
+            messageFragment.onPaneObscured();
+            messageFragment.setMenuVisibility(false);
+        }
+    }
+
+    @Override
+    public void onDrawerClosed(View drawerView) {
         if(messageFragment != null){
             messageFragment.onPaneRevealed();
             messageFragment.setMenuVisibility(true);
@@ -95,20 +102,7 @@ public class PrivateMessageListActivity extends SomeActivity implements SlidingM
     }
 
     @Override
-    public void onOpened() {
-        if(listFragment != null){
-            listFragment.setMenuVisibility(true);
-            listFragment.onPaneRevealed();
-        }
-        if(messageFragment != null){
-            messageFragment.onPaneObscured();
-            messageFragment.setMenuVisibility(false);
-        }
-    }
+    public void onDrawerStateChanged(int newState) {
 
-    public void showPM(int id, String title) {
-        messageFragment.showPM(id, title);
-        slidingMenu.setSlidingEnabled(true);
-        slidingMenu.showContent();
     }
 }

@@ -36,7 +36,7 @@ public class PrivateMessageFragment extends FastFragment implements Response.Err
     private String pmTitle;
 
     public PrivateMessageFragment() {
-        super(R.layout.ptr_generic_webview, R.menu.pm_reply);
+        super(R.layout.generic_webview, R.menu.pm_reply);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class PrivateMessageFragment extends FastFragment implements Response.Err
         pmId = intent.getIntExtra("pm_id", 0);
         pmTitle = intent.getStringExtra("pm_title");
 
-        webview = (WebView) frag.findViewById(R.id.ptr_webview);
+        webview = (WebView) frag.findViewById(R.id.webview);
         initWebview();
     }
 
