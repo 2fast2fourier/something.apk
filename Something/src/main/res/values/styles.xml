@@ -10,6 +10,7 @@
         <item name="listSubTextColor">#999999</item>
         <item name="listDividerColor">#808080</item>
         <item name="webviewBackgroundColor">#000000</item>
+        <item name="subforumBackground">#35383D</item>
 
         <item name="listActivatedBackground">@drawable/activated_background_dark</item>
 

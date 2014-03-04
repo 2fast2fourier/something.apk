@@ -5,15 +5,15 @@ systheme: light
 */
 
 .passive {
-color:#eae9ea;
+color:#eaeaea;
 }
 
 a {
-color:#00c0f4;
+color:#005C74;
 }
 
 body {
-background-color:#eae9ea;
+background-color:#eaeaea;
 font-family:Roboto, userselected, Verdana, Arial, sans-serif;
 }
 
@@ -57,14 +57,14 @@ max-height:100px;
 article {
 border-radius:.15em;
 background-color:#FFF;
-color:#363636;
+color:#222222;
 box-shadow:0 .15em 0 #dbdadb;
 margin:10px 5px;
 padding:15px;
 }
 
 article.read {
-background-color:#EDF2FF;
+background-color:#F2F2FF;
 }
 
 article.read div.postcontent {
@@ -143,7 +143,7 @@ font-size: 0.7em;
 }
 
 section.postcontent .bbc-spoiler{
-background: #828282;
+background: #222222;
 }
 
 section.postcontent .bbc-spoiler * {

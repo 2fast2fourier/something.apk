@@ -10,8 +10,7 @@
         android:layout_height="match_parent"
         android:id="@+id/main_drawer"
         tools:context=".MainActivity"
-        android:background="?primaryBackground"
-            >
+        android:background="?primaryBackground" >
         <fragment
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -44,7 +44,7 @@ public class ForumListFragment extends FastFragment implements FastQueryTask.Que
     public void viewCreated(View frag, Bundle savedInstanceState) {
         currentlySelectedForumId = getArguments().getInt("forum_id_hint", 0);
 
-        adapter = new FastAdapter(this, 1);
+        adapter = new FastAdapter(this, 3);
         forumList = (ListView) frag.findViewById(R.id.listview);
         forumList.setAdapter(adapter);
         forumList.setOnItemClickListener(adapter);

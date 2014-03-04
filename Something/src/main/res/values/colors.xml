@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="theme_checked">#aa0000</color>
-    <color name="activated_background_light">#22000000</color>
+    <color name="activated_background_light">#33000000</color>
     <color name="activated_background_dark">#22FFFFFF</color>
     <color name="activated_background_disabled">#00000000</color>
     <color name="actionbar_background_light">#054D7C</color>

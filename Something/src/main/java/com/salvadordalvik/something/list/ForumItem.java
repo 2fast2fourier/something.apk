@@ -25,14 +25,13 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
     public static final String[] DB_COLUMNS = {"forum_id", "forum_name", "parent_forum_id", "forum_starred"};
     private final Spanned title;
     private final int parentId;
-    private final boolean starred, indent, selected, showStar;
+    private final boolean starred, selected, showStar;
 
     public ForumItem(Cursor data, boolean indentSubforums, int[] columns, int selectedForumId) {
-        super(R.layout.forum_item, data.getInt(columns[0]), true);
+        super(data.getInt(columns[2]) > 0 && indentSubforums ? R.layout.subforum_item : R.layout.forum_item, data.getInt(columns[0]), true);
         this.title = Html.fromHtml(data.getString(columns[1]));
         this.parentId = data.getInt(columns[2]);
         this.starred = !data.isNull(columns[3]);
-        this.indent = indentSubforums;
         this.selected = id == selectedForumId;
         this.showStar = true;
     }
@@ -42,7 +41,6 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
         this.title = Html.fromHtml(title);
         this.parentId = parentId;
         this.starred = starred;
-        this.indent = indentSubforums;
         this.selected = id == selectedForumId;
         this.showStar = showStar;
     }
@@ -56,11 +54,6 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
     public void updateViewFromHolder(View view, ForumHolder holder) {
         holder.forumId = getId();
         holder.title.setText(title);
-        if(parentId > 0 && indent){
-            holder.indent.setVisibility(View.VISIBLE);
-        }else{
-            holder.indent.setVisibility(View.GONE);
-        }
         if(showStar){
             TypedValue star = new TypedValue();
             if(view.getContext().getTheme().resolveAttribute(starred ? R.attr.inlineStarIcon : R.attr.inlineEmptyStarIcon, star, false)){
@@ -89,11 +82,10 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
 
     protected static class ForumHolder implements View.OnClickListener {
         public TextView title;
-        public ImageView indent, star;
+        public ImageView star;
         public int forumId = 0;
         private ForumHolder(View view){
             title = (TextView) view.findViewById(R.id.forum_item_title);
-            indent = (ImageView) view.findViewById(R.id.forum_item_indent);
             star = (ImageView) view.findViewById(R.id.forum_item_star);
             star.setOnClickListener(this);
         }
