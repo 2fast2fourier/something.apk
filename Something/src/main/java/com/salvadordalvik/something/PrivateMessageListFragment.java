@@ -1,12 +1,12 @@
 package com.salvadordalvik.something;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.salvadordalvik.fastlibrary.FastFragment;
 import com.salvadordalvik.fastlibrary.alert.FastAlert;
 import com.salvadordalvik.fastlibrary.list.SectionFastAdapter;
 import com.salvadordalvik.something.request.PrivateMessageListRequest;
@@ -21,7 +21,7 @@ public class PrivateMessageListFragment extends SomeFragment implements Response
     private int folderId = 0;
 
     public PrivateMessageListFragment() {
-        super(R.layout.generic_listview);
+        super(R.layout.generic_listview, R.menu.pm_list);
     }
 
     @Override
@@ -65,5 +65,15 @@ public class PrivateMessageListFragment extends SomeFragment implements Response
 
     public void onPaneRevealed() {
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_refresh:
+                startRefresh();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

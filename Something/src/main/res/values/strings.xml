@@ -58,5 +58,7 @@
     <string name="preference_apply">Apply</string>
     <string name="menu_logout">Logout</string>
     <string name="posting_failed_title">Posting Failed</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="back_title">Back</string>
 
 </resources>
