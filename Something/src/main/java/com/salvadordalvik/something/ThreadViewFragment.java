@@ -448,7 +448,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         if(page < maxPage){
             goToPage(page+1);
         }else{
-            startRefresh();
+            startRefresh(false, true);
         }
     }
 

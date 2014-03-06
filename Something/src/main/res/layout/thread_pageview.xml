@@ -10,10 +10,10 @@
         android:layout_height="match_parent"
         android:id="@+id/ptr_webview"
         android:layout_above="@+id/threadview_navbar"
-        android:layout_marginBottom="48dp"/>
+        android:layout_marginBottom="?android:actionBarSize"/>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="?android:actionBarSize"
         android:orientation="horizontal"
         android:id="@+id/threadview_navbar"
         android:background="?attr/footerBackground"
@@ -42,8 +42,7 @@
             android:paddingLeft="16dp"
             android:minWidth="192dp"
             android:textSize="18sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold" />
+            android:textColor="#FFFFFF" />
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
