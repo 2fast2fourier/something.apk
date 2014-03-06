@@ -17,6 +17,7 @@
         <item name="progressBarColor">#BEBEBE</item>
 
         <item name="progressBarColorArray">@array/sbp_colors_dark</item>
+        <item name="ptrProgressBarColorArray">@array/sbp_colors_dark</item>
 
         <item name="listActivatedBackground">@drawable/activated_background_dark</item>
 

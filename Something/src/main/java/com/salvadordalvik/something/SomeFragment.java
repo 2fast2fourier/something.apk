@@ -39,6 +39,7 @@ public abstract class SomeFragment extends FastFragment {
         super.setRefreshAnimation(refreshing);
         if(progressBar != null){
             progressBar.setVisibility(refreshing ? View.VISIBLE : View.GONE);
+            progressBar.setSmoothProgressDrawableSpeed(1f);
         }
     }
 
@@ -62,8 +63,7 @@ public abstract class SomeFragment extends FastFragment {
     public void onRefreshStarted(View view) {
         super.onRefreshStarted(view);
         if(progressBar != null){
-            progressBar.setVisibility(View.VISIBLE);
-            progressBar.setSmoothProgressDrawableSpeed(1f);
+            progressBar.setVisibility(View.GONE);
         }
     }
 
