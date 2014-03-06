@@ -44,13 +44,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
 import uk.co.senab.actionbarpulltorefresh.library.Options;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnPullFromBottomListener;
 
 /**
  * Created by matthewshepard on 1/19/14.
  */
-public class ThreadViewFragment extends SomeFragment implements PageSelectDialogFragment.PageSelectable, View.OnClickListener {
+public class ThreadViewFragment extends SomeFragment implements PageSelectDialogFragment.PageSelectable, View.OnClickListener, OnPullFromBottomListener {
     private WebView threadView;
 
     private int threadId, page, maxPage, forumId;
@@ -61,6 +63,8 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     private ImageView navPrev, navNext;
     private TextView navPageBar;
     private boolean disableNavLoading = false;
+
+    private DefaultHeaderTransformer headerTransformer;
 
     public ThreadViewFragment() {
         super(R.layout.thread_pageview, R.menu.thread_view);
@@ -98,12 +102,13 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
 
     @Override
     protected void setupPullToRefresh(PullToRefreshLayout ptr) {
-        ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable().options(generatePullToRefreshOptions()).listener(this).setup(ptr);
+        ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable().options(generatePullToRefreshOptions()).addPullFromBottomListener(this).listener(this).setup(ptr);
     }
 
     @Override
     protected Options generatePullToRefreshOptions() {
-        return Options.create().scrollDistance(getScrollDistance()).build();
+        headerTransformer = new DefaultHeaderTransformer();
+        return Options.create().scrollDistance(getScrollDistance()).headerTransformer(headerTransformer).build();
     }
 
     private float getScrollDistance(){
@@ -220,6 +225,11 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         navPageBar.setText("Page "+page+"/"+maxPage);
         navNext.setImageResource(page < maxPage ? R.drawable.arrowright : R.drawable.ic_menu_load);
         navNext.setEnabled(!disableNavLoading || page == maxPage);
+
+        if(headerTransformer != null){
+            headerTransformer.setPullFromBottomText(getSafeString(page < maxPage ? R.string.pull_bottom_nextpage : R.string.pull_to_refresh_pull_label));
+            headerTransformer.setPullFromBottomReleaseText(getSafeString(page < maxPage ? R.string.pull_bottom_release_nexpage : R.string.pull_to_refresh_release_label));
+        }
     }
 
     @Override
@@ -431,6 +441,15 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
 
     private void displayPageSelect(){
         PageSelectDialogFragment.newInstance(page, maxPage, ThreadViewFragment.this).show(getFragmentManager(), "page_select");
+    }
+
+    @Override
+    public void onPullFromBottom(View view) {
+        if(page < maxPage){
+            goToPage(page+1);
+        }else{
+            startRefresh();
+        }
     }
 
     public class SomeJavascriptInterface {

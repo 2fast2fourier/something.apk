@@ -18,7 +18,9 @@ import com.bugsense.trace.BugSenseHandler;
 import com.salvadordalvik.something.util.SomePreferences;
 import com.salvadordalvik.something.util.SomeTheme;
 
-public class MainActivity extends SomeActivity implements DrawerLayout.DrawerListener {
+import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
+
+public class MainActivity extends SomeActivity implements DrawerLayout.DrawerListener, DefaultHeaderTransformer.ActionbarColorDelegate {
     private DrawerLayout slidingMenu;
 
     private ThreadListFragment threadList;
@@ -255,5 +257,10 @@ public class MainActivity extends SomeActivity implements DrawerLayout.DrawerLis
     @Override
     public void onDrawerStateChanged(int newState) {
 
+    }
+
+    @Override
+    public int getActionbarColor() {
+        return getCurrentActionbarColor();
     }
 }
