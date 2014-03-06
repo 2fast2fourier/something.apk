@@ -1,0 +1,11 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Something.Base.Light" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
+    </style>
+
+    <style name="Something.Base.Dark" parent="android:Theme.Holo">
+        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
+    </style>
+
+</resources>

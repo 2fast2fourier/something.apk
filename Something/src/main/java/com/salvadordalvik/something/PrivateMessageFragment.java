@@ -29,7 +29,7 @@ import com.salvadordalvik.something.util.Constants;
 /**
  * Created by matthewshepard on 2/12/14.
  */
-public class PrivateMessageFragment extends FastFragment implements Response.ErrorListener, Response.Listener<PrivateMessageRequest.PMData> {
+public class PrivateMessageFragment extends SomeFragment implements Response.ErrorListener, Response.Listener<PrivateMessageRequest.PMData> {
     private WebView webview;
 
     private int pmId = 0;

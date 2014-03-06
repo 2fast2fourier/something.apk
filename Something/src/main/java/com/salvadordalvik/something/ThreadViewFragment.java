@@ -50,7 +50,7 @@ import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 /**
  * Created by matthewshepard on 1/19/14.
  */
-public class ThreadViewFragment extends FastFragment implements PageSelectDialogFragment.PageSelectable, View.OnClickListener {
+public class ThreadViewFragment extends SomeFragment implements PageSelectDialogFragment.PageSelectable, View.OnClickListener {
     private WebView threadView;
 
     private int threadId, page, maxPage, forumId;

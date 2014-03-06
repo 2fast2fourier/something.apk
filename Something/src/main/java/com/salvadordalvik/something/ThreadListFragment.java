@@ -13,7 +13,6 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -26,7 +25,6 @@ import com.salvadordalvik.something.data.SomeDatabase;
 import com.salvadordalvik.something.list.ForumItem;
 import com.salvadordalvik.something.list.MenuItem;
 import com.salvadordalvik.something.list.PagedAdapter;
-import com.salvadordalvik.something.list.StubItem;
 import com.salvadordalvik.something.list.ThreadItem;
 import com.salvadordalvik.something.request.BookmarkRequest;
 import com.salvadordalvik.something.request.ThreadListRequest;
@@ -37,13 +35,12 @@ import com.salvadordalvik.something.widget.PreferencesDialogFragment;
 
 import java.util.List;
 
-import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
 import uk.co.senab.actionbarpulltorefresh.library.Options;
 
 /**
  * Created by matthewshepard on 1/16/14.
  */
-public class ThreadListFragment extends FastFragment implements FastQueryTask.QueryResultCallback<ForumItem>,PagedAdapter.PagedCallbacks, PageSelectDialogFragment.PageSelectable {
+public class ThreadListFragment extends SomeFragment implements FastQueryTask.QueryResultCallback<ForumItem>,PagedAdapter.PagedCallbacks, PageSelectDialogFragment.PageSelectable {
     private ListView threadList;
     private PagedAdapter adapter;
 
@@ -166,6 +163,11 @@ public class ThreadListFragment extends FastFragment implements FastQueryTask.Qu
             adapter.loadingPageFailed();
         }
     };
+
+    @Override
+    public void onRefreshCompleted() {
+        super.onRefreshCompleted();
+    }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {

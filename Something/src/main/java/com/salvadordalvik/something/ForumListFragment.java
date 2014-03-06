@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Created by matthewshepard on 1/22/14.
  */
-public class ForumListFragment extends FastFragment implements FastQueryTask.QueryResultCallback<ForumItem>,Response.ErrorListener, Response.Listener<Void> {
+public class ForumListFragment extends SomeFragment implements FastQueryTask.QueryResultCallback<ForumItem>,Response.ErrorListener, Response.Listener<Void> {
     private ListView forumList;
     private FastAdapter adapter;
 

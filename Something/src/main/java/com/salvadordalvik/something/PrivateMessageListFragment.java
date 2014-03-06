@@ -14,7 +14,7 @@ import com.salvadordalvik.something.request.PrivateMessageListRequest;
 /**
  * Created by matthewshepard on 2/7/14.
  */
-public class PrivateMessageListFragment extends FastFragment implements Response.ErrorListener, Response.Listener<PrivateMessageListRequest.PMListResult> {
+public class PrivateMessageListFragment extends SomeFragment implements Response.ErrorListener, Response.Listener<PrivateMessageListRequest.PMListResult> {
     private ListView pmList;
     private SectionFastAdapter adapter;
 

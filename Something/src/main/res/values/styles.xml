@@ -1,6 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Something.Dark" parent="android:Theme.Holo">
+    <style name="Something.Base.Dark" parent="android:Theme.Holo">
+    </style>
+
+    <style name="Something.Dark" parent="Something.Base.Dark">
         <item name="statusBarBackground">@color/actionbar_background_dark</item>
         <item name="primaryBackground">#000000</item>
         <item name="listBackground">#3E4147</item>
@@ -11,6 +14,9 @@
         <item name="listDividerColor">#808080</item>
         <item name="webviewBackgroundColor">#000000</item>
         <item name="subforumBackground">#35383D</item>
+        <item name="progressBarColor">#BEBEBE</item>
+
+        <item name="progressBarColorArray">@array/sbp_colors_dark</item>
 
         <item name="listActivatedBackground">@drawable/activated_background_dark</item>
 
@@ -22,8 +28,6 @@
         <item name="android:actionBarStyle">@style/ActionBar.Solid.Something_dark</item>
 
         <item name="actionbarBackgroundLayerList">@drawable/actionbar_background_dark</item>
-
-        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
     </style>
 
     <style name="ActionBar.Solid.Something_dark" parent="@android:style/Widget.Holo.ActionBar.Solid">

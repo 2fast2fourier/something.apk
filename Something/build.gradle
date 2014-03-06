@@ -48,6 +48,7 @@ dependencies {
     compile 'com.google.guava:guava:16.0'
     compile 'com.bugsense.trace:bugsense:3.4'
     compile 'com.readystatesoftware.systembartint:systembartint:1.0.1'
+    compile 'com.github.castorflex.smoothprogressbar:library:0.3.3'
     compile project(':ActionBar-PullToRefresh:library')
     compile project(':FastLibrary')
     compile project(':SlidingMenu:library')

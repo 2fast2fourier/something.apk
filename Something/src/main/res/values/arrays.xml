@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="sbp_colors_light">
+        <item>#BEBEBE</item>
+        <item>#3E3E3E</item>
+        <item>#BEBEBE</item>
+        <item>#3E3E3E</item>
+        <item>#BEBEBE</item>
+        <item>#3E3E3E</item>
+    </array>
+    <array name="sbp_colors_dark">
+        <item>#BEBEBE</item>
+        <item>#525252</item>
+        <item>#BEBEBE</item>
+        <item>#525252</item>
+        <item>#BEBEBE</item>
+        <item>#525252</item>
+    </array>
+</resources>

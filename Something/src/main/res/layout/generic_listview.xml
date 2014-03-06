@@ -13,4 +13,18 @@
         android:dividerHeight="1px"
         android:background="?attr/listBackground"
         android:cacheColorHint="?attr/listBackground"/>
+    <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:visibility="gone"
+        android:id="@+id/progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:indeterminate="true"
+        app:spb_sections_count="6"
+        app:spb_colors="?progressBarColorArray"
+        app:spb_stroke_width="4dp"
+        app:spb_stroke_separator_length="1dp"
+        app:spb_reversed="false"
+        app:spb_mirror_mode="true"
+        />
 </FrameLayout>
