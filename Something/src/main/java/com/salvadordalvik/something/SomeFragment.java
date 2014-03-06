@@ -41,4 +41,37 @@ public abstract class SomeFragment extends FastFragment {
             progressBar.setVisibility(refreshing ? View.VISIBLE : View.GONE);
         }
     }
+
+    @Override
+    protected void setProgress(int newProgress) {
+        if(progressBar != null){
+            if(newProgress > 98){
+                progressBar.setVisibility(View.GONE);
+            }else{
+                if(progressBar.getVisibility() != View.VISIBLE){
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+                progressBar.setSmoothProgressDrawableSpeed(newProgress/40f+0.1f);
+            }
+        }else{
+            super.setProgress(newProgress);
+        }
+    }
+
+    @Override
+    public void onRefreshStarted(View view) {
+        super.onRefreshStarted(view);
+        if(progressBar != null){
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setSmoothProgressDrawableSpeed(1f);
+        }
+    }
+
+    @Override
+    public void onRefreshCompleted() {
+        super.onRefreshCompleted();
+        if(progressBar != null){
+            progressBar.setVisibility(View.GONE);
+        }
+    }
 }
