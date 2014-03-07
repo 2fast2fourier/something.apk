@@ -14,7 +14,8 @@
         <item name="listDividerColor">#808080</item>
         <item name="webviewBackgroundColor">#000000</item>
         <item name="subforumBackground">#35383D</item>
-        <item name="progressBarColor">#BEBEBE</item>
+        <item name="progressBarColor">#2A98FF</item>
+        <item name="progressBarColorRefresh">#BEBEBE</item>
 
         <item name="progressBarColorArray">@array/sbp_colors_dark</item>
         <item name="ptrProgressBarColorArray">@array/sbp_colors_dark</item>

@@ -14,4 +14,5 @@
     <dimen name="preference_theme_selected_line">4dp</dimen>
     <dimen name="thread_tag_width">60dp</dimen>
     <dimen name="thread_tag_height">15dp</dimen>
+    <dimen name="pull_to_refresh_stroke">4dp</dimen>
 </resources>

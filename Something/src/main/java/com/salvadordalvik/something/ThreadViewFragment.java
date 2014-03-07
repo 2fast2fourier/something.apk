@@ -1,10 +1,19 @@
 package com.salvadordalvik.something;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ClipDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.SpannedString;
@@ -12,9 +21,12 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.webkit.ConsoleMessage;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -23,6 +35,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,8 +55,9 @@ import com.salvadordalvik.something.widget.PageSelectDialogFragment;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
-import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
+import uk.co.senab.actionbarpulltorefresh.library.HeaderTransformer;
 import uk.co.senab.actionbarpulltorefresh.library.Options;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshFromBottomListener;
@@ -54,6 +68,10 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshFromBottomL
 public class ThreadViewFragment extends SomeFragment implements PageSelectDialogFragment.PageSelectable, View.OnClickListener, OnRefreshFromBottomListener {
     private WebView threadView;
 
+    private View pfbContainer;
+    private TextView pfbTitle;
+    private ProgressBar pfbProgressbar;
+
     private int threadId, page, maxPage, forumId;
     private CharSequence threadTitle;
     private String pageHtml, rawThreadTitle;
@@ -62,8 +80,6 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     private ImageView navPrev, navNext;
     private TextView navPageBar;
     private boolean disableNavLoading = false;
-
-    private DefaultHeaderTransformer headerTransformer;
 
     public ThreadViewFragment() {
         super(R.layout.thread_pageview, R.menu.thread_view);
@@ -77,6 +93,10 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         navPageBar.setOnClickListener(this);
         navNext.setOnClickListener(this);
         navPrev.setOnClickListener(this);
+
+        pfbContainer = frag.findViewById(R.id.threadview_pullfrombottom);
+        pfbTitle = (TextView) frag.findViewById(R.id.threadview_pullfrombottom_title);
+        pfbProgressbar = (ProgressBar) frag.findViewById(R.id.threadview_pullfrombottom_progress);
 
         threadView = (WebView) frag.findViewById(R.id.ptr_webview);
         initWebview();
@@ -106,8 +126,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
 
     @Override
     protected Options generatePullToRefreshOptions() {
-        headerTransformer = new DefaultHeaderTransformer();
-        return Options.create().scrollDistance(getScrollDistance()).headerTransformer(headerTransformer).build();
+        return Options.create().scrollDistance(getScrollDistance()).headerTransformer(header).build();
     }
 
     private float getScrollDistance(){
@@ -224,11 +243,6 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         navPageBar.setText("Page "+page+"/"+maxPage);
         navNext.setImageResource(page < maxPage ? R.drawable.arrowright : R.drawable.ic_menu_load);
         navNext.setEnabled(!disableNavLoading || page == maxPage);
-
-        if(headerTransformer != null){
-            headerTransformer.setPullText(getSafeString(page < maxPage ? R.string.pull_bottom_nextpage : R.string.pull_to_refresh_pull_label));
-            headerTransformer.setReleaseText(getSafeString(page < maxPage ? R.string.pull_bottom_release_nexpage : R.string.pull_to_refresh_release_label));
-        }
     }
 
     @Override
@@ -516,4 +530,140 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     public int getForumId() {
         return forumId;
     }
+
+    private HeaderTransformer header = new HeaderTransformer(){
+        private int nextPageColor, refreshColor;
+
+        private final Interpolator mInterpolator = new AccelerateInterpolator();
+
+        @Override
+        public boolean showHeaderView() {
+            boolean changed = pfbContainer.getVisibility() != View.VISIBLE;
+            if(changed){
+                pfbContainer.setVisibility(View.VISIBLE);
+                AnimatorSet animSet = new AnimatorSet();
+                ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(pfbContainer, "alpha", 0f, 1f);
+                animSet.play(alphaAnim);
+                animSet.setDuration(200);
+                animSet.start();
+            }
+
+            return changed;
+        }
+
+        @Override
+        public boolean hideHeaderView() {
+            boolean changed = pfbContainer.getVisibility() != View.GONE;
+
+            if(changed){
+                Animator animator;
+                if (pfbContainer.getAlpha() >= 0.5f) {
+                    // If the content layout is showing, translate and fade out
+                    animator = new AnimatorSet();
+                    ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(pfbContainer, "alpha", 1f, 0f);
+                    ((AnimatorSet) animator).play(alphaAnim);
+                } else {
+                    // If the content layout isn't showing (minimized), just fade out
+                    animator = ObjectAnimator.ofFloat(pfbContainer, "alpha", 1f, 0f);
+                }
+                animator.setDuration(200);
+                animator.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        onReset();
+                    }
+                });
+                animator.start();
+            }
+
+            return changed;
+        }
+
+        @Override
+        public void onViewCreated(Activity activity, View headerView) {
+            if (pfbProgressbar != null) {
+                int[] ptrColorArray = null;
+
+                TypedValue sty = new TypedValue();
+                if(getActivity().getTheme().resolveAttribute(R.attr.progressBarColorArray, sty, false)){
+                    ptrColorArray = getResources().getIntArray(sty.data);
+                }
+                if(getActivity().getTheme().resolveAttribute(R.attr.progressBarColor, sty, true)){
+                    nextPageColor = sty.data;
+                }else{
+                    nextPageColor = Color.rgb(20,146,204);
+                }
+                if(getActivity().getTheme().resolveAttribute(R.attr.progressBarColorRefresh, sty, true)){
+                    refreshColor = sty.data;
+                }else{
+                    refreshColor = Color.rgb(190, 190, 190);
+                }
+
+                final int strokeWidth = getResources().getDimensionPixelSize(R.dimen.pull_to_refresh_stroke);
+
+                if(ptrColorArray != null){
+                    pfbProgressbar.setIndeterminateDrawable(
+                            new SmoothProgressDrawable.Builder(getActivity())
+                                    .colors(ptrColorArray)
+                                    .sectionsCount(6)
+                                    .separatorLength(0)
+                                    .strokeWidth(strokeWidth)
+                                    .build()
+                    );
+                }else{
+                    pfbProgressbar.setIndeterminateDrawable(
+                            new SmoothProgressDrawable.Builder(getActivity())
+                                    .color(nextPageColor)
+                                    .sectionsCount(6)
+                                    .separatorLength(0)
+                                    .strokeWidth(strokeWidth)
+                                    .build());
+                }
+                updateProgressbarColor();
+            }
+        }
+
+        private void updateProgressbarColor(){
+            ShapeDrawable shape = new ShapeDrawable();
+            shape.setShape(new RectShape());
+            shape.getPaint().setColor(page < maxPage ? nextPageColor : refreshColor);
+            ClipDrawable clipDrawable = new ClipDrawable(shape, Gravity.CENTER, ClipDrawable.HORIZONTAL);
+            pfbProgressbar.setProgressDrawable(clipDrawable);
+        }
+
+        @Override
+        public void onReset() {
+            pfbContainer.setVisibility(View.GONE);
+            pfbProgressbar.setProgress(0);
+            pfbProgressbar.setIndeterminate(false);
+            pfbTitle.setText(page < maxPage ? R.string.pull_bottom_nextpage : R.string.pull_to_refresh_pull_label);
+            updateProgressbarColor();
+        }
+
+        @Override
+        public void onPulled(float percentagePulled, boolean mCurrentPullIsUp) {
+            final float progress = mInterpolator.getInterpolation(percentagePulled);
+            pfbProgressbar.setProgress(Math.round(pfbProgressbar.getMax() * progress));
+        }
+
+        @Override
+        public void onRefreshStarted() {
+            pfbTitle.setText(R.string.thread_view_loading);
+            pfbProgressbar.setIndeterminate(true);
+        }
+
+        @Override
+        public void onReleaseToRefresh(boolean mCurrentPullIsUp) {
+            pfbTitle.setText(R.string.pull_bottom_release_nexpage);
+            pfbProgressbar.setProgress(pfbProgressbar.getMax());
+        }
+
+        @Override
+        public void onRefreshMinimized() {
+        }
+
+        @Override
+        public void onConfigurationChanged(Activity activity, Configuration newConfig) {
+        }
+    };
 }
