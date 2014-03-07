@@ -102,7 +102,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
 
     @Override
     protected void setupPullToRefresh(PullToRefreshLayout ptr) {
-        ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable().options(generatePullToRefreshOptions()).addPullFromBottomListener(this).listener(this).setup(ptr);
+        ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable().options(generatePullToRefreshOptions()).addPullFromBottomListener(this).setup(ptr);
     }
 
     @Override
