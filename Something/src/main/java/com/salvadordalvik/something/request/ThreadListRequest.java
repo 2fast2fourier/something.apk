@@ -1,5 +1,6 @@
 package com.salvadordalvik.something.request;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -94,7 +95,12 @@ public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListR
 
         int currentPage, maxPage = 1;
         Element pages = document.getElementsByClass("pages").first();
-        currentPage = FastUtils.safeParseInt(pages.getElementsByAttribute("selected").attr("value"), 1);
+        String pageValue = pages.getElementsByAttribute("selected").attr("value");
+        if(TextUtils.isEmpty(pageValue)){
+            currentPage = 1;
+        }else{
+            currentPage = FastUtils.safeParseInt(pageValue, 1);
+        }
         Element lastPage = pages.getElementsByTag("option").last();
         if(lastPage != null){
             maxPage = FastUtils.safeParseInt(lastPage.attr("value"), 1);

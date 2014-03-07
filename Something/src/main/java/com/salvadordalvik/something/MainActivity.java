@@ -20,7 +20,7 @@ import com.salvadordalvik.something.util.SomeTheme;
 
 import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
 
-public class MainActivity extends SomeActivity implements DrawerLayout.DrawerListener, DefaultHeaderTransformer.ActionbarColorDelegate {
+public class MainActivity extends SomeActivity implements DrawerLayout.DrawerListener {
     private DrawerLayout slidingMenu;
 
     private ThreadListFragment threadList;
@@ -257,10 +257,5 @@ public class MainActivity extends SomeActivity implements DrawerLayout.DrawerLis
     @Override
     public void onDrawerStateChanged(int newState) {
 
-    }
-
-    @Override
-    public int getActionbarColor() {
-        return getCurrentActionbarColor();
     }
 }

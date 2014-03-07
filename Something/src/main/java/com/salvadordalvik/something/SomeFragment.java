@@ -60,14 +60,6 @@ public abstract class SomeFragment extends FastFragment {
     }
 
     @Override
-    public void onRefreshStarted(View view) {
-        super.onRefreshStarted(view);
-        if(progressBar != null){
-            progressBar.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
     public void onRefreshCompleted() {
         super.onRefreshCompleted();
         if(progressBar != null){

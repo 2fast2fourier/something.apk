@@ -28,7 +28,6 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.salvadordalvik.fastlibrary.FastFragment;
 import com.salvadordalvik.fastlibrary.alert.FastAlert;
 import com.salvadordalvik.fastlibrary.request.FastVolley;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
@@ -47,12 +46,11 @@ import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
 import uk.co.senab.actionbarpulltorefresh.library.Options;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
-import uk.co.senab.actionbarpulltorefresh.library.listeners.OnPullFromBottomListener;
 
 /**
  * Created by matthewshepard on 1/19/14.
  */
-public class ThreadViewFragment extends SomeFragment implements PageSelectDialogFragment.PageSelectable, View.OnClickListener, OnPullFromBottomListener {
+public class ThreadViewFragment extends SomeFragment implements PageSelectDialogFragment.PageSelectable, View.OnClickListener {
     private WebView threadView;
 
     private int threadId, page, maxPage, forumId;
@@ -102,7 +100,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
 
     @Override
     protected void setupPullToRefresh(PullToRefreshLayout ptr) {
-        ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable().options(generatePullToRefreshOptions()).addPullFromBottomListener(this).setup(ptr);
+        ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable().options(generatePullToRefreshOptions()).listener(this).setup(ptr);
     }
 
     @Override
@@ -227,8 +225,8 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         navNext.setEnabled(!disableNavLoading || page == maxPage);
 
         if(headerTransformer != null){
-            headerTransformer.setPullFromBottomText(getSafeString(page < maxPage ? R.string.pull_bottom_nextpage : R.string.pull_to_refresh_pull_label));
-            headerTransformer.setPullFromBottomReleaseText(getSafeString(page < maxPage ? R.string.pull_bottom_release_nexpage : R.string.pull_to_refresh_release_label));
+            headerTransformer.setPullText(getSafeString(page < maxPage ? R.string.pull_bottom_nextpage : R.string.pull_to_refresh_pull_label));
+            headerTransformer.setReleaseText(getSafeString(page < maxPage ? R.string.pull_bottom_release_nexpage : R.string.pull_to_refresh_release_label));
         }
     }
 
@@ -444,7 +442,8 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     }
 
     @Override
-    public void onPullFromBottom(View view) {
+    public void onRefreshStarted(View view) {
+//        super.onRefreshStarted(view);
         if(page < maxPage){
             goToPage(page+1);
         }else{
