@@ -81,6 +81,8 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     private TextView navPageBar;
     private boolean disableNavLoading = false;
 
+    private boolean ignorePageProgress = false;
+
     public ThreadViewFragment() {
         super(R.layout.thread_pageview, R.menu.thread_view);
     }
@@ -243,6 +245,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         navPageBar.setText("Page "+page+"/"+maxPage);
         navNext.setImageResource(page < maxPage ? R.drawable.arrowright : R.drawable.ic_menu_load);
         navNext.setEnabled(!disableNavLoading || page == maxPage);
+        header.onReset();
     }
 
     @Override
@@ -304,6 +307,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         @Override
         public void onResponse(ThreadPageRequest.ThreadPage response) {
             loadSessionCookie();
+            ignorePageProgress = false;
             disableNavLoading = false;
             page = response.pageNum;
             maxPage = response.maxPageNum;
@@ -336,6 +340,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     };
 
     public void loadThread(int threadId, int page){
+        this.ignorePageProgress = true;
         this.threadId = threadId;
         this.page = page;
         this.maxPage = 0;
@@ -383,7 +388,9 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
             Log.d("WebView", "Progress: "+newProgress);
-            setProgress(newProgress);
+            if(!ignorePageProgress){
+                setProgress(newProgress);
+            }
         }
 
         @Override
@@ -404,7 +411,9 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
             Log.d("WebView", "onPageFinished: " + url);
-            setProgress(100);
+            if(!ignorePageProgress){
+                setProgress(100);
+            }
         }
 
         @Override
@@ -623,6 +632,10 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
             }
         }
 
+        private void updateTitle(){
+            pfbTitle.setText(page < maxPage ? R.string.pull_bottom_nextpage : R.string.pull_to_refresh_pull_label);
+        }
+
         private void updateProgressbarColor(){
             ShapeDrawable shape = new ShapeDrawable();
             shape.setShape(new RectShape());
@@ -636,7 +649,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
             pfbContainer.setVisibility(View.GONE);
             pfbProgressbar.setProgress(0);
             pfbProgressbar.setIndeterminate(false);
-            pfbTitle.setText(page < maxPage ? R.string.pull_bottom_nextpage : R.string.pull_to_refresh_pull_label);
+            updateTitle();
             updateProgressbarColor();
         }
 
