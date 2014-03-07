@@ -17,23 +17,24 @@ import com.salvadordalvik.fastlibrary.request.FastVolley;
 import com.salvadordalvik.something.MainActivity;
 import com.salvadordalvik.something.R;
 import com.salvadordalvik.something.util.SomePreferences;
+import com.salvadordalvik.something.util.SomeTheme;
 
 /**
  * Created by matthewshepard on 1/17/14.
  */
 public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements Parcelable{
     private String threadTitle, author, lastPost, tagUrl;
-    private int unread, replies;
-    private boolean bookmarked, closed;
+    private int unread, replies, bookmark;
+    private boolean closed;
 
-    public ThreadItem(int id, String title, int unreadCount, int replies, String author, String lastPost, boolean bookmarked, boolean closed, String tagUrl) {
+    public ThreadItem(int id, String title, int unreadCount, int replies, String author, String lastPost, int bookmarked, boolean closed, String tagUrl) {
         super(R.layout.thread_item, id, true);
         this.threadTitle = title;
         this.unread = unreadCount;
         this.replies = replies;
         this.author = author;
         this.lastPost = lastPost;
-        this.bookmarked = bookmarked;
+        this.bookmark = bookmarked;
         this.closed = closed;
         this.tagUrl = tagUrl;
     }
@@ -45,8 +46,8 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         this.replies = source.readInt();
         this.author = source.readString();
         this.lastPost = source.readString();
-        this.bookmarked = source.readByte() > 0;
-        this.closed = source.readByte() > 0;
+        this.bookmark = source.readInt();
+        this.closed = source.readInt() > 0;
         this.tagUrl = source.readString();
     }
 
@@ -58,7 +59,7 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         dest.writeInt(replies);
         dest.writeString(author);
         dest.writeString(lastPost);
-        dest.writeInt(bookmarked ? 1 : 0);
+        dest.writeInt(bookmark);
         dest.writeInt(closed ? 1 : 0);
         dest.writeString(tagUrl);
     }
@@ -73,10 +74,19 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
             holder.unread.setVisibility(View.GONE);
         }
         GradientDrawable unreadBackground = (GradientDrawable) holder.unread.getBackground();
-        if(bookmarked){
-            unreadBackground.setColor(Color.argb(255,53,102,147));
-        }else{
-            unreadBackground.setColor(Color.argb(255,0,0,0));
+        switch (bookmark){
+            case 0:
+                unreadBackground.setColor(SomeTheme.bookmark_unread);
+                break;
+            case 1:
+                unreadBackground.setColor(SomeTheme.bookmark_normal);
+                break;
+            case 2:
+                unreadBackground.setColor(SomeTheme.bookmark_red);
+                break;
+            case 3:
+                unreadBackground.setColor(SomeTheme.bookmark_gold);
+                break;
         }
         holder.unread.setAlpha(unread > 0 ? 1.0f : 0.5f);
         if(unread >= 0){
@@ -119,11 +129,11 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
     }
 
     public boolean isBookmarked() {
-        return bookmarked;
+        return bookmark > 0;
     }
 
     public void setBookmarked(boolean bookmarked) {
-        this.bookmarked = bookmarked;
+        this.bookmark = bookmarked ? 1 : 0;
     }
 
     protected static class ThreadHolder{

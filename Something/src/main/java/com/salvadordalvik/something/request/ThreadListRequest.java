@@ -60,7 +60,14 @@ public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListR
                 }
             }
 
-            boolean bookmarked = thread.getElementsByClass("bm0").size() > 0 || thread.getElementsByClass("bm1").size() > 0 || thread.getElementsByClass("bm2").size() > 0;
+            int bookmarked = 0;
+            if(thread.getElementsByClass("bm0").size() > 0){
+                bookmarked = 1;
+            }else if(thread.getElementsByClass("bm1").size() > 0){
+                bookmarked = 2;
+            }else if( thread.getElementsByClass("bm2").size() > 0){
+                bookmarked = 3;
+            }
             boolean closed = thread.hasClass("closed");
 
             replies = stripParseInt(thread.getElementsByClass("replies").first().text());
