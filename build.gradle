@@ -6,7 +6,7 @@ buildscript {
         maven { url 'http://gradle.bugsense.com/' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.7.+'
+        classpath 'com.android.tools.build:gradle:0.9.+'
     }
 }
 
