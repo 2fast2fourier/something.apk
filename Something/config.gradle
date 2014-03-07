@@ -1,0 +1,3 @@
+//place versionCode here by script, it will be used during the build state to set build number.
+//echo "ext.versionCode=$count" > config.gradle
+ext.versionCode=999
