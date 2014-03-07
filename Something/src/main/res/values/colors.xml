@@ -9,6 +9,6 @@
     <color name="actionbar_background_dark">#222222</color>
     <color name="readcount_unbookmarked">#356693</color>
     <color name="readcount_normal">#e28d00</color>
-    <color name="readcount_gold">#dfdd6d</color>
+    <color name="readcount_gold">#E5C100</color>
     <color name="readcount_red">#b4171f</color>
 </resources>

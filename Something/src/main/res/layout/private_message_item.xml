@@ -10,8 +10,7 @@
         android:text="Title"
         android:id="@+id/pm_item_title"
         android:textSize="16sp"
-        android:textColor="?listHeaderTextColor"
-        android:textStyle="bold" />
+        android:textColor="?listHeaderTextColor" />
 
     <TextView
         android:layout_width="wrap_content"

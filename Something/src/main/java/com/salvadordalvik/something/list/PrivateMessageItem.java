@@ -2,6 +2,7 @@ package com.salvadordalvik.something.list;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.TextView;
@@ -15,12 +16,14 @@ import com.salvadordalvik.something.R;
  */
 public class PrivateMessageItem extends BaseFastItem<PrivateMessageItem.PMHolder> {
     private final String title, author, date;
+    private boolean unread;
 
-    public PrivateMessageItem(int id, String title, String author, String date) {
+    public PrivateMessageItem(int id, String title, String author, String date, boolean unread) {
         super(R.layout.private_message_item, id);
         this.title = title;
         this.author = author;
         this.date = date;
+        this.unread = unread;
     }
 
     @Override
@@ -33,6 +36,11 @@ public class PrivateMessageItem extends BaseFastItem<PrivateMessageItem.PMHolder
         holder.title.setText(title);
         holder.subtext.setText(author);
         holder.date.setText(date);
+        if(unread){
+            holder.title.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        }else{
+            holder.title.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
+        }
     }
 
     @Override
@@ -42,7 +50,8 @@ public class PrivateMessageItem extends BaseFastItem<PrivateMessageItem.PMHolder
         }else{
             act.startActivity(new Intent(act, PrivateMessageListActivity.class).putExtra("pm_id", getId()).putExtra("pm_title", title));
         }
-        return false;
+        unread = false;
+        return true;
     }
 
     protected static class PMHolder{

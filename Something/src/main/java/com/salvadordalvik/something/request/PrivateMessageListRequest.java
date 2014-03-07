@@ -46,7 +46,13 @@ public class PrivateMessageListRequest extends HTMLRequest<PrivateMessageListReq
                         String title = message.getElementsByClass("title").text();
                         String date = message.getElementsByClass("date").text();
 
-                        pm.add(new PrivateMessageItem(id, title, author, date));
+                        boolean unread = false;
+                        Element status = message.getElementsByClass("status").first();
+                        if(status != null){
+                            unread = status.getElementsByAttributeValueContaining("src", "newpm").size() > 0;
+                        }
+
+                        pm.add(new PrivateMessageItem(id, title, author, date, unread));
                     }
                 }
             }catch (Exception e){
