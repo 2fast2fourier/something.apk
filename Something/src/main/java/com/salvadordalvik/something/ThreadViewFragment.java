@@ -61,6 +61,7 @@ import uk.co.senab.actionbarpulltorefresh.library.HeaderTransformer;
 import uk.co.senab.actionbarpulltorefresh.library.Options;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshFromBottomListener;
+import uk.co.senab.actionbarpulltorefresh.library.sdk.Compat;
 
 /**
  * Created by matthewshepard on 1/19/14.
@@ -245,7 +246,6 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         navPageBar.setText("Page "+page+"/"+maxPage);
         navNext.setImageResource(page < maxPage ? R.drawable.arrowright : R.drawable.ic_menu_load);
         navNext.setEnabled(!disableNavLoading || page == maxPage);
-        header.onReset();
     }
 
     @Override
@@ -548,7 +548,9 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         @Override
         public boolean showHeaderView() {
             boolean changed = pfbContainer.getVisibility() != View.VISIBLE;
+
             if(changed){
+                updateHeaderState();
                 pfbContainer.setVisibility(View.VISIBLE);
                 AnimatorSet animSet = new AnimatorSet();
                 ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(pfbContainer, "alpha", 0f, 1f);
@@ -590,58 +592,54 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
 
         @Override
         public void onViewCreated(Activity activity, View headerView) {
-            if (pfbProgressbar != null) {
-                int[] ptrColorArray = null;
+            int[] ptrColorArray = null;
 
-                TypedValue sty = new TypedValue();
-                if(getActivity().getTheme().resolveAttribute(R.attr.progressBarColorArray, sty, false)){
-                    ptrColorArray = getResources().getIntArray(sty.data);
-                }
-                if(getActivity().getTheme().resolveAttribute(R.attr.progressBarColor, sty, true)){
-                    nextPageColor = sty.data;
-                }else{
-                    nextPageColor = Color.rgb(20,146,204);
-                }
-                if(getActivity().getTheme().resolveAttribute(R.attr.progressBarColorRefresh, sty, true)){
-                    refreshColor = sty.data;
-                }else{
-                    refreshColor = Color.rgb(190, 190, 190);
-                }
-
-                final int strokeWidth = getResources().getDimensionPixelSize(R.dimen.pull_to_refresh_stroke);
-
-                if(ptrColorArray != null){
-                    pfbProgressbar.setIndeterminateDrawable(
-                            new SmoothProgressDrawable.Builder(getActivity())
-                                    .colors(ptrColorArray)
-                                    .sectionsCount(6)
-                                    .separatorLength(0)
-                                    .strokeWidth(strokeWidth)
-                                    .build()
-                    );
-                }else{
-                    pfbProgressbar.setIndeterminateDrawable(
-                            new SmoothProgressDrawable.Builder(getActivity())
-                                    .color(nextPageColor)
-                                    .sectionsCount(6)
-                                    .separatorLength(0)
-                                    .strokeWidth(strokeWidth)
-                                    .build());
-                }
-                updateProgressbarColor();
+            TypedValue sty = new TypedValue();
+            if(getActivity().getTheme().resolveAttribute(R.attr.progressBarColorArray, sty, false)){
+                ptrColorArray = getResources().getIntArray(sty.data);
             }
+            if(getActivity().getTheme().resolveAttribute(R.attr.progressBarColor, sty, true)){
+                nextPageColor = sty.data;
+            }else{
+                nextPageColor = Color.rgb(20,146,204);
+            }
+            if(getActivity().getTheme().resolveAttribute(R.attr.progressBarColorRefresh, sty, true)){
+                refreshColor = sty.data;
+            }else{
+                refreshColor = Color.rgb(190, 190, 190);
+            }
+
+            final int strokeWidth = getResources().getDimensionPixelSize(R.dimen.pull_to_refresh_stroke);
+
+            if(ptrColorArray != null){
+                pfbProgressbar.setIndeterminateDrawable(
+                        new SmoothProgressDrawable.Builder(getActivity())
+                                .colors(ptrColorArray)
+                                .sectionsCount(6)
+                                .separatorLength(0)
+                                .strokeWidth(strokeWidth)
+                                .build()
+                );
+            }else{
+                pfbProgressbar.setIndeterminateDrawable(
+                        new SmoothProgressDrawable.Builder(getActivity())
+                                .color(nextPageColor)
+                                .sectionsCount(6)
+                                .separatorLength(0)
+                                .strokeWidth(strokeWidth)
+                                .build());
+            }
+            updateHeaderState();
         }
 
-        private void updateTitle(){
-            pfbTitle.setText(page < maxPage ? R.string.pull_bottom_nextpage : R.string.pull_to_refresh_pull_label);
-        }
-
-        private void updateProgressbarColor(){
+        private void updateHeaderState(){
             ShapeDrawable shape = new ShapeDrawable();
             shape.setShape(new RectShape());
             shape.getPaint().setColor(page < maxPage ? nextPageColor : refreshColor);
             ClipDrawable clipDrawable = new ClipDrawable(shape, Gravity.CENTER, ClipDrawable.HORIZONTAL);
             pfbProgressbar.setProgressDrawable(clipDrawable);
+
+            pfbTitle.setText(page < maxPage ? R.string.pull_bottom_nextpage : R.string.pull_to_refresh_pull_label);
         }
 
         @Override
@@ -649,8 +647,8 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
             pfbContainer.setVisibility(View.GONE);
             pfbProgressbar.setProgress(0);
             pfbProgressbar.setIndeterminate(false);
-            updateTitle();
-            updateProgressbarColor();
+            Compat.setAlpha(pfbContainer, 1f);
+            updateHeaderState();
         }
 
         @Override

@@ -36,7 +36,7 @@ public abstract class SomeFragment extends FastFragment {
 
     @Override
     public void setRefreshAnimation(boolean refreshing) {
-        if(progressBar != null){
+        if(progressBar != null && !super.isRefreshing()){
             progressBar.setVisibility(refreshing ? View.VISIBLE : View.GONE);
             progressBar.setSmoothProgressDrawableSpeed(1f);
         }else{
@@ -46,7 +46,7 @@ public abstract class SomeFragment extends FastFragment {
 
     @Override
     protected void setProgress(int newProgress) {
-        if(progressBar != null){
+        if(progressBar != null && !super.isRefreshing()){
             if(newProgress > 98){
                 progressBar.setVisibility(View.GONE);
             }else{
