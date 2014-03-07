@@ -46,11 +46,12 @@ import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.DefaultHeaderTransformer;
 import uk.co.senab.actionbarpulltorefresh.library.Options;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshFromBottomListener;
 
 /**
  * Created by matthewshepard on 1/19/14.
  */
-public class ThreadViewFragment extends SomeFragment implements PageSelectDialogFragment.PageSelectable, View.OnClickListener {
+public class ThreadViewFragment extends SomeFragment implements PageSelectDialogFragment.PageSelectable, View.OnClickListener, OnRefreshFromBottomListener {
     private WebView threadView;
 
     private int threadId, page, maxPage, forumId;
@@ -100,7 +101,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
 
     @Override
     protected void setupPullToRefresh(PullToRefreshLayout ptr) {
-        ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable().options(generatePullToRefreshOptions()).listener(this).setup(ptr);
+        ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable().options(generatePullToRefreshOptions()).bottomListener(this).setup(ptr);
     }
 
     @Override
@@ -442,8 +443,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     }
 
     @Override
-    public void onRefreshStarted(View view) {
-//        super.onRefreshStarted(view);
+    public void onRefreshStartedFromBottom(View view) {
         if(page < maxPage){
             goToPage(page+1);
         }else{
