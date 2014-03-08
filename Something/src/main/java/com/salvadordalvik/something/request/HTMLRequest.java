@@ -28,7 +28,12 @@ public abstract class HTMLRequest<T> extends FastRequest<T> {
 
     @Override
     public T parseResponse(NetworkResponse response) throws Exception {
-        return parseHtmlResponse(response, parseDocument(response));
+        Document document = parseDocument(response);
+        Element stdErr = document.getElementsByClass("standarderror").first();
+        if(stdErr != null){
+            throw new SomeError(stdErr.getElementsByClass("standard").first().getElementsByClass("inner").first().ownText());
+        }
+        return parseHtmlResponse(response, document);
     }
 
     public abstract T parseHtmlResponse(NetworkResponse response, Document document) throws Exception;

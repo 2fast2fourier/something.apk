@@ -27,10 +27,6 @@ public class PMSendRequest extends HTMLRequest<PMSendRequest.PMSendResult> {
 
     @Override
     public PMSendResult parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
-        Element stdErr = document.getElementsByClass("standarderror").first();
-        if(stdErr != null){
-            throw new SomeError(stdErr.getElementsByClass("standard").first().getElementsByClass("inner").first().ownText());
-        }
         return new PMSendResult();
     }
 
