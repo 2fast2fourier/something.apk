@@ -48,4 +48,9 @@ public abstract class HTMLRequest<T> extends FastRequest<T> {
     protected static int stripParseInt(String str){
         return Integer.parseInt(str.replaceAll("\\D", ""));
     }
+
+    @Override
+    protected String getBodyCharset() {
+        return "CP1252";
+    }
 }

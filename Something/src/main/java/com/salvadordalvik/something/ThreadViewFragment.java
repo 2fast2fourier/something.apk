@@ -68,13 +68,14 @@ import uk.co.senab.actionbarpulltorefresh.library.sdk.Compat;
  * Created by matthewshepard on 1/19/14.
  */
 public class ThreadViewFragment extends SomeFragment implements PageSelectDialogFragment.PageSelectable, View.OnClickListener, OnRefreshFromBottomListener {
+    private static final int REQUEST_REPLY = 101;
     private WebView threadView;
 
     private View pfbContainer;
     private TextView pfbTitle;
     private ProgressBar pfbProgressbar;
 
-    private int threadId, page, maxPage, forumId;
+    private int threadId = 0, postId = 0, page, maxPage, forumId;
     private CharSequence threadTitle;
     private String pageHtml, rawThreadTitle;
     private boolean bookmarked;
@@ -263,10 +264,11 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_thread_reply:
-                startActivity(
+                startActivityForResult(
                         new Intent(getActivity(), ReplyActivity.class)
                                 .putExtra("thread_id", threadId)
-                                .putExtra("reply_type", ReplyFragment.TYPE_REPLY)
+                                .putExtra("reply_type", ReplyFragment.TYPE_REPLY),
+                        REQUEST_REPLY
                 );
                 return true;
             case R.id.menu_thread_bookmark:
@@ -297,7 +299,11 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         disableNavLoading = true;
         updateNavbar();
         FastVolley.cancelRequestByTag(THREAD_REQUEST_TAG);
-        queueRequest(new ThreadPageRequest(threadId, page, pageListener, errorListener), THREAD_REQUEST_TAG);
+        if(threadId > 0){
+            queueRequest(new ThreadPageRequest(threadId, page, pageListener, errorListener), THREAD_REQUEST_TAG);
+        }else if(postId > 0){
+            queueRequest(new ThreadPageRequest(postId, pageListener, errorListener));
+        }
         getHandler().postDelayed(enableNavigation, 1000);
     }
 
@@ -317,6 +323,8 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
             loadSessionCookie();
             ignorePageProgress = false;
             disableNavLoading = false;
+            threadId = response.threadId;
+            postId = 0;
             page = response.pageNum;
             maxPage = response.maxPageNum;
             if (!TextUtils.isEmpty(response.threadTitle)) {
@@ -351,6 +359,22 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         this.ignorePageProgress = true;
         this.threadId = threadId;
         this.page = page;
+        this.maxPage = 0;
+        this.forumId = 0;
+        this.bookmarked = false;
+        this.threadTitle = new SpannedString(getString(R.string.thread_view_loading));
+        setTitle(threadTitle);
+        invalidateOptionsMenu();
+        updateNavbar();
+        startRefresh();
+        threadView.loadUrl("about:blank");
+    }
+
+    public void loadThread(int postId){
+        this.ignorePageProgress = true;
+        this.postId = postId;
+        this.threadId = 0;
+        this.page = 0;
         this.maxPage = 0;
         this.forumId = 0;
         this.bookmarked = false;
@@ -482,24 +506,40 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_REPLY){
+            if(resultCode > 0){
+                loadThread(resultCode);
+            }else if(data != null && data.getIntExtra("thread_id", 0) > 0){
+                loadThread(data.getIntExtra("thread_id", 0), 0);
+            }else{
+                loadThread(threadId, 0);
+            }
+        }
+    }
+
     public class SomeJavascriptInterface {
 
         @JavascriptInterface
         public void onQuoteClick(String postId){
-            startActivity(
+            startActivityForResult(
                     new Intent(getActivity(), ReplyActivity.class)
                             .putExtra("thread_id", threadId)
                             .putExtra("post_id", Integer.parseInt(postId))
-                            .putExtra("reply_type", ReplyFragment.TYPE_QUOTE)
+                            .putExtra("reply_type", ReplyFragment.TYPE_QUOTE),
+                    REQUEST_REPLY
             );
         }
 
         @JavascriptInterface
         public void onEditClick(String postId){
-            startActivity(
+            startActivityForResult(
                     new Intent(getActivity(), ReplyActivity.class)
                             .putExtra("post_id", Integer.parseInt(postId))
-                            .putExtra("reply_type", ReplyFragment.TYPE_EDIT)
+                            .putExtra("reply_type", ReplyFragment.TYPE_EDIT),
+                    REQUEST_REPLY
             );
         }
 

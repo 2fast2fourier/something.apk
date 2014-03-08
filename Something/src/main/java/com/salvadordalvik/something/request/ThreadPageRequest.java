@@ -37,6 +37,13 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         addParam("perpage", SomePreferences.threadPostPerPage);
     }
 
+    public ThreadPageRequest(int postId, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
+        super("http://forums.somethingawful.com/showthread.php", Request.Method.GET, success, error);
+        addParam("postid", postId);
+        addParam("goto", "post");
+        addParam("perpage", SomePreferences.threadPostPerPage);
+    }
+
     @Override
     public ThreadPage parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
         return processThreadPage(document, SomePreferences.hideAllImages, SomePreferences.hidePreviouslyReadPosts);
@@ -141,6 +148,8 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 String postDate = post.getElementsByClass("postdate").text().replaceAll("[#?]", "").trim();
                 String postIndex = post.attr("data-idx");
 
+                boolean editable = post.getElementsByAttributeValueContaining("href","editpost.php?action=editpost").size() > 0;
+
                 Element userInfo = post.getElementsByClass("user_jump").first();
                 Matcher userIdMatcher = userJumpPattern.matcher(userInfo.attr("href"));
                 String userId = null;
@@ -190,7 +199,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 postData.put("isMarked", null);
                 postData.put("isSelf", null);
                 postData.put("notOnProbation", "notOnProbation");
-                postData.put("editable", null);
+                postData.put("editable", editable ? "editable" : null);
                 postData.put("mod", null);
                 postData.put("admin", null);
 
