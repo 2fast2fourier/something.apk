@@ -48,7 +48,7 @@
     <string name="reply_preview">Preview</string>
     <string name="reply_activity">Reply</string>
     <string name="pm_activity">Private Message</string>
-    <string name="pm_reply">REPLY</string>
+    <string name="pm_reply">Reply</string>
     <string name="login_started_title">Logging In</string>
     <string name="login_started_message">Please wait…</string>
     <string name="preference_dialog_title">Preferences</string>
@@ -58,6 +58,7 @@
     <string name="preference_apply">Apply</string>
     <string name="menu_logout">Logout</string>
     <string name="posting_failed_title">Posting Failed</string>
+    <string name="posting_failed_message">Failed to send post.</string>
     <string name="menu_refresh">Refresh</string>
     <string name="back_title">Back</string>
     <string name="menu_thread_reply">Reply</string>
@@ -68,6 +69,7 @@
     <string name="post_loading">Loading Reply</string>
     <string name="please_wait">Please wait…</string>
     <string name="posting_title">Posting…</string>
+    <string name="sending_title">Sending…</string>
     <string name="posting_message">Please wait.</string>
     <string name="reply_confirm_title_reply">Reply</string>
     <string name="reply_confirm_message_reply">Posting to:</string>
@@ -76,10 +78,13 @@
     <string name="reply_confirm_title_quote">Quoting Post</string>
     <string name="reply_confirm_message_quote">Quoting post in:</string>
     <string name="reply_confirm_title_pm">Private Message</string>
-    <string name="reply_confirm_message_pm">Messaging:</string>
+    <string name="reply_confirm_message_pm">User:</string>
     <string name="confirm_reply">Confirm</string>
     <string name="confirm_quote">Confirm</string>
     <string name="confirm_edit">Confirm</string>
     <string name="confirm_pm">Send</string>
+    <string name="reply_sent_pm">Message Sent</string>
+    <string name="reply_title_hint">Subject</string>
+    <string name="reply_username_hint">Username</string>
 
 </resources>

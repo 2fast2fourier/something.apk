@@ -7,6 +7,34 @@
     android:fitsSystemWindows="true">
     <EditText
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:scrollbars="vertical"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:hint="@string/reply_username_hint"
+        android:imeOptions="flagNoExtractUi"
+        android:textCursorDrawable="@null"
+        android:textColor="?listHeaderTextColor"
+        android:id="@+id/reply_username"
+        android:inputType="textNoSuggestions"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:hint="@string/reply_title_hint"
+        android:scrollbars="vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:imeOptions="flagNoExtractUi"
+        android:textCursorDrawable="@null"
+        android:textColor="?listHeaderTextColor"
+        android:id="@+id/reply_title"
+        android:inputType="textEmailSubject"
+        android:layout_below="@+id/reply_username"/>
+    <EditText
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="top"
         android:background="#11000000"
@@ -16,7 +44,8 @@
         android:textCursorDrawable="@null"
         android:textColor="?listHeaderTextColor"
         android:id="@+id/reply_content"
-        android:inputType="textMultiLine|textLongMessage"/>
+        android:inputType="textMultiLine|textLongMessage"
+        android:layout_below="@+id/reply_title"/>
 
     <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
         xmlns:app="http://schemas.android.com/apk/res-auto"

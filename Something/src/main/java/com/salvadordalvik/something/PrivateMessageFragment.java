@@ -5,7 +5,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -20,7 +19,6 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.salvadordalvik.fastlibrary.FastFragment;
 import com.salvadordalvik.fastlibrary.alert.FastAlert;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
 import com.salvadordalvik.something.request.PrivateMessageRequest;
@@ -30,6 +28,8 @@ import com.salvadordalvik.something.util.Constants;
  * Created by matthewshepard on 2/12/14.
  */
 public class PrivateMessageFragment extends SomeFragment implements Response.ErrorListener, Response.Listener<PrivateMessageRequest.PMData> {
+    private static final int REQUEST_REPLY = 110;
+
     private WebView webview;
 
     private int pmId = 0;
@@ -224,5 +224,33 @@ public class PrivateMessageFragment extends SomeFragment implements Response.Err
 
     public boolean hasPMLoaded() {
         return pmId > 0;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_pm_reply:
+                startReply();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void startReply() {
+        startActivityForResult(
+                new Intent(getActivity(), ReplyActivity.class)
+                        .putExtra("pm_id", pmId)
+                        .putExtra("reply_type", ReplyFragment.TYPE_PM),
+                REQUEST_REPLY
+        );
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(getActivity() instanceof PrivateMessageListActivity && requestCode == REQUEST_REPLY && resultCode == ReplyFragment.TYPE_PM){
+            FastAlert.notice(this, R.string.reply_sent_pm);
+            ((PrivateMessageListActivity)getActivity()).showPMFolder(Constants.PM_FOLDER_INBOX);
+        }
     }
 }

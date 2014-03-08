@@ -105,4 +105,9 @@ public class PrivateMessageListActivity extends SomeActivity implements DrawerLa
     public void onDrawerStateChanged(int newState) {
 
     }
+
+    public void showPMFolder(int folder) {
+        slidingMenu.openDrawer(Gravity.LEFT);
+        listFragment.showFolder(folder);
+    }
 }

@@ -5,7 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.VolleyError;
 import com.salvadordalvik.fastlibrary.FastFragment;
+import com.salvadordalvik.fastlibrary.alert.FastAlert;
+import com.salvadordalvik.fastlibrary.request.FastRequest;
+import com.salvadordalvik.something.request.SomeError;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
@@ -65,6 +69,14 @@ public abstract class SomeFragment extends FastFragment {
         super.onRefreshCompleted();
         if(progressBar != null){
             progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onFailure(FastRequest request, VolleyError error) {
+        super.onFailure(request, error);
+        if(error instanceof SomeError){
+            FastAlert.error(this, error.getMessage());
         }
     }
 }

@@ -11,15 +11,35 @@ import org.jsoup.nodes.Document;
  */
 public class PMReplyDataRequest extends HTMLRequest<PMReplyDataRequest.PMReplyData> {
     public PMReplyDataRequest(int pmId, Response.Listener<PMReplyData> success, Response.ErrorListener error) {
-        super("", Request.Method.GET, success, error);
+        super("http://forums.somethingawful.com/private.php", Request.Method.GET, success, error);
+        addParam("action", "newmessage");
+        addParam("privatemessageid", pmId);
     }
 
     @Override
     public PMReplyData parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
-        return new PMReplyData();
+        int pmId = 0;
+        String id = document.getElementsByAttributeValue("name", "prevmessageid").val();
+        if(id != null && id.matches("\\d+")){
+            pmId = Integer.parseInt(id);
+        }
+        String username = document.getElementsByAttributeValue("name", "touser").val();
+        String replyContent = document.getElementsByAttributeValue("name", "message").text();
+        String title = document.getElementsByAttributeValue("name", "title").val();
+        return new PMReplyData(pmId, replyContent, username, title);
     }
 
     public static class PMReplyData {
-        public String replyContent, username;
+        public final int replyToPMId;
+        public final String replyContent;
+
+        public String replyMessage, replyUsername, replyTitle;
+
+        public PMReplyData(int pmId, String replyContent, String username, String title) {
+            this.replyToPMId = pmId;
+            this.replyContent = replyContent;
+            this.replyUsername = username;
+            this.replyTitle = title;
+        }
     }
 }
