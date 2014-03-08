@@ -2,14 +2,21 @@ package com.salvadordalvik.something;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.salvadordalvik.fastlibrary.alert.FastAlert;
+import com.salvadordalvik.fastlibrary.list.FastItem;
 import com.salvadordalvik.fastlibrary.list.SectionFastAdapter;
+import com.salvadordalvik.something.list.PrivateMessageFolderItem;
+import com.salvadordalvik.something.list.PrivateMessageItem;
+import com.salvadordalvik.something.list.ThreadItem;
+import com.salvadordalvik.something.request.PMDeleteRequest;
 import com.salvadordalvik.something.request.PrivateMessageListRequest;
 
 /**
@@ -32,6 +39,8 @@ public class PrivateMessageListFragment extends SomeFragment implements Response
         adapter = new SectionFastAdapter(this, 2);
         pmList.setAdapter(adapter);
         pmList.setOnItemClickListener(adapter);
+
+        registerForContextMenu(pmList);
     }
 
     @Override
@@ -68,6 +77,39 @@ public class PrivateMessageListFragment extends SomeFragment implements Response
     public void onPaneRevealed() {
 
     }
+
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        FastItem item = adapter.getItem(info.position);
+        if (item instanceof PrivateMessageItem) {
+            getActivity().getMenuInflater().inflate(R.menu.pm_item, menu);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_delete:
+                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                FastItem pm = adapter.getItem(info.position);
+                if(pm != null){
+                    queueRequest(new PMDeleteRequest(folderId, deleteListener, null, pm.getId()));
+                    return true;
+                }
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    public Response.Listener deleteListener = new Response.Listener() {
+        @Override
+        public void onResponse(Object response) {
+            FastAlert.notice(PrivateMessageListFragment.this, R.string.pm_deleted);
+            startRefresh();
+        }
+    };
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
