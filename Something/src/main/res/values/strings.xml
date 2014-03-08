@@ -66,6 +66,20 @@
     <string name="retry">Retry</string>
     <string name="cancel">Cancel</string>
     <string name="post_loading">Loading Reply</string>
-    <string name="please_wait">Please wait...</string>
+    <string name="please_wait">Please wait…</string>
+    <string name="posting_title">Posting…</string>
+    <string name="posting_message">Please wait.</string>
+    <string name="reply_confirm_title_reply">Reply</string>
+    <string name="reply_confirm_message_reply">Posting to:</string>
+    <string name="reply_confirm_title_edit">Editing Post</string>
+    <string name="reply_confirm_message_edit">Editing post in:</string>
+    <string name="reply_confirm_title_quote">Quoting Post</string>
+    <string name="reply_confirm_message_quote">Quoting post in:</string>
+    <string name="reply_confirm_title_pm">Private Message</string>
+    <string name="reply_confirm_message_pm">Messaging:</string>
+    <string name="confirm_reply">Confirm</string>
+    <string name="confirm_quote">Confirm</string>
+    <string name="confirm_edit">Confirm</string>
+    <string name="confirm_pm">Send</string>
 
 </resources>

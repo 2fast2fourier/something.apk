@@ -16,6 +16,7 @@ import android.widget.EditText;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.salvadordalvik.fastlibrary.alert.FastAlert;
+import com.salvadordalvik.fastlibrary.request.FastVolley;
 import com.salvadordalvik.something.request.PMReplyDataRequest;
 import com.salvadordalvik.something.request.ReplyDataRequest;
 import com.salvadordalvik.something.request.ReplyPostRequest;
@@ -37,6 +38,7 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     private int threadId, postId, pmId, replyType;
 
     private ReplyDataRequest.ReplyDataResponse replyData = null;
+    private PMReplyDataRequest.PMReplyData pmReplyData = null;
 
     public ReplyFragment() {
         super(R.layout.reply_fragment, R.menu.post_reply);
@@ -88,6 +90,7 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
         if(reply != null){
             replyEnabled = replyData != null && replyContent.length() > 0;
             reply.setEnabled(replyEnabled);
+            reply.setVisible(replyEnabled);
         }
     }
 
@@ -95,7 +98,7 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_post_reply:
-                postReply();
+                confirmReply();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -104,11 +107,55 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     @Override
     public void refreshData(boolean pullToRefresh, boolean staleRefresh) {
         dismissDialog();
-        dialog = ProgressDialog.show(getActivity(), getString(R.string.post_loading), getString(R.string.please_wait), true, true, this);
+        dialog = ProgressDialog.show(getActivity(), getString(R.string.post_loading), getString(R.string.please_wait), true, false, this);
         if(replyType == TYPE_PM){
             queueRequest(new PMReplyDataRequest(pmId, pmReplyListener, loadingErrorListener));
         }else{
             queueRequest(new ReplyDataRequest(threadId, postId, replyType, replyListener, loadingErrorListener));
+        }
+    }
+
+    private void confirmReply(){
+        if(getActivity() != null){
+            int title, confirm;
+            String message;
+            switch (replyType){
+                case TYPE_REPLY:
+                    confirm = R.string.confirm_reply;
+                    title = R.string.reply_confirm_title_reply;
+                    message = getSafeString(R.string.reply_confirm_message_reply) +"\n"+ replyData.threadTitle;
+                    break;
+                case TYPE_QUOTE:
+                    confirm = R.string.confirm_quote;
+                    title = R.string.reply_confirm_title_quote;
+                    message = getSafeString(R.string.reply_confirm_message_quote) +"\n"+ replyData.threadTitle;
+                    break;
+                case TYPE_EDIT:
+                    confirm = R.string.confirm_edit;
+                    title = R.string.reply_confirm_title_edit;
+                    message = getSafeString(R.string.reply_confirm_message_edit) +"\n"+ replyData.threadTitle;
+                    break;
+                case TYPE_PM:
+                    confirm = R.string.confirm_pm;
+                    title = R.string.reply_confirm_title_pm;
+                    message = getSafeString(R.string.reply_confirm_message_pm) +"\n"+pmReplyData.username;
+                    break;
+                default:
+                    throw new IllegalArgumentException("INVALID REPLY TYPE");
+            }
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setPositiveButton(confirm,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                postReply();
+                            }
+                        }
+                    )
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
         }
     }
 
@@ -117,6 +164,7 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
         if(replyData != null && content != null && content.length() > 0){
             replyData.replyMessage = content.toString().trim();
             queueRequest(new ReplyPostRequest(replyData, postingResult, postingErrorListener));
+            dialog = ProgressDialog.show(getActivity(), getSafeString(R.string.posting_title), getSafeString(R.string.posting_message), true, false, this);
         }else{
             //this shouldn't happen, throw and log via bugsense
             throw new IllegalArgumentException("MISSING REPLY DATA");

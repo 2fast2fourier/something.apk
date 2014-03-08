@@ -514,8 +514,6 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
                 loadThread(resultCode);
             }else if(data != null && data.getIntExtra("thread_id", 0) > 0){
                 loadThread(data.getIntExtra("thread_id", 0), 0);
-            }else{
-                loadThread(threadId, 0);
             }
         }
     }

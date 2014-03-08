@@ -20,6 +20,6 @@ public class PMReplyDataRequest extends HTMLRequest<PMReplyDataRequest.PMReplyDa
     }
 
     public static class PMReplyData {
-        public String replyContent;
+        public String replyContent, username;
     }
 }
