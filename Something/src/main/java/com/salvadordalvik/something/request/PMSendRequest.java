@@ -5,7 +5,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 /**
  * Created by matthewshepard on 3/8/14.

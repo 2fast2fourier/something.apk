@@ -1,5 +1,6 @@
 package com.salvadordalvik.something;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.salvadordalvik.something.request.PrivateMessageListRequest;
  * Created by matthewshepard on 2/7/14.
  */
 public class PrivateMessageListFragment extends SomeFragment implements Response.ErrorListener, Response.Listener<PrivateMessageListRequest.PMListResult> {
+    private static final int REQUEST_REPLY = 120;
     private ListView pmList;
     private SectionFastAdapter adapter;
 
@@ -70,10 +72,27 @@ public class PrivateMessageListFragment extends SomeFragment implements Response
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case R.id.menu_newpm:
+                startActivityForResult(
+                        new Intent(getActivity(), ReplyActivity.class)
+                                .putExtra("pm_id", ReplyFragment.NEW_PM)
+                                .putExtra("reply_type", ReplyFragment.TYPE_PM),
+                        REQUEST_REPLY
+                );
+                return true;
             case R.id.menu_refresh:
                 startRefresh();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_REPLY && resultCode > 0){
+            FastAlert.notice(this, R.string.reply_sent_pm);
+            startRefresh();
+        }
     }
 }

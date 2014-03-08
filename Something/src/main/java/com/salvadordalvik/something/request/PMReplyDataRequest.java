@@ -13,7 +13,9 @@ public class PMReplyDataRequest extends HTMLRequest<PMReplyDataRequest.PMReplyDa
     public PMReplyDataRequest(int pmId, Response.Listener<PMReplyData> success, Response.ErrorListener error) {
         super("http://forums.somethingawful.com/private.php", Request.Method.GET, success, error);
         addParam("action", "newmessage");
-        addParam("privatemessageid", pmId);
+        if(pmId > 0){
+            addParam("privatemessageid", pmId);
+        }
     }
 
     @Override

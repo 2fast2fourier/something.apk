@@ -31,6 +31,8 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     public static final int TYPE_EDIT = 4;
     public static final int TYPE_PM = 5;
 
+    public static final int NEW_PM = -1;
+
     private ProgressDialog dialog = null;
 
     private EditText replyContent, replyTitle, replyUsername;
@@ -58,21 +60,25 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
                 if(threadId == 0 || postId != 0 || pmId != 0){
                     throw new IllegalArgumentException("ID MISMATCH");
                 }
+                setTitle(getSafeString(R.string.reply_title_reply));
                 break;
             case TYPE_QUOTE:
                 if(threadId == 0 || postId == 0 || pmId != 0){
                     throw new IllegalArgumentException("ID MISMATCH");
                 }
+                setTitle(getSafeString(R.string.reply_title_reply));
                 break;
             case TYPE_EDIT:
                 if(threadId != 0 || postId == 0 || pmId != 0){
                     throw new IllegalArgumentException("ID MISMATCH");
                 }
+                setTitle(getSafeString(R.string.reply_title_edit));
                 break;
             case TYPE_PM:
                 if(threadId != 0 || postId != 0 || pmId == 0){
                     throw new IllegalArgumentException("ID MISMATCH");
                 }
+                setTitle(getSafeString(R.string.reply_title_pm));
                 break;
             default:
                 throw new IllegalArgumentException("INVALID REPLY TYPE");
@@ -280,7 +286,7 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
                 case TYPE_QUOTE:
                     replyContent.setText(replyDataResponse.replyContent+"\n\n");
                     replyContent.setSelection(replyDataResponse.replyContent.length() + 2);
-                    setTitle("Quote: "+replyDataResponse.threadTitle);
+                    setTitle("Reply: "+replyDataResponse.threadTitle);
                     break;
                 case TYPE_EDIT:
                     replyContent.setText(replyDataResponse.replyContent+"\n\n");
@@ -304,22 +310,39 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
             }
             dismissDialog();
             if(getActivity() != null){
-                new AlertDialog.Builder(getActivity())
-                        .setTitle(R.string.post_loading_failed)
-                        .setMessage(error)
-                        .setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                startRefresh();
-                            }
-                        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (getActivity() != null) {
-                            getActivity().finish();
-                        }
-                    }
-                }).show();
+                if(volleyError instanceof SomeError){
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle(R.string.post_loading_failed)
+                            .setMessage(volleyError.getMessage())
+                            .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (getActivity() != null) {
+                                        getActivity().finish();
+                                    }
+                                }
+                            })
+                            .show();
+                }else{
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle(R.string.post_loading_failed)
+                            .setMessage(R.string.posting_failed_message)
+                            .setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    startRefresh();
+                                }
+                            })
+                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (getActivity() != null) {
+                                        getActivity().finish();
+                                    }
+                                }
+                            })
+                            .show();
+                }
             }
         }
     };
@@ -327,26 +350,27 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     private Response.ErrorListener postingErrorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError volleyError) {
-            Log.e("senderror", volleyError.toString());
-            String error;
-            if(volleyError instanceof SomeError){
-                error = volleyError.getMessage();
-            }else{
-                error = getSafeString(R.string.posting_failed_message);
-            }
             dismissDialog();
             if(getActivity() != null){
-                new AlertDialog.Builder(getActivity())
-                        .setTitle(R.string.posting_failed_title)
-                        .setMessage(error)
-                        .setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                postReply();
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel, null)
-                        .show();
+                if(volleyError instanceof SomeError){
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle(R.string.posting_failed_title)
+                            .setMessage(volleyError.getMessage())
+                            .setPositiveButton(R.string.button_ok, null)
+                            .show();
+                }else{
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle(R.string.posting_failed_title)
+                            .setMessage(R.string.posting_failed_message)
+                            .setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    postReply();
+                                }
+                            })
+                            .setNegativeButton(R.string.cancel, null)
+                            .show();
+                }
             }
         }
     };

@@ -5,4 +5,8 @@
         android:title="@string/menu_refresh"
         android:icon="@drawable/ic_action_refresh"
         android:showAsAction="always"/>
+    <item android:id="@+id/menu_newpm"
+        android:title="@string/menu_newpm"
+        android:icon="@drawable/ic_menu_reply"
+        android:showAsAction="always"/>
 </menu>

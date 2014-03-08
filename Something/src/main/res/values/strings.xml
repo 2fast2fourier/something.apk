@@ -86,5 +86,10 @@
     <string name="reply_sent_pm">Message Sent</string>
     <string name="reply_title_hint">Subject</string>
     <string name="reply_username_hint">Username</string>
+    <string name="menu_newpm">New Message</string>
+    <string name="reply_title_reply">New Reply</string>
+    <string name="reply_title_pm">Private Message</string>
+    <string name="reply_title_edit">Edit Post</string>
+    <string name="button_ok">OK</string>
 
 </resources>
