@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -261,6 +262,13 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case R.id.menu_thread_reply:
+                startActivity(
+                        new Intent(getActivity(), ReplyActivity.class)
+                                .putExtra("thread_id", threadId)
+                                .putExtra("reply_type", ReplyFragment.TYPE_REPLY)
+                );
+                return true;
             case R.id.menu_thread_bookmark:
                 FastAlert.process(getActivity(), getView(), getString(bookmarked ? R.string.bookmarking_thread_started_removing : R.string.bookmarking_thread_started));
                 queueRequest(new BookmarkRequest(threadId, !bookmarked, new Response.Listener<Boolean>() {
@@ -478,12 +486,21 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
 
         @JavascriptInterface
         public void onQuoteClick(String postId){
-
+            startActivity(
+                    new Intent(getActivity(), ReplyActivity.class)
+                            .putExtra("thread_id", threadId)
+                            .putExtra("post_id", Integer.parseInt(postId))
+                            .putExtra("reply_type", ReplyFragment.TYPE_QUOTE)
+            );
         }
 
         @JavascriptInterface
         public void onEditClick(String postId){
-
+            startActivity(
+                    new Intent(getActivity(), ReplyActivity.class)
+                            .putExtra("post_id", Integer.parseInt(postId))
+                            .putExtra("reply_type", ReplyFragment.TYPE_EDIT)
+            );
         }
 
         @JavascriptInterface

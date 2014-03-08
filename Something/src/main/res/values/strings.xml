@@ -60,5 +60,12 @@
     <string name="posting_failed_title">Posting Failed</string>
     <string name="menu_refresh">Refresh</string>
     <string name="back_title">Back</string>
+    <string name="menu_thread_reply">Reply</string>
+    <string name="post_loading_failed">Loading Failed</string>
+    <string name="post_loading_failed_message">Failed to load reply page.</string>
+    <string name="retry">Retry</string>
+    <string name="cancel">Cancel</string>
+    <string name="post_loading">Loading Reply</string>
+    <string name="please_wait">Please wait...</string>
 
 </resources>

@@ -8,6 +8,10 @@
         android:showAsAction="always">
         <menu>
             <item
+                android:id="@+id/menu_thread_reply"
+                android:title="@string/menu_thread_reply"
+                android:icon="@drawable/ic_menu_reply"/>
+            <item
                 android:id="@+id/menu_thread_bookmark"
                 android:title="@string/menu_thread_bookmark"
                 android:icon="@drawable/star_empty"/>
