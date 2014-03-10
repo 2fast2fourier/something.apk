@@ -1,6 +1,3 @@
-[submodule "FastLibrary"]
-	path = FastLibrary
-	url = git@github.com:Geekner/FastLibrary.git
 [submodule "SlidingMenu"]
 	path = SlidingMenu
 	url = git@github.com:Geekner/SlidingMenu.git
