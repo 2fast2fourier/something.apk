@@ -246,7 +246,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
 
     private void updateNavbar() {
         navPrev.setEnabled(page > 1 && !disableNavLoading);
-        navPageBar.setText("Page "+page+"/"+maxPage);
+        navPageBar.setText("Page "+Math.max(page, 0)+"/"+maxPage);
         navNext.setImageResource(page < maxPage ? R.drawable.arrowright : R.drawable.ic_menu_load);
         navNext.setEnabled(!disableNavLoading || page == maxPage);
     }

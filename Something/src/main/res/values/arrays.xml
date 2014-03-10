@@ -24,4 +24,20 @@
         <item>View Profile</item>
         <item>View Rapsheet</item>
     </array>
+    <array name="thread_context_actions_normal">
+        <item>First Page</item>
+        <item>Last Page</item>
+        <item>Bookmark</item>
+        <item>Mark as Unread</item>
+        <item>Share Link to Thread</item>
+        <item>Copy Thread Link</item>
+    </array>
+    <array name="thread_context_actions_bookmarked">
+        <item>First Page</item>
+        <item>Last Page</item>
+        <item>Unbookmark</item>
+        <item>Mark as Unread</item>
+        <item>Share Link to Thread</item>
+        <item>Copy Thread Link</item>
+    </array>
 </resources>

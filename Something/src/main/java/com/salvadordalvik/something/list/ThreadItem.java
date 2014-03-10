@@ -136,6 +136,10 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         this.bookmark = bookmarked ? 1 : 0;
     }
 
+    public String getTitle() {
+        return threadTitle;
+    }
+
     protected static class ThreadHolder{
         public TextView title, subtext, unread;
         public NetworkImageView tagImage;

@@ -31,6 +31,8 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         addParam("threadid", threadId);
         if(page > 0){
             addParam("pagenumber", page);
+        }else if(page < 0){
+            addParam("goto", "lastpost");
         }else{
             addParam("goto", "newpost");
         }

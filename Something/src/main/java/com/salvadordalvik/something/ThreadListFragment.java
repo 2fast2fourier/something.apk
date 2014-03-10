@@ -1,6 +1,8 @@
 package com.salvadordalvik.something;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -175,19 +177,45 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         FastItem item = adapter.getItem(info.position);
         if(item instanceof ThreadItem){
-            final ThreadItem thread = (ThreadItem) item;
-            menu.add(thread.isBookmarked() ? R.string.menu_thread_unbookmark : R.string.menu_thread_bookmark).setOnMenuItemClickListener(new android.view.MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(android.view.MenuItem item) {
-                    //TODO better integrate this request into fragment, display true indeterminate message.
-                    queueRequest(new BookmarkRequest(thread.getId(), !thread.isBookmarked(), null, null));
-                    thread.setBookmarked(!thread.isBookmarked());
-                    adapter.notifyDataSetChanged();
-                    FastAlert.process(getActivity(), getView(), getSafeString(R.string.bookmarking_thread_started));
-                    return true;
-                }
-            });
+            ThreadItem thread = (ThreadItem) item;
+            showThreadDialog(thread.getId(), thread.getTitle(), thread.isBookmarked(), thread);
         }
+    }
+
+    private void showThreadDialog(final int threadId, final String threadTitle, final boolean bookmarked, final ThreadItem item){
+        final String threadUrl = "http://forums.somethingawful.com/showthread.php?threadid=" + threadId;
+        new AlertDialog.Builder(getActivity())
+                .setTitle(threadTitle)
+                .setItems(bookmarked ? R.array.thread_context_actions_bookmarked : R.array.thread_context_actions_normal, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            //See R.array.thread_context_actions_normal for item list
+                            case 0://First Page
+                                ((MainActivity)getActivity()).showThread(threadId, 1);
+                                break;
+                            case 1://Last Page
+                                ((MainActivity)getActivity()).showThread(threadId, -1);
+                                break;
+                            case 2://Bookmark/Unbookmark
+                                queueRequest(new BookmarkRequest(threadId, !bookmarked, null, null));
+                                item.setBookmarked(!bookmarked);
+                                adapter.notifyDataSetChanged();
+                                break;
+                            case 3://Mark Unread
+                                FastAlert.error(ThreadListFragment.this, "NOT IMPLEMENTED YET");
+                                break;
+                            case 4://Share link
+                                FastUtils.showSimpleShareChooser(getActivity(), threadTitle, threadUrl, getSafeString(R.string.share_url_title));
+                                break;
+                            case 5://Copy Link
+                                FastUtils.copyToClipboard(getActivity(), threadTitle, threadUrl);
+                                FastAlert.notice(ThreadListFragment.this, R.string.link_copied, R.drawable.ic_menu_link);
+                                break;
+                        }
+                    }
+                })
+                .show();
     }
 
     private void updateStarredForums(){
