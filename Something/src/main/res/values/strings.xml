@@ -104,5 +104,8 @@
     <string name="bbcode_quote">Quote Block</string>
     <string name="bbcode_spoiler">Spoiler Block</string>
     <string name="bbcode_codeblock">Code Block</string>
+    <string name="post_more_title">More...</string>
+    <string name="share_url_title">Share Link</string>
+    <string name="link_copied">Copied Link</string>
 
 </resources>

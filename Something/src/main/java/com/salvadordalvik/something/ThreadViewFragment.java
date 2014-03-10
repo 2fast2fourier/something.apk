@@ -4,10 +4,13 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -20,7 +23,6 @@ import android.text.Html;
 import android.text.SpannedString;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.Menu;
@@ -69,6 +71,7 @@ import uk.co.senab.actionbarpulltorefresh.library.sdk.Compat;
  */
 public class ThreadViewFragment extends SomeFragment implements PageSelectDialogFragment.PageSelectable, View.OnClickListener, OnRefreshFromBottomListener {
     private static final int REQUEST_REPLY = 101;
+    private static final int REQUEST_NEW_PM = 102;
     private WebView threadView;
 
     private View pfbContainer;
@@ -138,16 +141,14 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         return Math.max(Math.min(FastUtils.calculateScrollDistance(getActivity(), 2.5f), 0.666f), 0.333f);
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private void initWebview() {
         threadView.getSettings().setJavaScriptEnabled(true);
         threadView.setWebChromeClient(chromeClient);
         threadView.setWebViewClient(webClient);
         threadView.addJavascriptInterface(new SomeJavascriptInterface(), "listener");
 
-        TypedValue val = new TypedValue();
-        if(getActivity().getTheme().resolveAttribute(R.attr.webviewBackgroundColor, val, true)){
-            threadView.setBackgroundColor(val.data);
-        }
+        threadView.setBackgroundColor(SomeTheme.getThemeColor(getActivity(), R.attr.webviewBackgroundColor, Color.BLACK));
 
         registerForContextMenu(threadView);
     }
@@ -395,7 +396,10 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
                 String value = cookieCutter.group(2);
                 cookieMstr.setCookie("forums.somethingawful.com", name+"="+value+"; domain=forums.somethingawful.com");
             }
-            CookieSyncManager.getInstance().sync();
+            CookieSyncManager cookieMan = CookieSyncManager.getInstance();
+            if(cookieMan != null){
+                cookieMan.sync();
+            }
         }
     }
 
@@ -515,6 +519,8 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
             }else if(data != null && data.getIntExtra("thread_id", 0) > 0){
                 loadThread(data.getIntExtra("thread_id", 0), 0);
             }
+        }else if(requestCode == REQUEST_NEW_PM && resultCode > 0){
+            FastAlert.notice(this, R.string.reply_sent_pm);
         }
     }
 
@@ -543,7 +549,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
 
         @JavascriptInterface
         public void onMoreClick(String postId, String username, String userid){
-
+            showMoreDialog(postId, username, userid);
         }
 
         @JavascriptInterface
@@ -573,6 +579,47 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
                 throw new RuntimeException("Invalid postIndex in onLastReadClick: "+postIndex);
             }
         }
+    }
+
+    private void showMoreDialog(final String postId, final String username, final String userid){
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.post_more_title)
+                .setItems(R.array.more_actions_normal, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            //See R.array.more_actions_normal for item list
+                            case 0://PM
+                                startActivityForResult(
+                                        new Intent(getActivity(), ReplyActivity.class)
+                                                .putExtra("pm_id", ReplyFragment.NEW_PM)
+                                                .putExtra("pm_username", username)
+                                                .putExtra("reply_type", ReplyFragment.TYPE_PM),
+                                        REQUEST_NEW_PM
+                                );
+                                break;
+                            case 1://Filter posts
+                                FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
+                                break;
+                            case 2://Share link
+                                String url = "http://forums.somethingawful.com/showthread.php?goto=post&postid=" + postId + "#post" + postId;
+                                FastUtils.showSimpleShareChooser(getActivity(), threadTitle.toString(), url, getSafeString(R.string.share_url_title));
+                                break;
+                            case 3://Copy Link
+                                String postUrl = "http://forums.somethingawful.com/showthread.php?goto=post&postid=" + postId + "#post" + postId;
+                                FastUtils.copyToClipboard(getActivity(), threadTitle.toString(), postUrl);
+                                FastAlert.notice(ThreadViewFragment.this, R.string.link_copied, R.drawable.ic_menu_link);
+                                break;
+                            case 4://Profile
+                                FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
+                                break;
+                            case 5://Rapsheet
+                                FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
+                                break;
+                        }
+                    }
+                })
+                .show();
     }
 
     @Override
@@ -647,22 +694,9 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
 
         @Override
         public void onViewCreated(Activity activity, View headerView) {
-            int[] ptrColorArray = null;
-
-            TypedValue sty = new TypedValue();
-            if(getActivity().getTheme().resolveAttribute(R.attr.progressBarColorArray, sty, false)){
-                ptrColorArray = getResources().getIntArray(sty.data);
-            }
-            if(getActivity().getTheme().resolveAttribute(R.attr.progressBarColor, sty, true)){
-                nextPageColor = sty.data;
-            }else{
-                nextPageColor = Color.rgb(20,146,204);
-            }
-            if(getActivity().getTheme().resolveAttribute(R.attr.progressBarColorRefresh, sty, true)){
-                refreshColor = sty.data;
-            }else{
-                refreshColor = Color.rgb(190, 190, 190);
-            }
+            int[] ptrColorArray = getResources().getIntArray(SomeTheme.getThemeResource(getActivity(), R.attr.progressBarColorArray, R.array.sbp_colors_light));
+            nextPageColor = SomeTheme.getThemeColor(getActivity(), R.attr.progressBarColor, Color.rgb(20,146,204));
+            refreshColor = SomeTheme.getThemeColor(getActivity(), R.attr.progressBarColorRefresh, Color.rgb(190, 190, 190));
 
             final int strokeWidth = getResources().getDimensionPixelSize(R.dimen.pull_to_refresh_stroke);
 

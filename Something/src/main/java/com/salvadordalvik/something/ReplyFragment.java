@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,6 +43,7 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     private boolean replyEnabled = false;
 
     private int threadId, postId, pmId, replyType;
+    private String pmUsername;
 
     private ReplyDataRequest.ReplyDataResponse replyData = null;
     private PMReplyDataRequest.PMReplyData pmReplyData = null;
@@ -58,6 +60,7 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
         postId = intent.getIntExtra("post_id", 0);
         pmId = intent.getIntExtra("pm_id", 0);
         replyType = intent.getIntExtra("reply_type", 0);
+        pmUsername = intent.getStringExtra("pm_username");
         switch (replyType){
             case TYPE_REPLY:
                 if(threadId == 0 || postId != 0 || pmId != 0){
@@ -368,8 +371,10 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
                 replyContent.setText("\n\n"+replyDataResponse.replyContent);
                 replyContent.setSelection(0);
             }
-            if(replyDataResponse.replyUsername != null){
+            if(!TextUtils.isEmpty(replyDataResponse.replyUsername)){
                 replyUsername.setText(replyDataResponse.replyUsername);
+            }else if(!TextUtils.isEmpty(pmUsername)){
+                replyUsername.setText(pmUsername);
             }
             if(replyDataResponse.replyTitle != null){
                 replyTitle.setText(replyDataResponse.replyTitle);
