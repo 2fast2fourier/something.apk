@@ -3,12 +3,14 @@ package com.salvadordalvik.something;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +28,7 @@ import com.salvadordalvik.something.request.SomeError;
  * Created by matthewshepard on 2/10/14.
  */
 public class ReplyFragment extends SomeFragment implements DialogInterface.OnCancelListener, TextWatcher {
+    private enum BBCODE {BOLD, ITALICS, UNDERLINE, STRIKEOUT, URL, VIDEO, IMAGE, QUOTE, SPOILER, CODE}
     public static final int TYPE_REPLY = 2;
     public static final int TYPE_QUOTE = 3;
     public static final int TYPE_EDIT = 4;
@@ -131,8 +134,121 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
             case R.id.menu_post_reply:
                 confirmReply();
                 return true;
+            case R.id.bbcode_bold:
+                insertBBCode(BBCODE.BOLD);
+                return true;
+            case R.id.bbcode_italics:
+                insertBBCode(BBCODE.ITALICS);
+                return true;
+            case R.id.bbcode_underline:
+                insertBBCode(BBCODE.UNDERLINE);
+                return true;
+            case R.id.bbcode_strikeout:
+                insertBBCode(BBCODE.STRIKEOUT);
+                return true;
+            case R.id.bbcode_url:
+                insertBBCode(BBCODE.URL);
+                return true;
+            case R.id.bbcode_video:
+                insertBBCode(BBCODE.VIDEO);
+                return true;
+            case R.id.bbcode_image:
+                insertBBCode(BBCODE.IMAGE);
+                return true;
+            case R.id.bbcode_quote:
+                insertBBCode(BBCODE.QUOTE);
+                return true;
+            case R.id.bbcode_spoiler:
+                insertBBCode(BBCODE.SPOILER);
+                return true;
+            case R.id.bbcode_code:
+                insertBBCode(BBCODE.CODE);
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void insertBBCode(BBCODE code){
+        insertBBCode(code, -1, -1);
+    }
+
+    public void insertBBCode(BBCODE code, int selectionStart, int selectionEnd){
+        if(selectionStart < 0){
+            //update selection values
+            selectionStart = replyContent.getSelectionStart();
+            selectionEnd = replyContent.getSelectionEnd();
+        }
+        boolean highlighted = selectionStart != selectionEnd;
+        String startTag = null;
+        String endTag = null;
+        switch(code){
+            case BOLD:
+                startTag = "[b]";
+                endTag = "[/b]";
+                break;
+            case ITALICS:
+                startTag = "[i]";
+                endTag = "[/i]";
+                break;
+            case UNDERLINE:
+                startTag = "[u]";
+                endTag = "[/u]";
+                break;
+            case STRIKEOUT:
+                startTag = "[s]";
+                endTag = "[/s]";
+                break;
+            case URL:
+                String link = null;
+                ClipboardManager cb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = cb.getPrimaryClip();
+                if(clip != null && clip.getItemCount() > 0){
+                    CharSequence clipText = clip.getItemAt(0).getText();
+                    if(clipText != null){
+                        String text = clipText.toString();
+                        if(text.startsWith("http://") || text.startsWith("https://")){
+                            link = text;
+                        }
+                    }
+                }
+                if(link != null){
+                    startTag = "[url="+link+"]";
+                }else{
+                    startTag = "[url]";
+                }
+                endTag = "[/url]";
+                break;
+            case QUOTE:
+                startTag = "[quote]";
+                endTag = "[/quote]";
+                break;
+            case IMAGE:
+                startTag = "[img]";
+                endTag = "[/img]";
+                break;
+            case VIDEO:
+                startTag = "[video]";
+                endTag = "[/video]";
+                break;
+            case SPOILER:
+                startTag = "[spoiler]";
+                endTag = "[/spoiler]";
+                break;
+            case CODE:
+                startTag = "[code]";
+                endTag = "[/code]";
+                break;
+        }
+        if(replyContent.getEditableText() != null){
+            if(highlighted){
+                replyContent.getEditableText().insert(selectionStart, startTag);
+                replyContent.getEditableText().insert(selectionEnd+startTag.length(), endTag);
+                replyContent.setSelection(selectionStart+startTag.length());
+            }else{
+                replyContent.getEditableText().insert(selectionStart, startTag+endTag);
+                replyContent.setSelection(selectionStart+startTag.length());
+            }
+        }
     }
 
     @Override
@@ -302,12 +418,6 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     private Response.ErrorListener loadingErrorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError volleyError) {
-            String error;
-            if(volleyError instanceof SomeError){
-                error = volleyError.getMessage();
-            }else{
-                error = getSafeString(R.string.post_loading_failed_message);
-            }
             dismissDialog();
             if(getActivity() != null){
                 if(volleyError instanceof SomeError){

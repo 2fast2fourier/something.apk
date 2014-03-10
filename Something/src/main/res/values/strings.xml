@@ -92,5 +92,17 @@
     <string name="button_ok">OK</string>
     <string name="menu_delete">Delete</string>
     <string name="pm_deleted">Message Deleted</string>
+    <string name="bbcode">BBCode</string>
+    <string name="bbcode_emotes">Emotes</string>
+    <string name="bbcode_bold">Bold</string>
+    <string name="bbcode_italics">Italics</string>
+    <string name="bbcode_underline">Underline</string>
+    <string name="bbcode_strikeout">Strikeout</string>
+    <string name="bbcode_imagetag">Image Tag</string>
+    <string name="bbcode_pasteurl">Insert URL</string>
+    <string name="bbcode_video">Insert Video</string>
+    <string name="bbcode_quote">Quote Block</string>
+    <string name="bbcode_spoiler">Spoiler Block</string>
+    <string name="bbcode_codeblock">Code Block</string>
 
 </resources>

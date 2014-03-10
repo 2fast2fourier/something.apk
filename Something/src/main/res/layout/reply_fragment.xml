@@ -18,7 +18,7 @@
         android:textCursorDrawable="@null"
         android:textColor="?listHeaderTextColor"
         android:id="@+id/reply_username"
-        android:inputType="textNoSuggestions"/>
+        android:inputType="textNoSuggestions|textCapWords"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
         android:textCursorDrawable="@null"
         android:textColor="?listHeaderTextColor"
         android:id="@+id/reply_title"
-        android:inputType="textEmailSubject"
+        android:inputType="textAutoCorrect|textCapSentences"
         android:layout_below="@+id/reply_username"/>
     <EditText
         android:layout_width="match_parent"
@@ -44,7 +44,7 @@
         android:textCursorDrawable="@null"
         android:textColor="?listHeaderTextColor"
         android:id="@+id/reply_content"
-        android:inputType="textMultiLine|textLongMessage"
+        android:inputType="textMultiLine|textLongMessage|textCapSentences|textAutoCorrect"
         android:layout_below="@+id/reply_title"/>
 
     <fr.castorflex.android.smoothprogressbar.SmoothProgressBar

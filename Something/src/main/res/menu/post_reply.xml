@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/bbcode"
+        android:icon="@drawable/ic_menu_bbcode"
+        android:showAsAction="always"
+        android:title="@string/bbcode">
+        <menu>
+            <item
+                android:id="@+id/bbcode_bold"
+                android:title="@string/bbcode_bold"/>
+            <item
+                android:id="@+id/bbcode_italics"
+                android:title="@string/bbcode_italics"/>
+            <item
+                android:id="@+id/bbcode_underline"
+                android:title="@string/bbcode_underline"/>
+            <item
+                android:id="@+id/bbcode_strikeout"
+                android:title="@string/bbcode_strikeout"/>
+            <item
+                android:id="@+id/bbcode_image"
+                android:icon="@drawable/ic_action_photo"
+                android:title="@string/bbcode_imagetag"/>
+            <item
+                android:id="@+id/bbcode_url"
+                android:icon="@drawable/ic_menu_link"
+                android:title="@string/bbcode_pasteurl"/>
+            <item
+                android:id="@+id/bbcode_video"
+                android:icon="@drawable/ic_menu_video"
+                android:title="@string/bbcode_video"/>
+            <item
+                android:id="@+id/bbcode_quote"
+                android:icon="@drawable/ic_menu_quote"
+                android:title="@string/bbcode_quote"/>
+            <item
+                android:id="@+id/bbcode_spoiler"
+                android:title="@string/bbcode_spoiler"/>
+            <item
+                android:id="@+id/bbcode_code"
+                android:title="@string/bbcode_codeblock"/>
+        </menu>
+    </item>
     <item android:id="@+id/menu_post_reply"
         android:title="@string/post_reply"
         android:icon="@drawable/reply_icon"
