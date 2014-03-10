@@ -78,7 +78,7 @@ public class ForumListFragment extends SomeFragment implements FastQueryTask.Que
     @Override
     public void queryResult(List<ForumItem> results) {
         adapter.clearList();
-        adapter.addItems(new ForumItem(Constants.BOOKMARK_FORUMID, getString(R.string.bookmark_title), 0, false, false, false, currentlySelectedForumId));
+        adapter.addItems(new ForumItem(Constants.BOOKMARK_FORUMID, getSafeString(R.string.bookmark_title), 0, false, false, false, currentlySelectedForumId));
         adapter.addItems(results);
     }
 

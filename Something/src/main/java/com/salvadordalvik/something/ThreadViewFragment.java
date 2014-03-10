@@ -599,6 +599,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
                                 );
                                 break;
                             case 1://Filter posts
+                                //TODO not implemented yet
                                 FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
                                 break;
                             case 2://Share link
@@ -611,9 +612,11 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
                                 FastAlert.notice(ThreadViewFragment.this, R.string.link_copied, R.drawable.ic_menu_link);
                                 break;
                             case 4://Profile
+                                //TODO not implemented yet
                                 FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
                                 break;
                             case 5://Rapsheet
+                                //TODO not implemented yet
                                 FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
                                 break;
                         }

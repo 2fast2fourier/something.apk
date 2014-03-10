@@ -42,7 +42,7 @@ import uk.co.senab.actionbarpulltorefresh.library.Options;
 /**
  * Created by matthewshepard on 1/16/14.
  */
-public class ThreadListFragment extends SomeFragment implements FastQueryTask.QueryResultCallback<ForumItem>,PagedAdapter.PagedCallbacks, PageSelectDialogFragment.PageSelectable {
+public class ThreadListFragment extends SomeFragment implements FastQueryTask.QueryResultCallback<ForumItem>,PagedAdapter.PagedCallbacks, PageSelectDialogFragment.PageSelectable, AdapterView.OnItemLongClickListener {
     private ListView threadList;
     private PagedAdapter adapter;
 
@@ -99,8 +99,7 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
         threadList.setAdapter(adapter);
         threadList.setOnItemClickListener(adapter);
         threadList.setOnScrollListener(adapter);
-
-        registerForContextMenu(threadList);
+        threadList.setOnItemLongClickListener(this);
     }
 
     @Override
@@ -171,17 +170,6 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
         super.onRefreshCompleted();
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        FastItem item = adapter.getItem(info.position);
-        if(item instanceof ThreadItem){
-            ThreadItem thread = (ThreadItem) item;
-            showThreadDialog(thread.getId(), thread.getTitle(), thread.isBookmarked(), thread);
-        }
-    }
-
     private void showThreadDialog(final int threadId, final String threadTitle, final boolean bookmarked, final ThreadItem item){
         final String threadUrl = "http://forums.somethingawful.com/showthread.php?threadid=" + threadId;
         new AlertDialog.Builder(getActivity())
@@ -192,17 +180,19 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
                         switch (which) {
                             //See R.array.thread_context_actions_normal for item list
                             case 0://First Page
-                                ((MainActivity)getActivity()).showThread(threadId, 1);
+                                ((MainActivity) getActivity()).showThread(threadId, 1);
                                 break;
                             case 1://Last Page
-                                ((MainActivity)getActivity()).showThread(threadId, -1);
+                                ((MainActivity) getActivity()).showThread(threadId, -1);
                                 break;
                             case 2://Bookmark/Unbookmark
                                 queueRequest(new BookmarkRequest(threadId, !bookmarked, null, null));
                                 item.setBookmarked(!bookmarked);
                                 adapter.notifyDataSetChanged();
+                                FastAlert.notice(ThreadListFragment.this, bookmarked ? R.string.bookmarking_thread_started_removing : R.string.bookmarking_thread_started, R.drawable.ic_menu_bookmark);
                                 break;
                             case 3://Mark Unread
+                                //TODO not implemented yet
                                 FastAlert.error(ThreadListFragment.this, "NOT IMPLEMENTED YET");
                                 break;
                             case 4://Share link
@@ -353,7 +343,6 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
         if(maxPage > 1){
             PageSelectDialogFragment.newInstance(page, maxPage, this).show(getFragmentManager(), "page_select");
         }
-
     }
 
     @Override
@@ -377,5 +366,16 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
         if(act instanceof MainActivity){
             ((MainActivity)act).setTitle(title, this);
         }
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        FastItem item = adapter.getItem(position);
+        if(item instanceof ThreadItem){
+            ThreadItem thread = (ThreadItem) item;
+            showThreadDialog(thread.getId(), thread.getTitle(), thread.isBookmarked(), thread);
+            return true;
+        }
+        return false;
     }
 }
