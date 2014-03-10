@@ -4,3 +4,7 @@
 [submodule "ActionBar-PullToRefresh"]
 	path = ActionBar-PullToRefresh
 	url = git@github.com:Geekner/ActionBar-PullToRefresh.git
+[submodule "FastLibrary"]
+	path = FastLibrary
+	url = git@github.com:Geekner/FastLibrary.git
+	branch = actionbar-ptr-dev
