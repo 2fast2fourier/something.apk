@@ -16,14 +16,16 @@ import com.salvadordalvik.something.R;
  */
 public class PrivateMessageItem extends BaseFastItem<PrivateMessageItem.PMHolder> {
     private final String title, author, date;
+    private final int folderId;
     private boolean unread;
 
-    public PrivateMessageItem(int id, String title, String author, String date, boolean unread) {
+    public PrivateMessageItem(int id, String title, String author, String date, boolean unread, int folderId) {
         super(R.layout.private_message_item, id);
         this.title = title;
         this.author = author;
         this.date = date;
         this.unread = unread;
+        this.folderId = folderId;
     }
 
     @Override
@@ -34,7 +36,7 @@ public class PrivateMessageItem extends BaseFastItem<PrivateMessageItem.PMHolder
     @Override
     public void updateViewFromHolder(View view, PMHolder holder) {
         holder.title.setText(title);
-        holder.subtext.setText(author);
+        holder.subtext.setText(formatSubtext(author, folderId));
         holder.date.setText(date);
         if(unread){
             holder.title.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
@@ -62,5 +64,12 @@ public class PrivateMessageItem extends BaseFastItem<PrivateMessageItem.PMHolder
             subtext = (TextView) view.findViewById(R.id.pm_item_author);
             date = (TextView) view.findViewById(R.id.pm_item_date);
         }
+    }
+
+    private static String formatSubtext(String user, int folderId){
+        if(folderId < 0){
+            return "To: "+user;
+        }
+        return "From: "+user;
     }
 }

@@ -1,5 +1,6 @@
 package com.salvadordalvik.something;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
@@ -22,6 +23,11 @@ public class PrivateMessageListActivity extends SomeActivity implements DrawerLa
         configureSlidingMenu();
         listFragment = (PrivateMessageListFragment) getSupportFragmentManager().findFragmentById(R.id.pm_list_fragment);
         messageFragment = (PrivateMessageFragment) getSupportFragmentManager().findFragmentById(R.id.pm_fragment);
+
+        ActionBar bar = getActionBar();
+        if(bar != null){
+            bar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     private void configureSlidingMenu(){
@@ -60,7 +66,11 @@ public class PrivateMessageListActivity extends SomeActivity implements DrawerLa
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                slidingMenu.openDrawer(Gravity.LEFT);
+                if(slidingMenu.isDrawerOpen(Gravity.LEFT)){
+                    finish();
+                }else{
+                    slidingMenu.openDrawer(Gravity.LEFT);
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);

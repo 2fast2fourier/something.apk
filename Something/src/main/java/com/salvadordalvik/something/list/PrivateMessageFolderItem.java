@@ -23,6 +23,10 @@ public class PrivateMessageFolderItem extends BaseFastItem<PrivateMessageFolderI
         this.selected = selected;
     }
 
+    public void setSelected(boolean selected){
+        this.selected = selected;
+    }
+
     @Override
     public PMFolderHolder createViewHolder(View view) {
         return new PMFolderHolder(view);

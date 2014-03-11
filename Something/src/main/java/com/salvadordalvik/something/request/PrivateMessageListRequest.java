@@ -4,7 +4,6 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.bugsense.trace.BugSenseHandler;
-import com.salvadordalvik.fastlibrary.util.FastUtils;
 import com.salvadordalvik.something.list.PrivateMessageFolderItem;
 import com.salvadordalvik.something.list.PrivateMessageItem;
 
@@ -22,8 +21,11 @@ import java.util.regex.Pattern;
 public class PrivateMessageListRequest extends HTMLRequest<PrivateMessageListRequest.PMListResult> {
     private static final Pattern pmIdPattern = Pattern.compile("privatemessageid=(\\d+)");
 
+    private int folderId;
+
     public PrivateMessageListRequest(int folderId, boolean showAll, Response.Listener<PMListResult> success, Response.ErrorListener error) {
         super("http://forums.somethingawful.com/private.php", Request.Method.GET, success, error);
+        this.folderId = folderId;
         addParam("folderid", folderId);
         if(showAll){
             addParam("showall", "1");
@@ -52,7 +54,7 @@ public class PrivateMessageListRequest extends HTMLRequest<PrivateMessageListReq
                             unread = status.getElementsByAttributeValueContaining("src", "newpm").size() > 0;
                         }
 
-                        pm.add(new PrivateMessageItem(id, title, author, date, unread));
+                        pm.add(new PrivateMessageItem(id, title, author, date, unread, folderId));
                     }
                 }
             }catch (Exception e){

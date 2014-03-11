@@ -19,6 +19,8 @@ import com.salvadordalvik.something.list.ThreadItem;
 import com.salvadordalvik.something.request.PMDeleteRequest;
 import com.salvadordalvik.something.request.PrivateMessageListRequest;
 
+import java.util.ArrayList;
+
 /**
  * Created by matthewshepard on 2/7/14.
  */
@@ -67,6 +69,15 @@ public class PrivateMessageListFragment extends SomeFragment implements Response
 
     public void showFolder(int id) {
         folderId = id;
+        ArrayList<FastItem> folders = adapter.getSectionItems(0);
+        if(folders != null){
+            for(FastItem item : folders){
+                if(item instanceof PrivateMessageFolderItem){
+                    ((PrivateMessageFolderItem) item).setSelected(item.getId() == id);
+                }
+            }
+        }
+        adapter.notifyDataSetChanged();
         startRefresh();
     }
 
