@@ -42,8 +42,7 @@
             android:paddingRight="16dp"
             android:paddingLeft="16dp"
             android:minWidth="192dp"
-            android:textSize="18sp"
-            android:textColor="#FFFFFF" />
+            style="@android:style/TextAppearance.Holo.Medium.Inverse"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -77,8 +76,7 @@
             android:paddingRight="16dp"
             android:paddingLeft="16dp"
             android:minWidth="192dp"
-            android:textSize="18sp"
-            android:textColor="#FFFFFF" />
+            style="@android:style/TextAppearance.Holo.Medium.Inverse" />
         <ProgressBar
             android:id="@+id/threadview_pullfrombottom_progress"
             android:layout_width="match_parent"

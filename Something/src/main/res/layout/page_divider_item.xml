@@ -28,8 +28,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:padding="12dp"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp" />
+            style="@android:style/TextAppearance.Holo.Medium.Inverse" />
 
         <ImageView
             android:layout_width="0px"
