@@ -20,9 +20,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PrivateMessageListActivity" android:label="@string/private_messages"/>
-        <activity android:name=".LoginActivity" android:label="@string/login_activity_title"/>
-        <activity android:name=".ReplyActivity" android:label="@string/reply_activity"/>
+        <activity android:name=".PrivateMessageListActivity" android:label="@string/private_messages"
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
+        <activity android:name=".LoginActivity" android:label="@string/login_activity_title"
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
+        <activity android:name=".ReplyActivity" android:label="@string/reply_activity"
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
     </application>
 
 </manifest>

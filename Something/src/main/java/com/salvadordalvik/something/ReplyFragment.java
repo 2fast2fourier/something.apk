@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -317,6 +318,7 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
             case TYPE_EDIT:
                 if(replyData != null && content != null && content.length() > 0){
                     replyData.replyMessage = content.toString().trim();
+                    Log.e("ReplyFragment", replyData.replyMessage);
                     queueRequest(new ReplyPostRequest(replyData, postingResult, postingErrorListener));
                     dialog = ProgressDialog.show(getActivity(), getSafeString(R.string.posting_title), getSafeString(R.string.posting_message), true, false, this);
                 }else{
@@ -344,6 +346,7 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     private Response.Listener<PMSendRequest.PMSendResult> pmSendResult = new Response.Listener<PMSendRequest.PMSendResult>() {
         @Override
         public void onResponse(PMSendRequest.PMSendResult response) {
+            dismissDialog();
             Activity activity = getActivity();
             if(activity != null){
                 activity.setResult(TYPE_PM);
@@ -355,6 +358,7 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     private Response.Listener<ReplyPostRequest.ReplyPostResult> postingResult = new Response.Listener<ReplyPostRequest.ReplyPostResult>() {
         @Override
         public void onResponse(ReplyPostRequest.ReplyPostResult response) {
+            dismissDialog();
             Activity activity = getActivity();
             if(activity != null){
                 activity.setResult(response.jumpPostId, new Intent().putExtra("thread_id", response.jumpThreadId).putExtra("post_id", response.jumpPostId));

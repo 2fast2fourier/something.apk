@@ -20,16 +20,13 @@ public class ReplyPostRequest extends HTMLRequest<ReplyPostRequest.ReplyPostResu
     public ReplyPostRequest(ReplyDataRequest.ReplyDataResponse reply, Response.Listener<ReplyPostResult> success, Response.ErrorListener error) {
         super(ReplyFragment.TYPE_EDIT == reply.type ? "http://forums.somethingawful.com/editpost.php" : "http://forums.somethingawful.com/newreply.php", Request.Method.POST, success, error);
         switch (reply.type){
+            case ReplyFragment.TYPE_QUOTE:
             case ReplyFragment.TYPE_REPLY:
                 addParam("action", "postreply");
                 addParam("threadid", reply.threadId);
                 break;
             case ReplyFragment.TYPE_EDIT:
                 addParam("action", "updatepost");
-                addParam("postid", reply.postId);
-                break;
-            case ReplyFragment.TYPE_QUOTE:
-                addParam("action", "postreply");
                 addParam("postid", reply.postId);
                 break;
         }
