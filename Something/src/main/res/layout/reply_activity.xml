@@ -9,7 +9,7 @@
     <fragment
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.salvadordalvik.something.ReplyFragment"
+        android:name="net.fastfourier.something.ReplyFragment"
         android:id="@+id/fragment"
         tools:layout="@layout/reply_fragment" />
 </LinearLayout>

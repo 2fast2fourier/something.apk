@@ -14,12 +14,12 @@
         <fragment
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:name="com.salvadordalvik.something.PrivateMessageFragment"
+            android:name="net.fastfourier.something.PrivateMessageFragment"
             android:id="@+id/pm_fragment" />
         <fragment
             android:layout_width="@dimen/pm_list_width"
             android:layout_height="match_parent"
-            android:name="com.salvadordalvik.something.PrivateMessageListFragment"
+            android:name="net.fastfourier.something.PrivateMessageListFragment"
             android:id="@+id/pm_list_fragment"
             android:layout_gravity="left"/>
     </android.support.v4.widget.DrawerLayout>

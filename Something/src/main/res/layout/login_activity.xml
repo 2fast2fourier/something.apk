@@ -10,7 +10,7 @@
     <fragment
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.salvadordalvik.something.LoginFragment"
+        android:name="net.fastfourier.something.LoginFragment"
         android:id="@+id/fragment"
         tools:layout="@layout/login_fragment" />
 </LinearLayout>

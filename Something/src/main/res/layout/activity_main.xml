@@ -15,7 +15,7 @@
                 android:id="@+id/threadview_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:name="com.salvadordalvik.something.ThreadViewFragment"
+                android:name="net.fastfourier.something.ThreadViewFragment"
                 tools:layout="@layout/thread_pageview" />
             <RelativeLayout
                 xmlns:android="http://schemas.android.com/apk/res/android"

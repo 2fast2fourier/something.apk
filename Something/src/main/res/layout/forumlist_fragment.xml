@@ -9,7 +9,7 @@
     <fragment
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:name="com.salvadordalvik.something.ForumListFragment"
+        android:name="net.fastfourier.something.ForumListFragment"
         android:id="@+id/forumlist_fragment"
         tools:layout="@layout/ptr_generic_listview" />
 </LinearLayout>
