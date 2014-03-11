@@ -48,13 +48,22 @@ public class PrivateMessageListRequest extends HTMLRequest<PrivateMessageListReq
                         String title = message.getElementsByClass("title").text();
                         String date = message.getElementsByClass("date").text();
 
-                        boolean unread = false;
-                        Element status = message.getElementsByClass("status").first();
-                        if(status != null){
-                            unread = status.getElementsByAttributeValueContaining("src", "newpm").size() > 0;
+                        int status = PrivateMessageItem.STATUS_NORMAL;
+                        Element statusDiv = message.getElementsByClass("status").first();
+                        if(statusDiv != null){
+                            String statusImg = statusDiv.getElementsByTag("img").attr("src");
+                            if(statusImg.contains("pmreplied")){
+                                status = PrivateMessageItem.STATUS_REPLIED;
+                            }else if(statusImg.contains("newpm")){
+                                status = PrivateMessageItem.STATUS_NEW;
+                            }else if(statusImg.contains("pmforwarded")){
+                                status = PrivateMessageItem.STATUS_FORWARDED;
+                            }else{
+                                status = PrivateMessageItem.STATUS_NORMAL;
+                            }
                         }
 
-                        pm.add(new PrivateMessageItem(id, title, author, date, unread, folderId));
+                        pm.add(new PrivateMessageItem(id, title, author, date, status, folderId));
                     }
                 }
             }catch (Exception e){

@@ -15,7 +15,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minWidth="140dp"
+        android:minWidth="172dp"
         android:text="Author Author Author"
         android:id="@+id/pm_item_author"
         android:textColor="?listSubTextColor"

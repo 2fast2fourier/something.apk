@@ -8,7 +8,7 @@
     <dimen name="nav_list_offset">40dp</dimen>
 
     <dimen name="pm_list_width_cutoff">340dp</dimen>
-    <dimen name="pm_list_width">300dp</dimen>
+    <dimen name="pm_list_width">340dp</dimen>
     <dimen name="pm_list_offset">40dp</dimen>
     <dimen name="preference_theme_size">48dp</dimen>
     <dimen name="preference_theme_selected_line">4dp</dimen>

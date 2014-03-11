@@ -28,7 +28,8 @@
             android:layout_weight="2"
             android:gravity="center"
             android:padding="12dp"
-            style="@android:style/TextAppearance.Holo.Medium.Inverse" />
+            style="@android:style/TextAppearance.Holo.Widget.ActionBar.Title"
+            android:textColor="#FFFFFF" />
 
         <ImageView
             android:layout_width="0px"
