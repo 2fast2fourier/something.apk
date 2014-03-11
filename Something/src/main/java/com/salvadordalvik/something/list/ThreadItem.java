@@ -120,8 +120,13 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
     }
 
     public void updateUnreadCount(int currentPage, int maxPage, int perPage) {
-        replies = Math.max(replies, pageToIndex(maxPage, perPage));
-        unread = Math.min(unread, Math.max(0, replies - pageToIndex(currentPage+1, perPage) + 1));
+        if(unread < 0){
+            replies = Math.max(replies, pageToIndex(maxPage, perPage));
+            unread = Math.max(0, replies - pageToIndex(currentPage+1, perPage) + 1);
+        }else{
+            replies = Math.max(replies, pageToIndex(maxPage, perPage));
+            unread = Math.min(unread, Math.max(0, replies - pageToIndex(currentPage+1, perPage) + 1));
+        }
     }
 
     private static int pageToIndex(int page, int perPage) {
@@ -138,6 +143,10 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
 
     public String getTitle() {
         return threadTitle;
+    }
+
+    public void markUnread() {
+        unread = -1;
     }
 
     protected static class ThreadHolder{

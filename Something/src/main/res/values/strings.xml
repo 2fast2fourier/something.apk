@@ -107,5 +107,6 @@
     <string name="post_more_title">More…</string>
     <string name="share_url_title">Share Link</string>
     <string name="link_copied">Copied Link</string>
+    <string name="marked_unread">Marked Unread</string>
 
 </resources>

@@ -29,6 +29,7 @@ import com.salvadordalvik.something.list.MenuItem;
 import com.salvadordalvik.something.list.PagedAdapter;
 import com.salvadordalvik.something.list.ThreadItem;
 import com.salvadordalvik.something.request.BookmarkRequest;
+import com.salvadordalvik.something.request.MarkUnreadRequest;
 import com.salvadordalvik.something.request.ThreadListRequest;
 import com.salvadordalvik.something.util.Constants;
 import com.salvadordalvik.something.util.SomePreferences;
@@ -192,8 +193,10 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
                                 FastAlert.notice(ThreadListFragment.this, bookmarked ? R.string.bookmarking_thread_started_removing : R.string.bookmarking_thread_started, R.drawable.ic_menu_bookmark);
                                 break;
                             case 3://Mark Unread
-                                //TODO not implemented yet
-                                FastAlert.error(ThreadListFragment.this, "NOT IMPLEMENTED YET");
+                                queueRequest(new MarkUnreadRequest(threadId, null, null));
+                                FastAlert.notice(ThreadListFragment.this, R.string.marked_unread);
+                                item.markUnread();
+                                adapter.notifyDataSetChanged();
                                 break;
                             case 4://Share link
                                 FastUtils.showSimpleShareChooser(getActivity(), threadTitle, threadUrl, getSafeString(R.string.share_url_title));
