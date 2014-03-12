@@ -64,6 +64,8 @@ public class MainActivity extends SomeActivity implements CustomViewAbove.OnPage
         slidingMenu.setMode(SlidingMenu.LEFT);
         slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
         slidingMenu.setTouchModeBehind(SlidingMenu.TOUCHMODE_MARGIN);
+        slidingMenu.setFadeEnabled(false);
+        slidingMenu.setBehindScrollScale(0f);
         updateSlidingMenuSize();
         slidingMenu.showMenu();
     }
