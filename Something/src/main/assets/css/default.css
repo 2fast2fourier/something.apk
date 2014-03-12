@@ -60,7 +60,7 @@ background-color:#FFF;
 color:#222222;
 box-shadow:0 .15em 0 #dbdadb;
 margin:10px 0px;
-padding:8px;
+padding:12px;
 }
 
 article.read {
@@ -242,7 +242,7 @@ color:#FFF;
 height:35px;
 display:none;
 padding-left:15px;
-margin:-11px -8px 5px;
+margin:-11px -12px 5px;
 }
 
 ul.postoptions li.edit {

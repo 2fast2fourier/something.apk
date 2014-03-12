@@ -59,7 +59,7 @@ border-radius:.15em;
 background-color:#FCF;
 color:#333;
 margin:10px 0px;
-padding:8px;
+padding:12px;
 position: relative;
 }
 
@@ -255,7 +255,7 @@ color:#FFF;
 height:35px;
 display:none;
 padding-left:15px;
-margin:-11px -8px 5px;
+margin:-11px -12px 5px;
 }
 
 ul.postoptions li.edit {

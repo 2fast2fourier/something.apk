@@ -59,7 +59,7 @@ article {
 background-color:#000;
 color:#eacf4c;
 margin:10px 0px;
-padding:8px;
+padding:12px;
 border: 1px solid #eacf4c;
 }
 
@@ -234,7 +234,7 @@ color:#eacf4c;
 height:35px;
 display:none;
 padding-left:15px;
-margin:-11px -8px 5px;
+margin:-11px -12px 5px;
 }
 
 ul.postoptions .edit {
