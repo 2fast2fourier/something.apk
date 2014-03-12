@@ -9,17 +9,21 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 
 import com.bugsense.trace.BugSenseHandler;
+import com.jeremyfeinstein.slidingmenu.lib.CustomViewAbove;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+
 import net.fastfourier.something.util.SomePreferences;
 import net.fastfourier.something.util.SomeTheme;
 
-public class MainActivity extends SomeActivity implements DrawerLayout.DrawerListener {
-    private DrawerLayout slidingMenu;
+public class MainActivity extends SomeActivity implements CustomViewAbove.OnPageChangeListener, SlidingMenu.OnCloseListener, SlidingMenu.OnOpenListener {
+    private SlidingMenu slidingMenu;
 
     private ThreadListFragment threadList;
     private ThreadViewFragment threadView;
@@ -33,10 +37,7 @@ public class MainActivity extends SomeActivity implements DrawerLayout.DrawerLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BugSenseHandler.initAndStartSession(this, "cd75dfa8");
-        requestWindowFeature(Window.FEATURE_PROGRESS);
         setContentView(R.layout.activity_main);
-        slidingMenu = (DrawerLayout) findViewById(R.id.main_drawer);
-        slidingMenu.setFocusableInTouchMode(false);
         configureSlidingMenu();
         setProgressBarVisibility(false);
         threadView = (ThreadViewFragment) getSupportFragmentManager().findFragmentById(R.id.threadview_fragment);
@@ -45,7 +46,7 @@ public class MainActivity extends SomeActivity implements DrawerLayout.DrawerLis
             threadList = (ThreadListFragment) threads;
         }else{
             threadList = new ThreadListFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.drawer_container, threadList, "thread_list").commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.sliding_container, threadList, "thread_list").commit();
         }
 
         if(!SomePreferences.loggedIn){
@@ -55,12 +56,26 @@ public class MainActivity extends SomeActivity implements DrawerLayout.DrawerLis
     }
 
     private void configureSlidingMenu(){
-        slidingMenu.setDrawerListener(this);
-        slidingMenu.openDrawer(Gravity.LEFT);
+        slidingMenu = new SlidingMenu(this, SlidingMenu.SLIDING_CONTENT);
+        slidingMenu.setMenu(R.layout.menu_container);
+        slidingMenu.setOnPageChangeListener(this);
+        slidingMenu.setOnCloseListener(this);
+        slidingMenu.setOnOpenListener(this);
+        slidingMenu.setMode(SlidingMenu.LEFT);
+        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+        slidingMenu.setTouchModeBehind(SlidingMenu.TOUCHMODE_MARGIN);
+        updateSlidingMenuSize();
+        slidingMenu.showMenu();
     }
 
-    private boolean isMenuShowing(){
-        return slidingMenu.isDrawerOpen(Gravity.LEFT);
+    private void updateSlidingMenuSize(){
+        DisplayMetrics met = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(met);
+        if(met.widthPixels < getResources().getDimension(R.dimen.nav_list_width_cutoff)){
+            slidingMenu.setBehindOffsetRes(R.dimen.nav_list_offset);
+        }else{
+            slidingMenu.setBehindWidthRes(R.dimen.nav_list_width);
+        }
     }
 
     @Override
@@ -72,7 +87,7 @@ public class MainActivity extends SomeActivity implements DrawerLayout.DrawerLis
     @Override
     protected void onResume() {
         super.onResume();
-        if(isMenuShowing()){
+        if(slidingMenu.isMenuShowing()){
             threadList.setMenuVisibility(true);
             threadView.setMenuVisibility(false);
             if(forumList != null){
@@ -91,10 +106,7 @@ public class MainActivity extends SomeActivity implements DrawerLayout.DrawerLis
                 setTitle(title);
             }
         }
-        slidingMenu.setDrawerLockMode(
-                threadView.hasThreadLoaded() ? DrawerLayout.LOCK_MODE_UNLOCKED : DrawerLayout.LOCK_MODE_LOCKED_OPEN,
-                Gravity.LEFT
-        );
+        slidingMenu.setSlidingEnabled(threadView.isThreadLoaded());
     }
 
     @Override
@@ -112,13 +124,13 @@ public class MainActivity extends SomeActivity implements DrawerLayout.DrawerLis
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                if(isMenuShowing()){
+                if(slidingMenu.isMenuShowing()){
                     if(getSupportFragmentManager().getBackStackEntryCount() > 0){
                         getSupportFragmentManager().popBackStack();
                         return true;
                     }
                 }else{
-                    slidingMenu.openDrawer(Gravity.LEFT);
+                    slidingMenu.showMenu();
                     return true;
                 }
         }
@@ -127,8 +139,8 @@ public class MainActivity extends SomeActivity implements DrawerLayout.DrawerLis
 
     @Override
     public void onBackPressed() {
-        if(!isMenuShowing()){
-            slidingMenu.openDrawer(Gravity.LEFT);
+        if(!slidingMenu.isMenuShowing()){
+            slidingMenu.showMenu();
         }else if(getSupportFragmentManager().getBackStackEntryCount() > 0){
             getSupportFragmentManager().popBackStack();
             forumList = null;
@@ -142,13 +154,13 @@ public class MainActivity extends SomeActivity implements DrawerLayout.DrawerLis
     }
 
     public void showThread(int id, int page) {
-        slidingMenu.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
-        slidingMenu.closeDrawer(Gravity.LEFT);
+        slidingMenu.setSlidingEnabled(true);
+        slidingMenu.showContent();
         threadView.loadThread(id, page);
     }
 
     public void showForum(int id) {
-        slidingMenu.openDrawer(Gravity.LEFT);
+        slidingMenu.showMenu();
         FragmentManager fragMan = getSupportFragmentManager();
         if(fragMan.getBackStackEntryCount() > 0){
             fragMan.popBackStackImmediate();
@@ -160,13 +172,13 @@ public class MainActivity extends SomeActivity implements DrawerLayout.DrawerLis
     public void showForumList(int currentForumId){
         FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
         forumList = ForumListFragment.newInstance(currentForumId);
-        trans.replace(R.id.drawer_container, forumList, "forum_list");
+        trans.replace(R.id.sliding_container, forumList, "forum_list");
         trans.addToBackStack("open_forum_list");
         trans.commit();
     }
 
     public void onThreadPageLoaded(int threadId) {
-        slidingMenu.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
+        slidingMenu.setSlidingEnabled(true);
         threadList.onThreadPageLoaded(threadId);
     }
 
@@ -177,7 +189,7 @@ public class MainActivity extends SomeActivity implements DrawerLayout.DrawerLis
     }
 
     public boolean isFragmentFocused(Fragment fragment){
-        if(slidingMenu != null && isMenuShowing()){
+        if(slidingMenu != null && slidingMenu.isMenuShowing()){
             return forumList == fragment || (forumList == null && fragment == threadList);
         }else{
             return fragment == threadView;
@@ -198,7 +210,16 @@ public class MainActivity extends SomeActivity implements DrawerLayout.DrawerLis
     }
 
     @Override
-    public void onDrawerSlide(View drawerView, float slideOffset) {
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        onSlide(Math.abs(positionOffset));
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+
+    }
+
+    private void onSlide(float slideOffset){
         if(sliderSettled && threadView != null){
             int start, end;
             start = SomeTheme.getActionbarColorForForum(threadView.getForumId(), getActionbarDefaultColor());
@@ -214,27 +235,7 @@ public class MainActivity extends SomeActivity implements DrawerLayout.DrawerLis
     }
 
     @Override
-    public void onDrawerOpened(View drawerView) {
-        if(threadList != null){
-            Spanned title = threadList.getTitle();
-            if(title != null && title.length() > 0){
-                setTitle(title);
-            }
-            threadList.setMenuVisibility(true);
-            threadList.onPaneRevealed();
-        }
-        if(threadView != null){
-            threadView.onPaneObscured();
-            threadView.setMenuVisibility(false);
-        }
-        setActionbarColorToDefault();
-
-        interpActionbarColor = false;
-        sliderSettled = true;
-    }
-
-    @Override
-    public void onDrawerClosed(View drawerView) {
+    public void onClose() {
         if(threadView != null){
             CharSequence title = threadView.getTitle();
             if(title != null && title.length() > 0){
@@ -253,7 +254,22 @@ public class MainActivity extends SomeActivity implements DrawerLayout.DrawerLis
     }
 
     @Override
-    public void onDrawerStateChanged(int newState) {
+    public void onOpen() {
+        if(threadList != null){
+            Spanned title = threadList.getTitle();
+            if(title != null && title.length() > 0){
+                setTitle(title);
+            }
+            threadList.setMenuVisibility(true);
+            threadList.onPaneRevealed();
+        }
+        if(threadView != null){
+            threadView.onPaneObscured();
+            threadView.setMenuVisibility(false);
+        }
+        setActionbarColorToDefault();
 
+        interpActionbarColor = false;
+        sliderSettled = true;
     }
 }

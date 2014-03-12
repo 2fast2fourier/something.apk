@@ -411,7 +411,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         }
     }
 
-    public boolean hasThreadLoaded() {
+    public boolean isThreadLoaded() {
         return pageHtml != null;
     }
 
