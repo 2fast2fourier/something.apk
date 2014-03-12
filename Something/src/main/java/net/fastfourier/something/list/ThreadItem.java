@@ -23,7 +23,7 @@ import net.fastfourier.something.util.SomeTheme;
 public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements Parcelable{
     private String threadTitle, author, lastPost, tagUrl;
     private int unread, replies, bookmark;
-    private boolean closed;
+    private boolean closed, selected;
 
     public ThreadItem(int id, String title, int unreadCount, int replies, String author, String lastPost, int bookmarked, boolean closed, String tagUrl) {
         super(R.layout.thread_item, id, true);
@@ -35,6 +35,7 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         this.bookmark = bookmarked;
         this.closed = closed;
         this.tagUrl = tagUrl;
+        this.selected = false;
     }
 
     public ThreadItem(Parcel source) {
@@ -47,6 +48,7 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         this.bookmark = source.readInt();
         this.closed = source.readInt() > 0;
         this.tagUrl = source.readString();
+        this.selected = false;
     }
 
     @Override
@@ -100,6 +102,7 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         }
 
         view.setAlpha(closed ? 0.5f : 1f);
+        view.setActivated(selected);
     }
 
     @Override
@@ -145,6 +148,10 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
 
     public void markUnread() {
         unread = -1;
+    }
+
+    public void setSelected(boolean selected){
+        this.selected = selected;
     }
 
     protected static class ThreadHolder{

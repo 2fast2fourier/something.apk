@@ -2,16 +2,16 @@ package net.fastfourier.something;
 
 import android.app.ActionBar;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
-import android.view.Gravity;
+import android.util.DisplayMetrics;
 import android.view.MenuItem;
-import android.view.View;
+
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 /**
  * Created by matthewshepard on 2/7/14.
  */
-public class PrivateMessageListActivity extends SomeActivity implements DrawerLayout.DrawerListener {
-    private DrawerLayout slidingMenu;
+public class PrivateMessageListActivity extends SomeActivity implements SlidingMenu.OnCloseListener, SlidingMenu.OnOpenListener {
+    private SlidingMenu slidingMenu;
     private PrivateMessageListFragment listFragment;
     private PrivateMessageFragment messageFragment;
 
@@ -19,7 +19,6 @@ public class PrivateMessageListActivity extends SomeActivity implements DrawerLa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.private_message_activity);
-        slidingMenu = (DrawerLayout) findViewById(R.id.main_drawer);
         configureSlidingMenu();
         listFragment = (PrivateMessageListFragment) getSupportFragmentManager().findFragmentById(R.id.pm_list_fragment);
         messageFragment = (PrivateMessageFragment) getSupportFragmentManager().findFragmentById(R.id.pm_fragment);
@@ -31,45 +30,59 @@ public class PrivateMessageListActivity extends SomeActivity implements DrawerLa
     }
 
     private void configureSlidingMenu(){
-        slidingMenu.setFocusableInTouchMode(false);
-        slidingMenu.setDrawerListener(this);
-        slidingMenu.openDrawer(Gravity.LEFT);
+        slidingMenu = new SlidingMenu(this, SlidingMenu.SLIDING_CONTENT);
+        slidingMenu.setMenu(R.layout.pm_container);
+        slidingMenu.setOnCloseListener(this);
+        slidingMenu.setOnOpenListener(this);
+        slidingMenu.setMode(SlidingMenu.LEFT);
+        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+        slidingMenu.setTouchModeBehind(SlidingMenu.TOUCHMODE_MARGIN);
+        slidingMenu.setFadeEnabled(false);
+        slidingMenu.setBehindScrollScale(0f);
+        updateSlidingMenuSize();
+        slidingMenu.showMenu();
     }
 
-    private boolean isMenuShowing(){
-        return slidingMenu.isDrawerOpen(Gravity.LEFT);
+    private void updateSlidingMenuSize(){
+        DisplayMetrics met = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(met);
+        if(met.widthPixels < getResources().getDimension(R.dimen.pm_list_width_cutoff)){
+            slidingMenu.setBehindOffsetRes(R.dimen.pm_list_offset);
+        }else{
+            slidingMenu.setBehindWidthRes(R.dimen.pm_list_width);
+        }
     }
 
     @Override
     public void onBackPressed() {
-        if(isMenuShowing()){
+        if(slidingMenu.isMenuShowing()){
             super.onBackPressed();
         }else{
-            slidingMenu.openDrawer(Gravity.LEFT);
+            slidingMenu.showMenu();
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(isMenuShowing()){
+        if(slidingMenu.isMenuShowing()){
             listFragment.setMenuVisibility(true);
             messageFragment.setMenuVisibility(false);
         }else{
             listFragment.setMenuVisibility(false);
             messageFragment.setMenuVisibility(true);
         }
-        slidingMenu.setDrawerLockMode(messageFragment.hasPMLoaded() ? DrawerLayout.LOCK_MODE_UNLOCKED : DrawerLayout.LOCK_MODE_LOCKED_OPEN, Gravity.LEFT);
+        slidingMenu.setSlidingEnabled(messageFragment.isPMLoaded());
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                if(slidingMenu.isDrawerOpen(Gravity.LEFT)){
+                if(slidingMenu.isMenuShowing()){
                     finish();
                 }else{
-                    slidingMenu.openDrawer(Gravity.LEFT);
+                    slidingMenu.showMenu();
                 }
                 return true;
         }
@@ -78,29 +91,18 @@ public class PrivateMessageListActivity extends SomeActivity implements DrawerLa
 
     public void showPM(int id, String title) {
         messageFragment.showPM(id, title);
-        slidingMenu.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
-        slidingMenu.closeDrawer(Gravity.LEFT);
+        listFragment.highlightPM(id);
+        slidingMenu.setSlidingEnabled(true);
+        slidingMenu.showContent();
+    }
+
+    public void showPMFolder(int folder) {
+        slidingMenu.showMenu();
+        listFragment.showFolder(folder);
     }
 
     @Override
-    public void onDrawerSlide(View drawerView, float slideOffset) {
-
-    }
-
-    @Override
-    public void onDrawerOpened(View drawerView) {
-        if(listFragment != null){
-            listFragment.setMenuVisibility(true);
-            listFragment.onPaneRevealed();
-        }
-        if(messageFragment != null){
-            messageFragment.onPaneObscured();
-            messageFragment.setMenuVisibility(false);
-        }
-    }
-
-    @Override
-    public void onDrawerClosed(View drawerView) {
+    public void onClose() {
         if(messageFragment != null){
             messageFragment.onPaneRevealed();
             messageFragment.setMenuVisibility(true);
@@ -112,12 +114,18 @@ public class PrivateMessageListActivity extends SomeActivity implements DrawerLa
     }
 
     @Override
-    public void onDrawerStateChanged(int newState) {
-
+    public void onOpen() {
+        if(listFragment != null){
+            listFragment.setMenuVisibility(true);
+            listFragment.onPaneRevealed();
+        }
+        if(messageFragment != null){
+            messageFragment.onPaneObscured();
+            messageFragment.setMenuVisibility(false);
+        }
     }
 
-    public void showPMFolder(int folder) {
-        slidingMenu.openDrawer(Gravity.LEFT);
-        listFragment.showFolder(folder);
+    public int getSelectedPMId() {
+        return messageFragment != null ? messageFragment.getPmId() : 0;
     }
 }

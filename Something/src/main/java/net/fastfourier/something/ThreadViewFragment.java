@@ -524,6 +524,10 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         }
     }
 
+    public int getThreadId() {
+        return threadId;
+    }
+
     public class SomeJavascriptInterface {
 
         @JavascriptInterface

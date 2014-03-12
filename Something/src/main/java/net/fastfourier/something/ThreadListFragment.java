@@ -153,6 +153,10 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
                 }
             }
             updateForumTitle();
+            Activity activity = getActivity();
+            if(activity instanceof MainActivity){
+                highlightThread(((MainActivity)activity).getCurrentThreadId());
+            }
         }
     };
 
@@ -378,5 +382,14 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
             return true;
         }
         return false;
+    }
+
+    public void highlightThread(int id) {
+        for(FastItem item : adapter.getAllItems()){
+            if(item instanceof ThreadItem){
+                ((ThreadItem) item).setSelected(item.getId() == id);
+            }
+        }
+        adapter.notifyDataSetChanged();
     }
 }

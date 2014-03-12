@@ -23,6 +23,7 @@ public class PrivateMessageItem extends BaseFastItem<PrivateMessageItem.PMHolder
     private final String title, author, date;
     private final int folderId;
     private int status;
+    private boolean selected;
 
     public PrivateMessageItem(int id, String title, String author, String date, int status, int folderId) {
         super(R.layout.private_message_item, id);
@@ -31,6 +32,7 @@ public class PrivateMessageItem extends BaseFastItem<PrivateMessageItem.PMHolder
         this.date = date;
         this.status = status;
         this.folderId = folderId;
+        this.selected = false;
     }
 
     @Override
@@ -63,6 +65,11 @@ public class PrivateMessageItem extends BaseFastItem<PrivateMessageItem.PMHolder
                 break;
         }
         holder.subtext.setCompoundDrawablePadding(4);
+        view.setActivated(selected);
+    }
+
+    public void setSelected(boolean selected){
+        this.selected = selected;
     }
 
     @Override
@@ -72,7 +79,9 @@ public class PrivateMessageItem extends BaseFastItem<PrivateMessageItem.PMHolder
         }else{
             act.startActivity(new Intent(act, PrivateMessageListActivity.class).putExtra("pm_id", getId()).putExtra("pm_title", title));
         }
-        status = STATUS_NORMAL;
+        if(status == STATUS_NEW){
+            status = STATUS_NORMAL;
+        }
         return true;
     }
 

@@ -34,6 +34,7 @@ public class PrivateMessageFragment extends SomeFragment implements Response.Err
 
     private int pmId = 0;
     private String pmTitle;
+    private boolean ignorePageProgress = true;
 
     public PrivateMessageFragment() {
         super(R.layout.generic_webview, R.menu.pm_reply);
@@ -93,6 +94,8 @@ public class PrivateMessageFragment extends SomeFragment implements Response.Err
     public void showPM(int pmId, String pmTitle){
         this.pmId = pmId;
         this.pmTitle = pmTitle;
+        this.ignorePageProgress = true;
+        webview.loadUrl("about:blank");
         startRefresh();
     }
 
@@ -156,25 +159,14 @@ public class PrivateMessageFragment extends SomeFragment implements Response.Err
         }
     }
 
-//    public class ReplyJavascriptInterface {
-//
-//        @JavascriptInterface
-//        public void onReplySubmit(String postContent){
-//
-//        }
-//
-//        @JavascriptInterface
-//        public void onReplyPreview(String postContent){
-//
-//        }
-//    }
-
     private WebChromeClient chromeClient = new WebChromeClient(){
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
             Log.d("WebView", "Progress: " + newProgress);
-            setProgress(newProgress);
+            if(!ignorePageProgress){
+                setProgress(newProgress);
+            }
         }
 
         @Override
@@ -195,7 +187,9 @@ public class PrivateMessageFragment extends SomeFragment implements Response.Err
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
             Log.d("WebView", "onPageFinished: " + url);
-            setProgress(100);
+            if(!ignorePageProgress){
+                setProgress(100);
+            }
         }
 
         @Override
@@ -219,10 +213,11 @@ public class PrivateMessageFragment extends SomeFragment implements Response.Err
 
     @Override
     public void onResponse(PrivateMessageRequest.PMData pmData) {
+        this.ignorePageProgress = false;
         webview.loadDataWithBaseURL(Constants.BASE_URL, pmData.htmlData, "text/html", "utf-8", null);
     }
 
-    public boolean hasPMLoaded() {
+    public boolean isPMLoaded() {
         return pmId > 0;
     }
 
@@ -252,5 +247,9 @@ public class PrivateMessageFragment extends SomeFragment implements Response.Err
             FastAlert.notice(this, R.string.reply_sent_pm);
             ((PrivateMessageListActivity)getActivity()).showPMFolder(Constants.PM_FOLDER_INBOX);
         }
+    }
+
+    public int getPmId() {
+        return pmId;
     }
 }

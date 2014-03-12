@@ -159,6 +159,7 @@ public class MainActivity extends SomeActivity implements CustomViewAbove.OnPage
         slidingMenu.setSlidingEnabled(true);
         slidingMenu.showContent();
         threadView.loadThread(id, page);
+        threadList.highlightThread(id);
     }
 
     public void showForum(int id) {
@@ -273,5 +274,9 @@ public class MainActivity extends SomeActivity implements CustomViewAbove.OnPage
 
         interpActionbarColor = false;
         sliderSettled = true;
+    }
+
+    public int getCurrentThreadId() {
+        return threadView != null ? threadView.getThreadId() : 0;
     }
 }

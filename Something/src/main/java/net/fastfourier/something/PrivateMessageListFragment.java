@@ -1,5 +1,6 @@
 package net.fastfourier.something;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -59,6 +60,10 @@ public class PrivateMessageListFragment extends SomeFragment implements Response
     public void onResponse(PrivateMessageListRequest.PMListResult pmListResult) {
         adapter.replaceSection(0, pmListResult.folders);
         adapter.replaceSection(1, pmListResult.messages);
+        Activity activity = getActivity();
+        if(activity instanceof PrivateMessageListActivity){
+            highlightPM(((PrivateMessageListActivity)activity).getSelectedPMId());
+        }
     }
 
     @Override
@@ -145,6 +150,14 @@ public class PrivateMessageListFragment extends SomeFragment implements Response
         if(requestCode == REQUEST_REPLY && resultCode > 0){
             FastAlert.notice(this, R.string.reply_sent_pm);
             startRefresh();
+        }
+    }
+
+    public void highlightPM(int id) {
+        for(FastItem item : adapter.getAllItems()){
+            if(item instanceof PrivateMessageItem){
+                ((PrivateMessageItem) item).setSelected(item.getId() == id);
+            }
         }
     }
 }
