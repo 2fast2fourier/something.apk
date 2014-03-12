@@ -5,11 +5,11 @@
 
     <dimen name="nav_list_width_cutoff">400dp</dimen>
     <dimen name="nav_list_width">340dp</dimen>
-    <dimen name="nav_list_offset">20dp</dimen>
+    <dimen name="nav_list_offset">40dp</dimen>
 
     <dimen name="pm_list_width_cutoff">340dp</dimen>
     <dimen name="pm_list_width">340dp</dimen>
-    <dimen name="pm_list_offset">20dp</dimen>
+    <dimen name="pm_list_offset">40dp</dimen>
     <dimen name="preference_theme_size">48dp</dimen>
     <dimen name="preference_theme_selected_line">4dp</dimen>
     <dimen name="thread_tag_width">60dp</dimen>
