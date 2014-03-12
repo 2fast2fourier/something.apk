@@ -38,6 +38,7 @@
         <item name="android:actionBarStyle">@style/ActionBar.Solid.Something_dark</item>
 
         <item name="actionbarBackgroundLayerList">@drawable/actionbar_background_dark</item>
+        <item name="android:icon">@android:color/transparent</item>
     </style>
 
     <style name="ActionBar.Solid.Something_dark" parent="@android:style/Widget.Holo.ActionBar.Solid">
@@ -76,6 +77,7 @@
         <item name="android:actionBarStyle">@style/ActionBar.Solid.Something_light</item>
 
         <item name="actionbarBackgroundLayerList">@drawable/actionbar_background_light</item>
+        <item name="android:icon">@android:color/transparent</item>
     </style>
 
     <style name="ActionBar.Solid.Something_light" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
