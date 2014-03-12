@@ -59,12 +59,12 @@ border-radius:.15em;
 background-color:#FFF;
 color:#222222;
 box-shadow:0 .15em 0 #dbdadb;
-margin:10px 5px;
-padding:15px;
+margin:10px 0px;
+padding:8px;
 }
 
 article.read {
-background-color:#F2F2FF;
+background-color:#EEF8FF;
 }
 
 article.read div.postcontent {
@@ -101,7 +101,7 @@ word-wrap: break-word;
 }
 
 section.postcontent .bbc-block {
-border-left:2px solid #eae9ea;
+border-left:2px solid #D0D0D0;
 margin:5px 0;
 padding:5px 10px 5px 20px;
 }
@@ -159,7 +159,7 @@ visibility: visible;
 }
 
 section.postcontent .signature {
-border-top: 2px solid #eae9ea;
+border-top: 2px solid #D0D0D0;
 padding-top: 10px;
 }
 
@@ -168,7 +168,7 @@ vertical-align:top;
 clear:left;
 overflow:hidden;
 border:0;
-border-bottom:2px solid #eae9ea;
+border-bottom:2px solid #D0D0D0;
 margin:0 0 10px;
 padding:0 0 10px;
 }
@@ -180,7 +180,7 @@ width:100%;
 overflow:hidden;
 display:inline-block;
 border:0;
-border-bottom:2px solid #eae9ea;
+border-bottom:2px solid #D0D0D0;
 margin:0 0 10px;
 padding:0 0 10px;
 }
@@ -242,7 +242,7 @@ color:#FFF;
 height:35px;
 display:none;
 padding-left:15px;
-margin:-11px -15px 5px;
+margin:-11px -8px 5px;
 }
 
 ul.postoptions li.edit {
