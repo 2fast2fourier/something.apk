@@ -2,7 +2,7 @@ def gitVersionCode(){
     try{
         def version = new ByteArrayOutputStream()
         exec {
-            commandLine 'git','rev-list','head','--count'
+            commandLine 'git','rev-list','HEAD','--count'
             standardOutput = version;
         }
         return Integer.parseInt(version.toString().trim())
