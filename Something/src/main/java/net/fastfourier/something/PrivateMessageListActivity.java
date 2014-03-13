@@ -2,16 +2,21 @@ package net.fastfourier.something;
 
 import android.app.ActionBar;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+
+import net.fastfourier.something.widget.MarginDrawerLayout;
 
 /**
  * Created by matthewshepard on 2/7/14.
  */
-public class PrivateMessageListActivity extends SomeActivity implements SlidingMenu.OnCloseListener, SlidingMenu.OnOpenListener {
-    private SlidingMenu slidingMenu;
+public class PrivateMessageListActivity extends SomeActivity implements MarginDrawerLayout.DrawerListener {
+    private MarginDrawerLayout drawerLayout;
     private PrivateMessageListFragment listFragment;
     private PrivateMessageFragment messageFragment;
 
@@ -19,7 +24,11 @@ public class PrivateMessageListActivity extends SomeActivity implements SlidingM
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.private_message_activity);
-        configureSlidingMenu();
+        drawerLayout = (MarginDrawerLayout) findViewById(R.id.pm_drawer);
+        drawerLayout.setDrawerListener(this);
+        drawerLayout.setFocusableInTouchMode(false);
+        drawerLayout.openDrawer(Gravity.LEFT);
+
         listFragment = (PrivateMessageListFragment) getSupportFragmentManager().findFragmentById(R.id.pm_list_fragment);
         messageFragment = (PrivateMessageFragment) getSupportFragmentManager().findFragmentById(R.id.pm_fragment);
 
@@ -29,60 +38,36 @@ public class PrivateMessageListActivity extends SomeActivity implements SlidingM
         }
     }
 
-    private void configureSlidingMenu(){
-        slidingMenu = new SlidingMenu(this, SlidingMenu.SLIDING_CONTENT);
-        slidingMenu.setMenu(R.layout.pm_container);
-        slidingMenu.setOnCloseListener(this);
-        slidingMenu.setOnOpenListener(this);
-        slidingMenu.setMode(SlidingMenu.LEFT);
-        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
-        slidingMenu.setTouchModeBehind(SlidingMenu.TOUCHMODE_MARGIN);
-        slidingMenu.setFadeEnabled(false);
-        slidingMenu.setBehindScrollScale(0f);
-        updateSlidingMenuSize();
-        slidingMenu.showMenu();
-    }
-
-    private void updateSlidingMenuSize(){
-        DisplayMetrics met = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(met);
-        if(met.widthPixels < getResources().getDimension(R.dimen.pm_list_width_cutoff)){
-            slidingMenu.setBehindOffsetRes(R.dimen.pm_list_offset);
-        }else{
-            slidingMenu.setBehindWidthRes(R.dimen.pm_list_width);
-        }
-    }
-
     @Override
     public void onBackPressed() {
-        if(slidingMenu.isMenuShowing()){
+        if(isMenuShowing()){
             super.onBackPressed();
         }else{
-            slidingMenu.showMenu();
+            showMenu();
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(slidingMenu.isMenuShowing()){
+        if(isMenuShowing()){
             listFragment.setMenuVisibility(true);
             messageFragment.setMenuVisibility(false);
         }else{
             listFragment.setMenuVisibility(false);
             messageFragment.setMenuVisibility(true);
         }
-        slidingMenu.setSlidingEnabled(messageFragment.isPMLoaded());
+        lockDrawer(!messageFragment.isPMLoaded());
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                if(slidingMenu.isMenuShowing()){
+                if(isMenuShowing()){
                     finish();
                 }else{
-                    slidingMenu.showMenu();
+                    showMenu();
                 }
                 return true;
         }
@@ -92,17 +77,55 @@ public class PrivateMessageListActivity extends SomeActivity implements SlidingM
     public void showPM(int id, String title) {
         messageFragment.showPM(id, title);
         listFragment.highlightPM(id);
-        slidingMenu.setSlidingEnabled(true);
-        slidingMenu.showContent();
+        lockDrawer(false);
+        closeMenu();
     }
 
     public void showPMFolder(int folder) {
-        slidingMenu.showMenu();
+        showMenu();
         listFragment.showFolder(folder);
     }
 
+    public int getSelectedPMId() {
+        return messageFragment != null ? messageFragment.getPmId() : 0;
+    }
+
+
+    private boolean isMenuShowing(){
+        return drawerLayout == null || drawerLayout.isDrawerOpen(Gravity.LEFT);
+    }
+
+    private void lockDrawer(boolean lock){
+        drawerLayout.setDrawerLockMode(lock ? DrawerLayout.LOCK_MODE_LOCKED_OPEN : DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
+    }
+
+    private void showMenu(){
+        drawerLayout.openDrawer(Gravity.LEFT);
+    }
+
+    private void closeMenu(){
+        drawerLayout.closeDrawer(Gravity.LEFT);
+    }
+
     @Override
-    public void onClose() {
+    public void onDrawerSlide(View drawerView, float slideOffset) {
+
+    }
+
+    @Override
+    public void onDrawerOpened(View drawerView) {
+        if(listFragment != null){
+            listFragment.setMenuVisibility(true);
+            listFragment.onPaneRevealed();
+        }
+        if(messageFragment != null){
+            messageFragment.onPaneObscured();
+            messageFragment.setMenuVisibility(false);
+        }
+    }
+
+    @Override
+    public void onDrawerClosed(View drawerView) {
         if(messageFragment != null){
             messageFragment.onPaneRevealed();
             messageFragment.setMenuVisibility(true);
@@ -114,18 +137,7 @@ public class PrivateMessageListActivity extends SomeActivity implements SlidingM
     }
 
     @Override
-    public void onOpen() {
-        if(listFragment != null){
-            listFragment.setMenuVisibility(true);
-            listFragment.onPaneRevealed();
-        }
-        if(messageFragment != null){
-            messageFragment.onPaneObscured();
-            messageFragment.setMenuVisibility(false);
-        }
-    }
+    public void onDrawerStateChanged(int newState) {
 
-    public int getSelectedPMId() {
-        return messageFragment != null ? messageFragment.getPmId() : 0;
     }
 }

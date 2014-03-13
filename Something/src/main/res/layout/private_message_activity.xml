@@ -5,9 +5,20 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="?primaryBackground">
+    <net.fastfourier.something.widget.MarginDrawerLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/pm_drawer">
         <fragment
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:name="net.fastfourier.something.PrivateMessageFragment"
             android:id="@+id/pm_fragment" />
+        <fragment
+            android:layout_width="@dimen/nav_list_width"
+            android:layout_height="match_parent"
+            android:name="net.fastfourier.something.PrivateMessageListFragment"
+            android:id="@+id/pm_list_fragment"
+            android:layout_gravity="left"/>
+    </net.fastfourier.something.widget.MarginDrawerLayout>
 </FrameLayout>

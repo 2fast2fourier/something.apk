@@ -21,9 +21,10 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import net.fastfourier.something.util.SomePreferences;
 import net.fastfourier.something.util.SomeTheme;
+import net.fastfourier.something.widget.MarginDrawerLayout;
 
-public class MainActivity extends SomeActivity implements DrawerLayout.DrawerListener {
-    private DrawerLayout drawerLayout;
+public class MainActivity extends SomeActivity implements MarginDrawerLayout.DrawerListener {
+    private MarginDrawerLayout drawerLayout;
 
     private ThreadListFragment threadList;
     private ThreadViewFragment threadView;
@@ -38,7 +39,7 @@ public class MainActivity extends SomeActivity implements DrawerLayout.DrawerLis
         super.onCreate(savedInstanceState);
         BugSenseHandler.initAndStartSession(this, "cd75dfa8");
         setContentView(R.layout.activity_main);
-        drawerLayout = (DrawerLayout) findViewById(R.id.main_drawer);
+        drawerLayout = (MarginDrawerLayout) findViewById(R.id.main_drawer);
         drawerLayout.setDrawerListener(this);
         drawerLayout.setFocusableInTouchMode(false);
         drawerLayout.openDrawer(Gravity.LEFT);
