@@ -24,6 +24,7 @@
         <item name="subforumBackground">#35383D</item>
         <item name="progressBarColor">#2A98FF</item>
         <item name="progressBarColorRefresh">#BEBEBE</item>
+        <item name="forumCategoryColor">#000000</item>
 
         <item name="progressBarColorArray">@array/sbp_colors_dark</item>
         <item name="ptrProgressBarColorArray">@array/sbp_colors_dark</item>
@@ -63,6 +64,7 @@
         <item name="subforumBackground">#DDDDDD</item>
         <item name="progressBarColor">#2A98FF</item>
         <item name="progressBarColorRefresh">#BEBEBE</item>
+        <item name="forumCategoryColor">#2E444D</item>
 
         <item name="progressBarColorArray">@array/sbp_colors_light</item>
         <item name="ptrProgressBarColorArray">@array/sbp_colors_light</item>

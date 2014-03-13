@@ -3,6 +3,7 @@ package net.fastfourier.something;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ListView;
 
@@ -10,12 +11,17 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.salvadordalvik.fastlibrary.data.FastQueryTask;
 import com.salvadordalvik.fastlibrary.list.FastAdapter;
+import com.salvadordalvik.fastlibrary.list.FastItem;
+
+import net.fastfourier.something.list.DividerItem;
 import net.fastfourier.something.list.ForumItem;
 import net.fastfourier.something.data.SomeDatabase;
+import net.fastfourier.something.list.StubItem;
 import net.fastfourier.something.request.ForumListRequest;
 import net.fastfourier.something.util.Constants;
 import net.fastfourier.something.util.SomePreferences;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -76,9 +82,21 @@ public class ForumListFragment extends SomeFragment implements FastQueryTask.Que
 
     @Override
     public void queryResult(List<ForumItem> results) {
+        ArrayList<FastItem> forumList = new ArrayList<FastItem>();
+        String forumCategory = "";
+        forumList.add(new ForumItem(Constants.BOOKMARK_FORUMID, getSafeString(R.string.bookmark_title), 0, false, false, false, currentlySelectedForumId));
+        for(ForumItem forum : results){
+            if(!forumCategory.equalsIgnoreCase(forum.getCategory())){
+                String category = forum.getCategory();
+                if(!TextUtils.isEmpty(category)){
+                    forumCategory = category;
+                    forumList.add(new DividerItem(R.layout.forum_divider, R.id.forum_divider_title, forumCategory));
+                }
+            }
+            forumList.add(forum);
+        }
         adapter.clearList();
-        adapter.addItems(new ForumItem(Constants.BOOKMARK_FORUMID, getSafeString(R.string.bookmark_title), 0, false, false, false, currentlySelectedForumId));
-        adapter.addItems(results);
+        adapter.addItems(forumList);
     }
 
     @Override

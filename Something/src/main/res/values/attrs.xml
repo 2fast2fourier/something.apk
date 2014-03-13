@@ -12,6 +12,7 @@
     <attr name="subforumBackground" format="color|reference"/>
     <attr name="progressBarColor" format="color|reference"/>
     <attr name="progressBarColorRefresh" format="color|reference"/>
+    <attr name="forumCategoryColor" format="color|reference"/>
 
     <attr name="progressBarColorArray" format="reference"/>
 

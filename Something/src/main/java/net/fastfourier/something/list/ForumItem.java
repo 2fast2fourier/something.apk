@@ -21,10 +21,11 @@ import net.fastfourier.something.data.SomeDatabase;
  * Created by matthewshepard on 1/22/14.
  */
 public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
-    public static final String[] DB_COLUMNS = {"forum_id", "forum_name", "parent_forum_id", "forum_starred"};
+    public static final String[] DB_COLUMNS = {"forum_id", "forum_name", "parent_forum_id", "forum_starred", "category"};
     private final Spanned title;
     private final int parentId;
     private final boolean starred, selected, showStar;
+    private final String category;
 
     public ForumItem(Cursor data, boolean indentSubforums, int[] columns, int selectedForumId) {
         super(data.getInt(columns[2]) > 0 && indentSubforums ? R.layout.subforum_item : R.layout.forum_item, data.getInt(columns[0]), true);
@@ -33,6 +34,7 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
         this.starred = !data.isNull(columns[3]);
         this.selected = id == selectedForumId;
         this.showStar = true;
+        this.category = data.getString(columns[4]);
     }
 
     public ForumItem(int id, String title, int parentId, boolean showStar, boolean starred, boolean indentSubforums, int selectedForumId) {
@@ -42,6 +44,7 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
         this.starred = starred;
         this.selected = id == selectedForumId;
         this.showStar = showStar;
+        this.category = "";
     }
 
     @Override
@@ -77,6 +80,10 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
 
     public boolean isStarred() {
         return starred;
+    }
+
+    public String getCategory() {
+        return category;
     }
 
     protected static class ForumHolder implements View.OnClickListener {

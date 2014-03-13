@@ -262,7 +262,7 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
 
         interpActionbarColor = false;
         sliderSettled = true;
-        
+
         ActionBar ab = getActionBar();
         if(ab != null){
             ab.setDisplayHomeAsUpEnabled(true);
