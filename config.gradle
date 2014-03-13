@@ -1,3 +1,16 @@
+def gitVersionCode(){
+    try{
+        def version = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git','rev-list','head','--count'
+            standardOutput = version;
+        }
+        return Integer.parseInt(version.toString().trim())
+    }catch(e){
+        return 999
+    }
+}
+
 //place versionCode here by script, it will be used during the build state to set build number.
 //echo "ext.versionCode=$count" > config.gradle
-ext.versionCode=999
+ext.versionCode=gitVersionCode()
