@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -41,13 +42,15 @@ import uk.co.senab.actionbarpulltorefresh.library.Options;
 /**
  * Created by matthewshepard on 1/16/14.
  */
-public class ThreadListFragment extends SomeFragment implements FastQueryTask.QueryResultCallback<ForumItem>,PagedAdapter.PagedCallbacks, PageSelectDialogFragment.PageSelectable, AdapterView.OnItemLongClickListener {
+public class ThreadListFragment extends SomeFragment implements FastQueryTask.QueryResultCallback<ForumItem>,PagedAdapter.PagedCallbacks, PageSelectDialogFragment.PageSelectable, AdapterView.OnItemLongClickListener, View.OnClickListener {
     private ListView threadList;
     private PagedAdapter adapter;
 
     private int forumId = -1;
     private boolean starred = false;
     private Spanned forumTitle;
+
+    private int unreadPMCount = 0;
 
     public ThreadListFragment() {
         super(R.layout.generic_listview, R.menu.thread_list);
@@ -157,6 +160,10 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
             if(activity instanceof MainActivity){
                 highlightThread(((MainActivity)activity).getCurrentThreadId());
             }
+
+            //this will only be non-zero in bookmarks
+            unreadPMCount = response.unreadPMCount;
+            invalidateOptionsMenu();
         }
     };
 
@@ -261,6 +268,17 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
 
         android.view.MenuItem home = menu.findItem(R.id.menu_forum_home);
         home.setVisible(forumId == SomePreferences.favoriteForumId && forumId != Constants.BOOKMARK_FORUMID);
+
+        android.view.MenuItem pm = menu.findItem(R.id.menu_private_messages);
+        View pmView = pm.getActionView();
+        View notification = pmView.findViewById(R.id.pm_count);
+        if(unreadPMCount > 0){
+            notification.setVisibility(View.VISIBLE);
+            ((TextView)notification).setText(Integer.toString(unreadPMCount));
+        }else{
+            notification.setVisibility(View.GONE);
+        }
+        pmView.setOnClickListener(this);
     }
 
     @Override
@@ -291,7 +309,7 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
                 getActivity().finish();
                 return true;
             case R.id.menu_private_messages:
-                startActivity(new Intent(getActivity(), PrivateMessageListActivity.class));
+                showPMs();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -391,5 +409,18 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
             }
         }
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.pm_notification_button:
+                showPMs();
+                break;
+        }
+    }
+
+    private void showPMs() {
+        startActivity(new Intent(getActivity(), PrivateMessageListActivity.class));
     }
 }

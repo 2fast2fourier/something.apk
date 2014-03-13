@@ -6,6 +6,7 @@ import android.util.Log;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.bugsense.trace.BugSenseHandler;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
 import net.fastfourier.something.data.ForumProcessTask;
 import net.fastfourier.something.data.ThreadManager;
@@ -26,13 +27,25 @@ public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListR
     private boolean scrollTo;
 
     public ThreadListRequest(int forumId, int page, boolean scrollTo, Response.Listener<ThreadListResponse> success, Response.ErrorListener error) {
-        super(forumId == Constants.BOOKMARK_FORUMID ? "http://forums.somethingawful.com/bookmarkthreads.php" : "http://forums.somethingawful.com/forumdisplay.php", Request.Method.GET, success, error);
+        super(getUrl(forumId, page), Request.Method.GET, success, error);
         if(forumId != Constants.BOOKMARK_FORUMID){
             addParam("forumid", forumId);
         }
         addParam("pagenumber", page);
         this.forumId = forumId;
         this.scrollTo = scrollTo;
+    }
+
+    private static String getUrl(int forumId, int page){
+        if(forumId == Constants.BOOKMARK_FORUMID){
+            if(page == 1){
+                return "http://forums.somethingawful.com/usercp.php";
+            }else{
+                return "http://forums.somethingawful.com/bookmarkthreads.php";
+            }
+        }else{
+            return "http://forums.somethingawful.com/forumdisplay.php";
+        }
     }
 
     @Override
@@ -105,21 +118,33 @@ public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListR
             maxPage = FastUtils.safeParseInt(lastPage.attr("value"), 1);
         }
 
+        int unreadPMCount = 0;
+        Element pmContainer = document.getElementsByClass("private_messages").first();
+        if(pmContainer != null){
+            Element pmBody = pmContainer.getElementsByTag("tbody").first();
+            if(pmBody != null){
+                //we don't have any classes on the actual PM elements,
+                //but we don't need anything other than the count.
+                unreadPMCount = pmBody.getElementsByTag("tr").size();
+            }
+        }
+
         ThreadManager.putThreadList(threads);
 
-        return new ThreadListResponse(threads, currentPage, maxPage, scrollTo);
+        return new ThreadListResponse(threads, currentPage, maxPage, scrollTo, unreadPMCount);
     }
 
     public static class ThreadListResponse{
         public final ArrayList<ThreadItem> threads;
-        public final int page, maxPage;
+        public final int page, maxPage, unreadPMCount;
         public final boolean scrollTo;
 
-        public ThreadListResponse(ArrayList<ThreadItem> threads, int page, int maxPage, boolean scrollTo){
+        public ThreadListResponse(ArrayList<ThreadItem> threads, int page, int maxPage, boolean scrollTo, int unreadPMCount){
             this.threads = threads;
             this.page = page;
             this.maxPage = maxPage;
             this.scrollTo = scrollTo;
+            this.unreadPMCount = unreadPMCount;
         }
     }
 }

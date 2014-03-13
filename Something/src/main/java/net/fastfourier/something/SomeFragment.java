@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.volley.VolleyError;
+import com.bugsense.trace.BugSenseHandler;
 import com.salvadordalvik.fastlibrary.FastFragment;
 import com.salvadordalvik.fastlibrary.alert.FastAlert;
 import com.salvadordalvik.fastlibrary.request.FastRequest;
@@ -77,6 +78,8 @@ public abstract class SomeFragment extends FastFragment {
         super.onFailure(request, error);
         if(error instanceof SomeError){
             FastAlert.error(this, error.getMessage());
+        }else{
+            BugSenseHandler.sendException(error);
         }
     }
 }
