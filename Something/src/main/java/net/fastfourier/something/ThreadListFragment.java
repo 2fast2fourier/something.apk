@@ -23,8 +23,8 @@ import com.salvadordalvik.fastlibrary.data.FastQueryTask;
 import com.salvadordalvik.fastlibrary.list.FastItem;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
 import net.fastfourier.something.data.SomeDatabase;
+import net.fastfourier.something.list.ForumHeaderItem;
 import net.fastfourier.something.list.ForumItem;
-import net.fastfourier.something.list.MenuItem;
 import net.fastfourier.something.list.PagedAdapter;
 import net.fastfourier.something.list.ThreadItem;
 import net.fastfourier.something.request.BookmarkRequest;
@@ -52,11 +52,13 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
 
     private int unreadPMCount = 0;
 
+    private ForumHeaderItem header;
+
     public ThreadListFragment() {
         super(R.layout.generic_listview, R.menu.thread_list);
         adapter = new PagedAdapter(this, 3, 6, this);
 
-        adapter.addItems(0, new MenuItem("Forums") {
+        header = new ForumHeaderItem("Forums") {
             @Override
             public boolean onItemClick(Activity act, Fragment fragment) {
                 ((MainActivity) act).showForumList(forumId);
@@ -67,7 +69,9 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
             public void onButtonClick(View view) {
                 ((MainActivity)getActivity()).showForum(Constants.BOOKMARK_FORUMID);
             }
-        });
+        };
+
+        adapter.addItems(0, header);
     }
 
     @Override
@@ -83,6 +87,7 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
                 forumId = SomePreferences.favoriteForumId;
             }
         }
+        header.setSelected(forumId == Constants.BOOKMARK_FORUMID);
     }
 
     @Override
@@ -330,6 +335,7 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
     }
 
     public void showForum(int id) {
+        header.setSelected(id == Constants.BOOKMARK_FORUMID);
         threadList.setSelection(1);
         adapter.clearPages();
         forumId = id;

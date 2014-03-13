@@ -11,10 +11,11 @@ import net.fastfourier.something.R;
 /**
  * Created by matthewshepard on 1/27/14.
  */
-public abstract class MenuItem extends BaseFastItem<MenuItem.MenuHolder> implements View.OnClickListener {
+public abstract class ForumHeaderItem extends BaseFastItem<ForumHeaderItem.MenuHolder> implements View.OnClickListener {
     private String title;
+    private boolean selected = false;
 
-    public MenuItem(String title) {
+    public ForumHeaderItem(String title) {
         super(R.layout.forum_header_item);
         this.title = title;
     }
@@ -23,6 +24,11 @@ public abstract class MenuItem extends BaseFastItem<MenuItem.MenuHolder> impleme
     public void updateViewFromHolder(View view, MenuHolder holder) {
         holder.title.setText(title);
         holder.button.setOnClickListener(this);
+        view.setActivated(selected);
+    }
+
+    public void setSelected(boolean selected){
+        this.selected = selected;
     }
 
     public abstract void onButtonClick(View view);
