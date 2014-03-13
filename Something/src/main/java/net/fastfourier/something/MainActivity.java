@@ -1,5 +1,6 @@
 package net.fastfourier.something;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -88,6 +89,10 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
             }
         }
         lockDrawer(!threadView.isThreadLoaded());
+        ActionBar ab = getActionBar();
+        if(ab != null){
+            ab.setDisplayHomeAsUpEnabled(!isMenuShowing());
+        }
     }
 
     @Override
@@ -233,6 +238,11 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
 
         interpActionbarColor = false;
         sliderSettled = true;
+
+        ActionBar ab = getActionBar();
+        if(ab != null){
+            ab.setDisplayHomeAsUpEnabled(false);
+        }
     }
 
     @Override
@@ -252,6 +262,11 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
 
         interpActionbarColor = false;
         sliderSettled = true;
+        
+        ActionBar ab = getActionBar();
+        if(ab != null){
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
