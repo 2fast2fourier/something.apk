@@ -5,10 +5,20 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="?primaryBackground">
-    <fragment
-        android:id="@+id/threadview_fragment"
+    <android.support.v4.widget.DrawerLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="net.fastfourier.something.ThreadViewFragment"
-        tools:layout="@layout/thread_pageview" />
+        android:id="@+id/main_drawer">
+        <fragment
+            android:id="@+id/threadview_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="net.fastfourier.something.ThreadViewFragment"
+            tools:layout="@layout/thread_pageview" />
+        <RelativeLayout
+            android:layout_width="@dimen/nav_list_width"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:id="@+id/sliding_container"/>
+    </android.support.v4.widget.DrawerLayout>
 </FrameLayout>

@@ -22,8 +22,8 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import net.fastfourier.something.util.SomePreferences;
 import net.fastfourier.something.util.SomeTheme;
 
-public class MainActivity extends SomeActivity implements CustomViewAbove.OnPageChangeListener, SlidingMenu.OnCloseListener, SlidingMenu.OnOpenListener {
-    private SlidingMenu slidingMenu;
+public class MainActivity extends SomeActivity implements DrawerLayout.DrawerListener {
+    private DrawerLayout drawerLayout;
 
     private ThreadListFragment threadList;
     private ThreadViewFragment threadView;
@@ -38,7 +38,10 @@ public class MainActivity extends SomeActivity implements CustomViewAbove.OnPage
         super.onCreate(savedInstanceState);
         BugSenseHandler.initAndStartSession(this, "cd75dfa8");
         setContentView(R.layout.activity_main);
-        configureSlidingMenu();
+        drawerLayout = (DrawerLayout) findViewById(R.id.main_drawer);
+        drawerLayout.setDrawerListener(this);
+        drawerLayout.setFocusableInTouchMode(false);
+        drawerLayout.openDrawer(Gravity.LEFT);
         setProgressBarVisibility(false);
         threadView = (ThreadViewFragment) getSupportFragmentManager().findFragmentById(R.id.threadview_fragment);
         Fragment threads = getSupportFragmentManager().findFragmentByTag("thread_list");
@@ -55,31 +58,6 @@ public class MainActivity extends SomeActivity implements CustomViewAbove.OnPage
         }
     }
 
-    private void configureSlidingMenu(){
-        slidingMenu = new SlidingMenu(this, SlidingMenu.SLIDING_CONTENT);
-        slidingMenu.setMenu(R.layout.menu_container);
-        slidingMenu.setOnPageChangeListener(this);
-        slidingMenu.setOnCloseListener(this);
-        slidingMenu.setOnOpenListener(this);
-        slidingMenu.setMode(SlidingMenu.LEFT);
-        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
-        slidingMenu.setTouchModeBehind(SlidingMenu.TOUCHMODE_MARGIN);
-        slidingMenu.setFadeEnabled(false);
-        slidingMenu.setBehindScrollScale(0f);
-        updateSlidingMenuSize();
-        slidingMenu.showMenu();
-    }
-
-    private void updateSlidingMenuSize(){
-        DisplayMetrics met = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(met);
-        if(met.widthPixels < getResources().getDimension(R.dimen.nav_list_width_cutoff)){
-            slidingMenu.setBehindOffsetRes(R.dimen.nav_list_offset);
-        }else{
-            slidingMenu.setBehindWidthRes(R.dimen.nav_list_width);
-        }
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -89,7 +67,7 @@ public class MainActivity extends SomeActivity implements CustomViewAbove.OnPage
     @Override
     protected void onResume() {
         super.onResume();
-        if(slidingMenu.isMenuShowing()){
+        if(isMenuShowing()){
             threadList.setMenuVisibility(true);
             threadView.setMenuVisibility(false);
             if(forumList != null){
@@ -108,7 +86,7 @@ public class MainActivity extends SomeActivity implements CustomViewAbove.OnPage
                 setTitle(title);
             }
         }
-        slidingMenu.setSlidingEnabled(threadView.isThreadLoaded());
+        lockDrawer(!threadView.isThreadLoaded());
     }
 
     @Override
@@ -126,13 +104,13 @@ public class MainActivity extends SomeActivity implements CustomViewAbove.OnPage
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                if(slidingMenu.isMenuShowing()){
+                if(isMenuShowing()){
                     if(getSupportFragmentManager().getBackStackEntryCount() > 0){
                         getSupportFragmentManager().popBackStack();
                         return true;
                     }
                 }else{
-                    slidingMenu.showMenu();
+                    showMenu();
                     return true;
                 }
         }
@@ -141,8 +119,8 @@ public class MainActivity extends SomeActivity implements CustomViewAbove.OnPage
 
     @Override
     public void onBackPressed() {
-        if(!slidingMenu.isMenuShowing()){
-            slidingMenu.showMenu();
+        if(!isMenuShowing()){
+            showMenu();
         }else if(getSupportFragmentManager().getBackStackEntryCount() > 0){
             getSupportFragmentManager().popBackStack();
             forumList = null;
@@ -156,14 +134,14 @@ public class MainActivity extends SomeActivity implements CustomViewAbove.OnPage
     }
 
     public void showThread(int id, int page) {
-        slidingMenu.setSlidingEnabled(true);
-        slidingMenu.showContent();
+        lockDrawer(false);
+        closeMenu();
         threadView.loadThread(id, page);
         threadList.highlightThread(id);
     }
 
     public void showForum(int id) {
-        slidingMenu.showMenu();
+        showMenu();
         FragmentManager fragMan = getSupportFragmentManager();
         if(fragMan.getBackStackEntryCount() > 0){
             fragMan.popBackStackImmediate();
@@ -181,7 +159,7 @@ public class MainActivity extends SomeActivity implements CustomViewAbove.OnPage
     }
 
     public void onThreadPageLoaded(int threadId) {
-        slidingMenu.setSlidingEnabled(true);
+        lockDrawer(false);
         threadList.onThreadPageLoaded(threadId);
     }
 
@@ -192,7 +170,7 @@ public class MainActivity extends SomeActivity implements CustomViewAbove.OnPage
     }
 
     public boolean isFragmentFocused(Fragment fragment){
-        if(slidingMenu != null && slidingMenu.isMenuShowing()){
+        if(isMenuShowing()){
             return forumList == fragment || (forumList == null && fragment == threadList);
         }else{
             return fragment == threadView;
@@ -212,16 +190,6 @@ public class MainActivity extends SomeActivity implements CustomViewAbove.OnPage
         rgb[2] = Color.blue(color);
     }
 
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        onSlide(Math.abs(positionOffset));
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-
-    }
-
     private void onSlide(float slideOffset){
         if(sliderSettled && threadView != null){
             int start, end;
@@ -237,27 +205,17 @@ public class MainActivity extends SomeActivity implements CustomViewAbove.OnPage
         }
     }
 
-    @Override
-    public void onClose() {
-        if(threadView != null){
-            CharSequence title = threadView.getTitle();
-            if(title != null && title.length() > 0){
-                setTitle(title);
-            }
-            threadView.onPaneRevealed();
-            threadView.setMenuVisibility(true);
-        }
-        if(threadList != null){
-            threadList.setMenuVisibility(false);
-            threadList.onPaneObscured();
-        }
-
-        interpActionbarColor = false;
-        sliderSettled = true;
+    public int getCurrentThreadId() {
+        return threadView != null ? threadView.getThreadId() : 0;
     }
 
     @Override
-    public void onOpen() {
+    public void onDrawerSlide(View drawerView, float slideOffset) {
+        onSlide(slideOffset);
+    }
+
+    @Override
+    public void onDrawerOpened(View drawerView) {
         if(threadList != null){
             Spanned title = threadList.getTitle();
             if(title != null && title.length() > 0){
@@ -276,7 +234,43 @@ public class MainActivity extends SomeActivity implements CustomViewAbove.OnPage
         sliderSettled = true;
     }
 
-    public int getCurrentThreadId() {
-        return threadView != null ? threadView.getThreadId() : 0;
+    @Override
+    public void onDrawerClosed(View drawerView) {
+        if(threadView != null){
+            CharSequence title = threadView.getTitle();
+            if(title != null && title.length() > 0){
+                setTitle(title);
+            }
+            threadView.onPaneRevealed();
+            threadView.setMenuVisibility(true);
+        }
+        if(threadList != null){
+            threadList.setMenuVisibility(false);
+            threadList.onPaneObscured();
+        }
+
+        interpActionbarColor = false;
+        sliderSettled = true;
+    }
+
+    @Override
+    public void onDrawerStateChanged(int newState) {
+
+    }
+
+    private boolean isMenuShowing(){
+        return drawerLayout == null || drawerLayout.isDrawerOpen(Gravity.LEFT);
+    }
+
+    private void lockDrawer(boolean lock){
+        drawerLayout.setDrawerLockMode(lock ? DrawerLayout.LOCK_MODE_LOCKED_OPEN : DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
+    }
+
+    private void showMenu(){
+        drawerLayout.openDrawer(Gravity.LEFT);
+    }
+
+    private void closeMenu(){
+        drawerLayout.closeDrawer(Gravity.LEFT);
     }
 }
