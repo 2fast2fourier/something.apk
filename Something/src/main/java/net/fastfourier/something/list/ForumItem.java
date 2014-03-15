@@ -16,6 +16,7 @@ import com.salvadordalvik.fastlibrary.list.BaseFastItem;
 import net.fastfourier.something.MainActivity;
 import net.fastfourier.something.R;
 import net.fastfourier.something.data.SomeDatabase;
+import net.fastfourier.something.util.SomeTheme;
 
 /**
  * Created by matthewshepard on 1/22/14.
@@ -24,7 +25,8 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
     public static final String[] DB_COLUMNS = {"forum_id", "forum_name", "parent_forum_id", "forum_starred", "category"};
     private final Spanned title;
     private final int parentId;
-    private final boolean starred, selected, showStar;
+    private final boolean showStar;
+    private boolean selected, starred;
     private final String category;
 
     public ForumItem(Cursor data, boolean indentSubforums, int[] columns, int selectedForumId) {
@@ -54,7 +56,7 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
 
     @Override
     public void updateViewFromHolder(View view, ForumHolder holder) {
-        holder.forumId = getId();
+        holder.forum = this;
         holder.title.setText(title);
         if(showStar){
             TypedValue star = new TypedValue();
@@ -86,25 +88,9 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
         return category;
     }
 
-    protected static class ForumHolder implements View.OnClickListener {
-        public TextView title;
-        public ImageView star;
-        public int forumId = 0;
-        private ForumHolder(View view){
-            title = (TextView) view.findViewById(R.id.forum_item_title);
-            star = (ImageView) view.findViewById(R.id.forum_item_star);
-            star.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            if(forumId > 0){
-                TypedValue starVal = new TypedValue();
-                if(v.getContext().getTheme().resolveAttribute(toggleStar(forumId) ? R.attr.inlineStarIcon : R.attr.inlineEmptyStarIcon, starVal, false)){
-                    star.setImageResource(starVal.data);
-                }
-            }
-        }
+    private boolean toggleStar(){
+        starred = toggleStar(getId());
+        return starred;
     }
 
     public static boolean toggleStar(int forumId){
@@ -115,6 +101,29 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
         }else{
             SomeDatabase.getDatabase().insertRows(SomeDatabase.TABLE_STARRED_FORUM, SQLiteDatabase.CONFLICT_IGNORE, cv);
             return true;
+        }
+    }
+
+    protected static class ForumHolder implements View.OnClickListener {
+        public TextView title;
+        public ImageView star;
+        public ForumItem forum;
+        private ForumHolder(View view){
+            title = (TextView) view.findViewById(R.id.forum_item_title);
+            star = (ImageView) view.findViewById(R.id.forum_item_star);
+            star.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if(forum != null && forum.getId() > 0){
+                star.setImageResource(
+                        SomeTheme.getThemeResource(
+                                v.getContext(),
+                                forum.toggleStar() ? R.attr.inlineStarIcon : R.attr.inlineEmptyStarIcon,
+                                R.drawable.star)
+                );
+            }
         }
     }
 }

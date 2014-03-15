@@ -91,7 +91,7 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
         lockDrawer(!threadView.isThreadLoaded());
         ActionBar ab = getActionBar();
         if(ab != null){
-            ab.setDisplayHomeAsUpEnabled(!isMenuShowing());
+            ab.setDisplayHomeAsUpEnabled(!isMenuShowing() || forumList != null);
         }
     }
 
@@ -111,8 +111,8 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
         switch (item.getItemId()){
             case android.R.id.home:
                 if(isMenuShowing()){
-                    if(getSupportFragmentManager().getBackStackEntryCount() > 0){
-                        getSupportFragmentManager().popBackStack();
+                    if(forumList != null){
+                        hideForumsList();
                         return true;
                     }
                 }else{
@@ -128,8 +128,7 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
         if(!isMenuShowing()){
             showMenu();
         }else if(getSupportFragmentManager().getBackStackEntryCount() > 0){
-            getSupportFragmentManager().popBackStack();
-            forumList = null;
+            hideForumsList();
         }else{
             super.onBackPressed();
         }
@@ -150,10 +149,19 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
         showMenu();
         FragmentManager fragMan = getSupportFragmentManager();
         if(fragMan.getBackStackEntryCount() > 0){
-            fragMan.popBackStackImmediate();
-            forumList = null;
+            hideForumsList();
         }
         threadList.showForum(id);
+    }
+
+    public void hideForumsList(){
+        getSupportFragmentManager().popBackStackImmediate();
+        forumList = null;
+        ActionBar ab = getActionBar();
+        if(ab != null){
+            ab.setDisplayHomeAsUpEnabled(false);
+        }
+        setTitle(threadList.getTitle());
     }
 
     public void showForumList(int currentForumId){
@@ -162,6 +170,11 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
         trans.replace(R.id.sliding_container, forumList, "forum_list");
         trans.addToBackStack("open_forum_list");
         trans.commit();
+
+        ActionBar ab = getActionBar();
+        if(ab != null){
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     public void onThreadPageLoaded(int threadId) {
@@ -241,7 +254,7 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
 
         ActionBar ab = getActionBar();
         if(ab != null){
-            ab.setDisplayHomeAsUpEnabled(false);
+            ab.setDisplayHomeAsUpEnabled(forumList != null);
         }
     }
 
