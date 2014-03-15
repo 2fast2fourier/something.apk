@@ -23,6 +23,7 @@ import com.salvadordalvik.fastlibrary.alert.FastAlert;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
 import net.fastfourier.something.request.PrivateMessageRequest;
 import net.fastfourier.something.util.Constants;
+import net.fastfourier.something.util.SomeURL;
 
 /**
  * Created by matthewshepard on 2/12/14.
@@ -201,7 +202,7 @@ public class PrivateMessageFragment extends SomeFragment implements Response.Err
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             Log.d("WebView", "shouldOverrideUrlLoading: "+url);
-            FastUtils.startUrlIntent(getActivity(), url);
+            SomeURL.handleUrl(getActivity(), url);
             return true;
         }
     };

@@ -38,7 +38,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         addParam("perpage", SomePreferences.threadPostPerPage);
     }
 
-    public ThreadPageRequest(int postId, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
+    public ThreadPageRequest(long postId, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
         super("http://forums.somethingawful.com/showthread.php", Request.Method.GET, success, error);
         addParam("postid", postId);
         addParam("goto", "post");

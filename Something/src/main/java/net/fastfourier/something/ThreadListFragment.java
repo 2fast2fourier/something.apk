@@ -429,4 +429,8 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
     private void showPMs() {
         startActivity(new Intent(getActivity(), PrivateMessageListActivity.class));
     }
+
+    public int getForumId() {
+        return forumId;
+    }
 }

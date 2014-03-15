@@ -145,6 +145,13 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
         threadList.highlightThread(id);
     }
 
+    public void showPost(long id) {
+        lockDrawer(false);
+        closeMenu();
+        threadView.loadThread(id);
+        threadList.highlightThread(0);
+    }
+
     public void showForum(int id) {
         showMenu();
         FragmentManager fragMan = getSupportFragmentManager();
@@ -162,6 +169,14 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
             ab.setDisplayHomeAsUpEnabled(false);
         }
         setTitle(threadList.getTitle());
+    }
+
+    public void showForumList(){
+        showForumList(getCurrentForumId());
+    }
+
+    private int getCurrentForumId() {
+        return threadList != null ? threadList.getForumId() : 0;
     }
 
     public void showForumList(int currentForumId){

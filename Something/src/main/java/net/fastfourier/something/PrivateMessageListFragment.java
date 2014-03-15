@@ -36,6 +36,12 @@ public class PrivateMessageListFragment extends SomeFragment implements Response
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        folderId = getActivity().getIntent().getIntExtra("pm_folder", 0);
+    }
+
+    @Override
     public void viewCreated(View frag, Bundle savedInstanceState) {
         pmList = (ListView) frag.findViewById(R.id.listview);
         adapter = new SectionFastAdapter(this, 2);

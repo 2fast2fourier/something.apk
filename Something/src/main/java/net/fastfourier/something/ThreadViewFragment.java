@@ -53,6 +53,7 @@ import net.fastfourier.something.request.ThreadPageRequest;
 import net.fastfourier.something.util.Constants;
 import net.fastfourier.something.util.SomePreferences;
 import net.fastfourier.something.util.SomeTheme;
+import net.fastfourier.something.util.SomeURL;
 import net.fastfourier.something.widget.PageSelectDialogFragment;
 
 import java.util.regex.Matcher;
@@ -78,7 +79,11 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     private TextView pfbTitle;
     private ProgressBar pfbProgressbar;
 
-    private int threadId = 0, postId = 0, page, maxPage, forumId;
+    private int threadId = 0;
+    private long postId = 0;
+    private int page;
+    private int maxPage;
+    private int forumId;
     private CharSequence threadTitle;
     private String pageHtml, rawThreadTitle;
     private boolean bookmarked;
@@ -371,7 +376,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         threadView.loadUrl("about:blank");
     }
 
-    public void loadThread(int postId){
+    public void loadThread(long postId){
         this.ignorePageProgress = true;
         this.postId = postId;
         this.threadId = 0;
@@ -420,6 +425,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     }
 
     private WebChromeClient chromeClient = new WebChromeClient(){
+
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
@@ -460,7 +466,6 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            Log.d("WebView", "shouldOverrideUrlLoading: "+url);
             if(url != null && url.startsWith("something")){
                 if(url.contains("something://something-next")){
                     goToPage(page+1);
@@ -473,7 +478,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
                     return true;
                 }
             }
-            FastUtils.startUrlIntent(getActivity(), url);
+            SomeURL.handleUrl(getActivity(), url);
             return true;
         }
     };
