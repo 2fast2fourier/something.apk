@@ -8,8 +8,10 @@ import android.util.Log;
 import com.bugsense.trace.BugSenseHandler;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
 
+import net.fastfourier.something.BuildConfig;
 import net.fastfourier.something.MainActivity;
 import net.fastfourier.something.PrivateMessageListActivity;
+import net.fastfourier.something.SomeApplication;
 
 /**
  * Created by matthewshepard on 3/14/14.
@@ -27,7 +29,7 @@ public class SomeURL {
         if(url != null && url.length() > 0){
             try{
                 Uri parsedUrl = Uri.parse(url);
-                Log.e("SomeURL", "URL: "+url);
+                if(BuildConfig.DEBUG) Log.d("SomeURL", "URL: " + url);
                 if(parsedUrl.isRelative() || "forums.somethingawful.com".equalsIgnoreCase(parsedUrl.getHost())){
                     String lastPath = parsedUrl.getLastPathSegment();
                     if("showthread.php".equalsIgnoreCase(lastPath)){
