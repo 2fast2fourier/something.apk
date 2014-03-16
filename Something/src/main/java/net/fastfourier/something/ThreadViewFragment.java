@@ -260,6 +260,8 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         outState.putInt("thread_maxpage", maxPage);
         outState.putString("thread_title", rawThreadTitle);
         outState.putLong("post_id", postId);
+        outState.putInt("thread_forum_id", forumId);
+        outState.putBoolean("thread_bookmarked", bookmarked);
         return outState;
     }
 
@@ -269,6 +271,8 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         page = inState.getInt("thread_page", 1);
         maxPage = inState.getInt("thread_maxpage", 1);
         postId = inState.getLong("post_id", 0);
+        forumId = inState.getInt("thread_forum_id", 0);
+        bookmarked = inState.getBoolean("thread_bookmarked");
         rawThreadTitle = inState.getString("thread_title");
         if(!TextUtils.isEmpty(rawThreadTitle)){
             threadTitle = Html.fromHtml(rawThreadTitle);
