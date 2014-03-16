@@ -2,6 +2,7 @@ package net.fastfourier.something.list;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.Fragment;
@@ -72,7 +73,7 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
 
     @Override
     public boolean onItemClick(Activity act, Fragment fragment) {
-        ((MainActivity)act).showForum(id);
+        act.startActivity(new Intent(act, MainActivity.class).putExtra("forum_id", id).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
         return false;
     }
 

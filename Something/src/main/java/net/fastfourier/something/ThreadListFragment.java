@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Spanned;
 import android.text.SpannedString;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -61,13 +60,13 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
         header = new ForumHeaderItem("Forums") {
             @Override
             public boolean onItemClick(Activity act, Fragment fragment) {
-                ((MainActivity) act).showForumList(forumId);
+                act.startActivity(new Intent(act, MainActivity.class).putExtra("show_index", true).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
                 return false;
             }
 
             @Override
             public void onButtonClick(View view) {
-                ((MainActivity)getActivity()).showForum(Constants.BOOKMARK_FORUMID);
+                getActivity().startActivity(new Intent(getActivity(), MainActivity.class).putExtra("forum_id", Constants.BOOKMARK_FORUMID).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
             }
         };
 
@@ -98,7 +97,6 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
     }
 
     private float getScrollDistance(){
-        Log.e("thread", "scroll distance: "+FastUtils.calculateScrollDistance(getActivity(), 2.5f));
         return Math.max(Math.min(FastUtils.calculateScrollDistance(getActivity(), 2.5f), 0.666f), 0.333f);
     }
 
@@ -114,10 +112,11 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
     @Override
     public void onResume() {
         super.onResume();
-        if(!startRefreshIfStale()){
-            updateStarredForums();
+        if(((MainActivity)getActivity()).isFragmentFocused(this)){
+            startRefreshIfStale();
             updateForumTitle();
         }
+        updateStarredForums();
     }
 
     public void onPaneObscured() {

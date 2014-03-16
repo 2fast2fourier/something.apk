@@ -27,7 +27,7 @@ public class SomeURL {
         if(url != null && url.length() > 0){
             try{
                 Uri parsedUrl = Uri.parse(url);
-                Log.e("SomeURL", "URL: "+url+" - "+parsedUrl.getHost()+" + "+parsedUrl.getPath()+" + "+parsedUrl.getLastPathSegment()+" + "+parsedUrl.getQuery()+" + "+parsedUrl.getFragment()+" - "+parsedUrl.getAuthority());
+                Log.e("SomeURL", "URL: "+url);
                 if(parsedUrl.isRelative() || "forums.somethingawful.com".equalsIgnoreCase(parsedUrl.getHost())){
                     String lastPath = parsedUrl.getLastPathSegment();
                     if("showthread.php".equalsIgnoreCase(lastPath)){
@@ -69,18 +69,29 @@ public class SomeURL {
                     }else if("private.php".equalsIgnoreCase(lastPath)){
                         String folder = parsedUrl.getQueryParameter("folderid");
                         String pmid = parsedUrl.getQueryParameter("privatemessageid");
-                        if(folder != null && folder.matches("\\d+")){
+                        if(folder != null){
                             urlType = TYPE.PM_FOLDER;
                             id = Integer.parseInt(folder);
-                        }else if(pmid != null && pmid.matches("\\d+")){
+                        }else if(pmid != null){
                             urlType = TYPE.PM_MESSAGE;
                             id = Integer.parseInt(pmid);
                         }else{
+                            urlType = TYPE.PM_FOLDER;
                             id = Constants.PM_FOLDER_INBOX;
                         }
                     }else if("usercp.php".equalsIgnoreCase(lastPath)){
                         urlType = TYPE.FORUM;
                         id = Constants.BOOKMARK_FORUMID;
+                        page = 1;
+                    }else if("bookmarkthreads.php".equalsIgnoreCase(lastPath)){
+                        urlType = TYPE.FORUM;
+                        id = Constants.BOOKMARK_FORUMID;
+                        String pageNum = parsedUrl.getQueryParameter("pagenumber");
+                        if(pageNum != null && pageNum.matches("\\d+")){
+                            page = Integer.parseInt(pageNum);
+                        }else{
+                            page = 1;
+                        }
                     }else if("index.php".equalsIgnoreCase(lastPath) || parsedUrl.getPath() == null || parsedUrl.getPath().length() < 2){
                         urlType = TYPE.INDEX;
                     }else{
@@ -132,30 +143,33 @@ public class SomeURL {
         switch (urlType){
             case THREAD:
                 if(activity != null){
-                    activity.startActivity(new Intent(activity, MainActivity.class).putExtra("thread_id", (int) id).putExtra("thread_page", page));
+                    activity.startActivity(new Intent(activity, MainActivity.class).putExtra("thread_id", (int) id).putExtra("thread_page", page).putExtra("from_url", true));
                 }
+                break;
             case POST:
                 if(activity != null){
-                    activity.startActivity(new Intent(activity, MainActivity.class).putExtra("post_id", id));
+                    activity.startActivity(new Intent(activity, MainActivity.class).putExtra("post_id", id).putExtra("from_url", true));
                 }
+                break;
             case FORUM:
                 if(activity instanceof MainActivity){
                     ((MainActivity) activity).showForum((int) id);
                 }else if(activity != null){
-                    activity.startActivity(new Intent(activity, MainActivity.class).putExtra("forum_id", (int) id).putExtra("forum_page", page));
+                    activity.startActivity(new Intent(activity, MainActivity.class).putExtra("forum_id", (int) id).putExtra("forum_page", page).putExtra("from_url", true));
                 }
                 break;
             case INDEX:
                 if(activity instanceof MainActivity){
                     ((MainActivity) activity).showForumList();
                 }else if(activity != null){
-                    activity.startActivity(new Intent(activity, MainActivity.class).putExtra("show_index", true));
+                    activity.startActivity(new Intent(activity, MainActivity.class).putExtra("show_index", true).putExtra("from_url", true));
                 }
+                break;
             case PM_FOLDER:
                 if(activity instanceof PrivateMessageListActivity){
                     ((PrivateMessageListActivity) activity).showPMFolder((int) id);
                 }else if(activity != null){
-                    activity.startActivity(new Intent(activity, PrivateMessageListActivity.class).putExtra("pm_folder", (int) id));
+                    activity.startActivity(new Intent(activity, PrivateMessageListActivity.class).putExtra("pm_folder", (int) id).putExtra("from_url", true));
                 }
                 break;
             case PM_MESSAGE:
@@ -163,7 +177,7 @@ public class SomeURL {
                 if(activity instanceof PrivateMessageListActivity){
                     ((PrivateMessageListActivity) activity).showPM((int) id, "Private Message");
                 }else if(activity != null){
-                    activity.startActivity(new Intent(activity, PrivateMessageListActivity.class).putExtra("pm_id", (int) id));
+                    activity.startActivity(new Intent(activity, PrivateMessageListActivity.class).putExtra("pm_id", (int) id).putExtra("from_url", true));
                 }
                 break;
             case EXTERNAL:

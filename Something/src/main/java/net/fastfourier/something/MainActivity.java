@@ -33,7 +33,7 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
 
     private int[] startColor = new int[3], endColor = new int[3];
     private float[] currentColor = new float[3];
-    private boolean sliderSettled = true, interpActionbarColor = false;
+    private boolean sliderSettled = true, interpActionbarColor = false, openedFromUrl = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +43,13 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
         drawerLayout = (MarginDrawerLayout) findViewById(R.id.main_drawer);
         drawerLayout.setDrawerListener(this);
         drawerLayout.setFocusableInTouchMode(false);
-        drawerLayout.openDrawer(Gravity.LEFT);
+        Intent intent = getIntent();
+        if(intent.hasExtra("thread_id") || intent.hasExtra("post_id")){
+            closeMenu();
+            openedFromUrl = intent.getBooleanExtra("from_url", false);
+        }else{
+            showMenu();
+        }
         setProgressBarVisibility(false);
         threadView = (ThreadViewFragment) getSupportFragmentManager().findFragmentById(R.id.threadview_fragment);
         Fragment threads = getSupportFragmentManager().findFragmentByTag("thread_list");
@@ -123,7 +129,9 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                if(isMenuShowing()){
+                if(openedFromUrl){
+                    finish();
+                }else if(isMenuShowing()){
                     if(forumList != null){
                         hideForumsList();
                         return true;
@@ -138,7 +146,7 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
 
     @Override
     public void onBackPressed() {
-        if(!isMenuShowing()){
+        if(!openedFromUrl && !isMenuShowing()){
             showMenu();
         }else if(getSupportFragmentManager().getBackStackEntryCount() > 0){
             hideForumsList();
@@ -193,6 +201,7 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
     }
 
     public void showForumList(int currentForumId){
+        showMenu();
         FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
         forumList = ForumListFragment.newInstance(currentForumId);
         trans.replace(R.id.sliding_container, forumList, "forum_list");

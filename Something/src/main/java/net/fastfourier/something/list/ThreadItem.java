@@ -1,6 +1,7 @@
 package net.fastfourier.something.list;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v4.app.Fragment;
 import android.os.Parcel;
@@ -108,9 +109,9 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
     @Override
     public boolean onItemClick(Activity act, Fragment fragment) {
         if(unread >= 0){
-            ((MainActivity)act).showThread(id);
+            act.startActivity(new Intent(act, MainActivity.class).putExtra("thread_id", id).putExtra("thread_page", 0).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
         }else{
-            ((MainActivity)act).showThread(id, 1);
+            act.startActivity(new Intent(act, MainActivity.class).putExtra("thread_id", id).putExtra("thread_page", 1).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
         }
         return false;
     }

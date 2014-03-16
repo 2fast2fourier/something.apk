@@ -142,6 +142,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         loadSessionCookie();
 
         if(savedInstanceState == null && (threadId > 0 || postId > 0)){
+            setTitle("Loading...");
             startRefresh();
         }
     }
@@ -431,7 +432,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     }
 
     public boolean isThreadLoaded() {
-        return pageHtml != null || threadId > 0;
+        return pageHtml != null || threadId > 0 || postId > 0;
     }
 
     public CharSequence getTitle() {
