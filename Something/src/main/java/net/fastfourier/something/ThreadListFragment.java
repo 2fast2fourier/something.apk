@@ -83,6 +83,8 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
         }else if(forumId < 1){
             if(args != null && args.containsKey("forum_id")){
                 forumId = args.getInt("forum_id", SomePreferences.favoriteForumId);
+            }else if(getActivity().getIntent().hasExtra("forum_id")){
+                forumId = getActivity().getIntent().getIntExtra("forum_id", SomePreferences.favoriteForumId);
             }else{
                 forumId = SomePreferences.favoriteForumId;
             }

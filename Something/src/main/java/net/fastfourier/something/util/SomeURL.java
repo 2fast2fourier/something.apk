@@ -18,7 +18,8 @@ public class SomeURL {
     public enum TYPE {FORUM, THREAD, POST, PM_FOLDER, PM_MESSAGE, INDEX, EXTERNAL, UNKNOWN}
 
     private TYPE urlType;
-    private int id = 0, page = 0, userId = 0;
+    private int page = 0, userId = 0;
+    private long id;
     private String url;
 
     public SomeURL(String url) {
@@ -52,7 +53,7 @@ public class SomeURL {
                                 page = 1;
                             }
                         }
-                        String user = parsedUrl.getQueryParameter("pagenumber");
+                        String user = parsedUrl.getQueryParameter("userid");
                         if(user != null && user.matches("\\d+")){
                             userId = Integer.parseInt(user);
                         }
@@ -107,7 +108,7 @@ public class SomeURL {
         return urlType;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -130,22 +131,18 @@ public class SomeURL {
     public void handleUrl(Activity activity) {
         switch (urlType){
             case THREAD:
-                if(activity instanceof MainActivity){
-                    ((MainActivity) activity).showThread(id, page);
-                }else if(activity != null){
-                    activity.startActivity(new Intent(activity, MainActivity.class).putExtra("thread_id", id).putExtra("thread_page", page));
+                if(activity != null){
+                    activity.startActivity(new Intent(activity, MainActivity.class).putExtra("thread_id", (int) id).putExtra("thread_page", page));
                 }
             case POST:
-                if(activity instanceof MainActivity){
-                    ((MainActivity) activity).showThread(id);
-                }else if(activity != null){
+                if(activity != null){
                     activity.startActivity(new Intent(activity, MainActivity.class).putExtra("post_id", id));
                 }
             case FORUM:
                 if(activity instanceof MainActivity){
-                    ((MainActivity) activity).showForum(id);
+                    ((MainActivity) activity).showForum((int) id);
                 }else if(activity != null){
-                    activity.startActivity(new Intent(activity, MainActivity.class).putExtra("forum_id", id).putExtra("forum_page", page));
+                    activity.startActivity(new Intent(activity, MainActivity.class).putExtra("forum_id", (int) id).putExtra("forum_page", page));
                 }
                 break;
             case INDEX:
@@ -156,16 +153,17 @@ public class SomeURL {
                 }
             case PM_FOLDER:
                 if(activity instanceof PrivateMessageListActivity){
-                    ((PrivateMessageListActivity) activity).showPMFolder(id);
+                    ((PrivateMessageListActivity) activity).showPMFolder((int) id);
                 }else if(activity != null){
-                    activity.startActivity(new Intent(activity, PrivateMessageListActivity.class).putExtra("pm_folder", id));
+                    activity.startActivity(new Intent(activity, PrivateMessageListActivity.class).putExtra("pm_folder", (int) id));
                 }
                 break;
             case PM_MESSAGE:
+                //This URL type will probably never happen.
                 if(activity instanceof PrivateMessageListActivity){
-                    ((PrivateMessageListActivity) activity).showPM(id, "Private Message");
+                    ((PrivateMessageListActivity) activity).showPM((int) id, "Private Message");
                 }else if(activity != null){
-                    activity.startActivity(new Intent(activity, PrivateMessageListActivity.class).putExtra("pm_id", id));
+                    activity.startActivity(new Intent(activity, PrivateMessageListActivity.class).putExtra("pm_id", (int) id));
                 }
                 break;
             case EXTERNAL:

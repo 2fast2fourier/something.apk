@@ -99,6 +99,30 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if(savedInstanceState != null && savedInstanceState.containsKey("thread_html")){
+            threadId = savedInstanceState.getInt("thread_id");
+            pageHtml = savedInstanceState.getString("thread_html");
+            page = savedInstanceState.getInt("thread_page", 1);
+            maxPage = savedInstanceState.getInt("thread_maxpage", 1);
+            rawThreadTitle = savedInstanceState.getString("thread_title");
+            if(!TextUtils.isEmpty(rawThreadTitle)){
+                threadTitle = Html.fromHtml(rawThreadTitle);
+                setTitle(threadTitle);
+            }
+
+            threadView.loadDataWithBaseURL(Constants.BASE_URL, pageHtml, "text/html", "utf-8", null);
+        }else{
+            Intent intent = getActivity().getIntent();
+            threadId = intent.getIntExtra("thread_id", 0);
+            page = intent.getIntExtra("thread_page", 0);
+            postId = intent.getLongExtra("post_id", 0);
+        }
+    }
+
+    @Override
     public void viewCreated(View frag, Bundle savedInstanceState) {
         navPrev = (ImageView) frag.findViewById(R.id.threadview_prev);
         navNext = (ImageView) frag.findViewById(R.id.threadview_next);
@@ -114,22 +138,12 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         threadView = (WebView) frag.findViewById(R.id.ptr_webview);
         initWebview();
 
-        if(savedInstanceState != null && savedInstanceState.containsKey("thread_html")){
-            threadId = savedInstanceState.getInt("thread_id");
-            pageHtml = savedInstanceState.getString("thread_html");
-            page = savedInstanceState.getInt("thread_page", 1);
-            maxPage = savedInstanceState.getInt("thread_maxpage", 1);
-            rawThreadTitle = savedInstanceState.getString("thread_title");
-            if(!TextUtils.isEmpty(rawThreadTitle)){
-                threadTitle = Html.fromHtml(rawThreadTitle);
-                setTitle(threadTitle);
-            }
-
-            threadView.loadDataWithBaseURL(Constants.BASE_URL, pageHtml, "text/html", "utf-8", null);
-        }
-
         updateNavbar();
         loadSessionCookie();
+
+        if(savedInstanceState == null && (threadId > 0 || postId > 0)){
+            startRefresh();
+        }
     }
 
     @Override
@@ -417,7 +431,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     }
 
     public boolean isThreadLoaded() {
-        return pageHtml != null;
+        return pageHtml != null || threadId > 0;
     }
 
     public CharSequence getTitle() {

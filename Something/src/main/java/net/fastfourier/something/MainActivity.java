@@ -53,10 +53,23 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
             threadList = new ThreadListFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.sliding_container, threadList, "thread_list").commit();
         }
-
         if(!SomePreferences.loggedIn){
             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
             finish();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if(intent.hasExtra("thread_id")){
+            showThread(intent.getIntExtra("thread_id", 0), intent.getIntExtra("thread_page", 1));
+        }else if(intent.hasExtra("post_id")){
+            showPost(intent.getLongExtra("post_id", 0));
+        }else if(intent.hasExtra("forum_id")){
+            showForum(intent.getIntExtra("forum_id", intent.getIntExtra("forum_page", 1)));
+        }else if(intent.getBooleanExtra("show_index", false)){
+            showForumList();
         }
     }
 
