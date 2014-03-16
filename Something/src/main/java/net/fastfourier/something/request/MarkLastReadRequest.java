@@ -20,6 +20,6 @@ public class MarkLastReadRequest extends HTMLRequest<ThreadPageRequest.ThreadPag
 
     @Override
     public ThreadPageRequest.ThreadPage parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
-        return ThreadPageRequest.processThreadPage(document, SomePreferences.hideAllImages, SomePreferences.hidePreviouslyReadPosts);
+        return ThreadPageRequest.processThreadPage(document, SomePreferences.hideAllImages, SomePreferences.hidePreviouslyReadPosts, 0);
     }
 }

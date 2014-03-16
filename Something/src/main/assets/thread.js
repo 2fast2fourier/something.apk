@@ -63,7 +63,7 @@ function pageinit() {
 	                e.preventDefault();
 	                if($(id).css("display") == 'none'){
                         showReadPosts();
-                        jumpTo = id;
+                        window.jumpToPostId = id;
                         window.setTimeout(jumpToJump, 500);
 	                }else{
 	                    window.scrollTo(0,$(id).offset().top);
@@ -83,12 +83,10 @@ function pageinit() {
     });
 };
 
-var jumpTo = null;
-
 function jumpToJump(){
-    if(jumpTo){
+    if(window.jumpToPostId > 0){
         window.scrollTo(0,$(jumpTo).offset().top);
-        jumpTo = null;
+        window.jumpToPostId = 0;
     }
 }
 
@@ -102,21 +100,24 @@ function showReadPosts(){
 
 function onThreadLoaded(){
     pageinit();
-    scrollLastRead();
+    if(window.jumpToPostId > 0){
+        scrollPost(window.jumpToPostId);
+        window.jumpToPostId = 0;
+    }else{
+        scrollLastRead();
+    }
 }
 
-function scrollPost(postjump) {
-    if (postjump != "") {
-        try{
-            window.topScrollItem = $("#post"+postjump).first();
-            window.topScrollPos = window.topScrollItem.offset().top;
-            window.scrollTo(0,window.topScrollPos);
-            window.topScrollCount = 200;
-              window.topScrollID = window.setTimeout(scrollUpdate, 500);
-        }catch(error){
-            scrollLastRead();
-        }
-    } else {
+function scrollPost(postId) {
+    try{
+        window.topScrollItem = $("#post"+postId).first();
+        window.topScrollPos = window.topScrollItem.offset().top;
+        window.scrollTo(0,window.topScrollPos);
+        window.topScrollCount = 100;
+        window.topScrollID = window.setTimeout(scrollUpdate, 500);
+    }catch(error){
+        window.topScrollCount = 0;
+        window.topScrollItem = null;
         scrollLastRead();
     }
 }
@@ -127,7 +128,7 @@ function scrollLastRead(){
         window.topScrollPos = window.topScrollItem.offset().top;
         window.topScrollCount = 100;
         window.scrollTo(0, window.topScrollPos);
-          window.topScrollID = window.setTimeout(scrollUpdate, 500);
+        window.topScrollID = window.setTimeout(scrollUpdate, 500);
     }catch(error){
         window.topScrollCount = 0;
         window.topScrollItem = null;
