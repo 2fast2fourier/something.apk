@@ -12,7 +12,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 19
         versionCode rootProject.versionCode
-        versionName "0.3.2"
+        versionName "0.3.3"
     }
 
     signingConfigs {
