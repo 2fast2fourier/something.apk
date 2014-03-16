@@ -10,15 +10,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 
 import com.bugsense.trace.BugSenseHandler;
-import com.jeremyfeinstein.slidingmenu.lib.CustomViewAbove;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import net.fastfourier.something.util.SomePreferences;
 import net.fastfourier.something.util.SomeTheme;
@@ -33,7 +29,7 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
 
     private int[] startColor = new int[3], endColor = new int[3];
     private float[] currentColor = new float[3];
-    private boolean sliderSettled = true, interpActionbarColor = false, openedFromUrl = false;
+    private boolean sliderSettled = true, interpActionbarColor = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +39,8 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
         drawerLayout = (MarginDrawerLayout) findViewById(R.id.main_drawer);
         drawerLayout.setDrawerListener(this);
         drawerLayout.setFocusableInTouchMode(false);
-        Intent intent = getIntent();
-        if(intent.hasExtra("thread_id") || intent.hasExtra("post_id")){
+        if(savedInstanceState != null && !savedInstanceState.getBoolean("menu_open")){
             closeMenu();
-            openedFromUrl = intent.getBooleanExtra("from_url", false);
         }else{
             showMenu();
         }
@@ -69,9 +63,9 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if(intent.hasExtra("thread_id")){
-            showThread(intent.getIntExtra("thread_id", 0), intent.getIntExtra("thread_page", 1));
+            showThread(intent.getIntExtra("thread_id", 0), intent.getIntExtra("thread_page", 1), intent.getBooleanExtra("from_url", false));
         }else if(intent.hasExtra("post_id")){
-            showPost(intent.getLongExtra("post_id", 0));
+            showPost(intent.getLongExtra("post_id", 0), intent.getBooleanExtra("from_url", false));
         }else if(intent.hasExtra("forum_id")){
             showForum(intent.getIntExtra("forum_id", intent.getIntExtra("forum_page", 1)));
         }else if(intent.getBooleanExtra("show_index", false)){
@@ -126,18 +120,24 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("menu_open", isMenuShowing());
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                if(openedFromUrl){
-                    finish();
-                }else if(isMenuShowing()){
+                if(isMenuShowing()){
                     if(forumList != null){
                         hideForumsList();
                         return true;
                     }
                 }else{
-                    showMenu();
+                    if(!threadView.overrideBackPressed()){
+                        showMenu();
+                    }
                     return true;
                 }
         }
@@ -146,8 +146,10 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
 
     @Override
     public void onBackPressed() {
-        if(!openedFromUrl && !isMenuShowing()){
-            showMenu();
+        if(!isMenuShowing()){
+            if(!threadView.overrideBackPressed()){
+                showMenu();
+            }
         }else if(getSupportFragmentManager().getBackStackEntryCount() > 0){
             hideForumsList();
         }else{
@@ -155,21 +157,21 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
         }
     }
 
-    public void showThread(int id) {
-        showThread(id, 0);
+    public void showThread(int id, boolean fromUrl) {
+        showThread(id, 0, fromUrl);
     }
 
-    public void showThread(int id, int page) {
+    public void showThread(int id, int page, boolean fromUrl) {
         lockDrawer(false);
         closeMenu();
-        threadView.loadThread(id, page);
+        threadView.loadThread(id, page, fromUrl);
         threadList.highlightThread(id);
     }
 
-    public void showPost(long id) {
+    public void showPost(long id, boolean fromUrl) {
         lockDrawer(false);
         closeMenu();
-        threadView.loadThread(id);
+        threadView.loadPost(id, fromUrl);
         threadList.highlightThread(0);
     }
 

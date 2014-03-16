@@ -60,13 +60,13 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
         header = new ForumHeaderItem("Forums") {
             @Override
             public boolean onItemClick(Activity act, Fragment fragment) {
-                act.startActivity(new Intent(act, MainActivity.class).putExtra("show_index", true).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
+                act.startActivity(new Intent(act, MainActivity.class).putExtra("show_index", true).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 return false;
             }
 
             @Override
             public void onButtonClick(View view) {
-                getActivity().startActivity(new Intent(getActivity(), MainActivity.class).putExtra("forum_id", Constants.BOOKMARK_FORUMID).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
+                getActivity().startActivity(new Intent(getActivity(), MainActivity.class).putExtra("forum_id", Constants.BOOKMARK_FORUMID).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
         };
 
@@ -196,10 +196,10 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
                         switch (which) {
                             //See R.array.thread_context_actions_normal for item list
                             case 0://First Page
-                                ((MainActivity) getActivity()).showThread(threadId, 1);
+                                ((MainActivity) getActivity()).showThread(threadId, 1, false);
                                 break;
                             case 1://Last Page
-                                ((MainActivity) getActivity()).showThread(threadId, -1);
+                                ((MainActivity) getActivity()).showThread(threadId, -1, false);
                                 break;
                             case 2://Bookmark/Unbookmark
                                 queueRequest(new BookmarkRequest(threadId, !bookmarked, null, null));

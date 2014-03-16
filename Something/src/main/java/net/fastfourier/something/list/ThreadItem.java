@@ -108,11 +108,11 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
 
     @Override
     public boolean onItemClick(Activity act, Fragment fragment) {
-        if(unread >= 0){
-            act.startActivity(new Intent(act, MainActivity.class).putExtra("thread_id", id).putExtra("thread_page", 0).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
-        }else{
-            act.startActivity(new Intent(act, MainActivity.class).putExtra("thread_id", id).putExtra("thread_page", 1).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
-        }
+        act.startActivity(
+                new Intent(act, MainActivity.class)
+                        .putExtra("thread_id", id)
+                        .putExtra("thread_page", unread >= 0 ? 0 : 1)
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         return false;
     }
 

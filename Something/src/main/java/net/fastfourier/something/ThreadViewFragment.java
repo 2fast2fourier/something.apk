@@ -56,6 +56,7 @@ import net.fastfourier.something.util.SomeTheme;
 import net.fastfourier.something.util.SomeURL;
 import net.fastfourier.something.widget.PageSelectDialogFragment;
 
+import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -88,6 +89,8 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     private String pageHtml, rawThreadTitle;
     private boolean bookmarked;
 
+    private LinkedList<Bundle> threadBackstack = new LinkedList<Bundle>();
+
     private ImageView navPrev, navNext;
     private TextView navPageBar;
     private boolean disableNavLoading = false;
@@ -103,17 +106,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         super.onCreate(savedInstanceState);
 
         if(savedInstanceState != null && savedInstanceState.containsKey("thread_html")){
-            threadId = savedInstanceState.getInt("thread_id");
-            pageHtml = savedInstanceState.getString("thread_html");
-            page = savedInstanceState.getInt("thread_page", 1);
-            maxPage = savedInstanceState.getInt("thread_maxpage", 1);
-            rawThreadTitle = savedInstanceState.getString("thread_title");
-            if(!TextUtils.isEmpty(rawThreadTitle)){
-                threadTitle = Html.fromHtml(rawThreadTitle);
-                setTitle(threadTitle);
-            }
-
-            threadView.loadDataWithBaseURL(Constants.BASE_URL, pageHtml, "text/html", "utf-8", null);
+            loadThreadState(savedInstanceState);
         }else{
             Intent intent = getActivity().getIntent();
             threadId = intent.getIntExtra("thread_id", 0);
@@ -256,12 +249,33 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if(pageHtml != null){
-            outState.putString("thread_html", pageHtml);
-            outState.putInt("thread_id", threadId);
-            outState.putInt("thread_page", page);
-            outState.putInt("thread_maxpage", maxPage);
-            outState.putString("thread_title", rawThreadTitle);
+            saveThreadState(outState);
         }
+    }
+
+    private Bundle saveThreadState(Bundle outState){
+        outState.putString("thread_html", pageHtml);
+        outState.putInt("thread_id", threadId);
+        outState.putInt("thread_page", page);
+        outState.putInt("thread_maxpage", maxPage);
+        outState.putString("thread_title", rawThreadTitle);
+        outState.putLong("post_id", postId);
+        return outState;
+    }
+
+    private void loadThreadState(Bundle inState){
+        threadId = inState.getInt("thread_id", 0);
+        pageHtml = inState.getString("thread_html");
+        page = inState.getInt("thread_page", 1);
+        maxPage = inState.getInt("thread_maxpage", 1);
+        postId = inState.getLong("post_id", 0);
+        rawThreadTitle = inState.getString("thread_title");
+        if(!TextUtils.isEmpty(rawThreadTitle)){
+            threadTitle = Html.fromHtml(rawThreadTitle);
+            setTitle(threadTitle);
+        }
+
+        threadView.loadDataWithBaseURL(Constants.BASE_URL, pageHtml, "text/html", "utf-8", null);
     }
 
     private void updateNavbar() {
@@ -376,7 +390,12 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         }
     };
 
-    public void loadThread(int threadId, int page){
+    public void loadThread(int threadId, int page, boolean fromUrl){
+        if(fromUrl && isThreadLoaded()){
+            threadBackstack.push(saveThreadState(new Bundle()));
+        }else{
+            threadBackstack.clear();
+        }
         this.ignorePageProgress = true;
         this.threadId = threadId;
         this.page = page;
@@ -391,7 +410,12 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         threadView.loadUrl("about:blank");
     }
 
-    public void loadThread(long postId){
+    public void loadPost(long postId, boolean fromUrl){
+        if(fromUrl && isThreadLoaded()){
+            threadBackstack.push(saveThreadState(new Bundle()));
+        }else{
+            threadBackstack.clear();
+        }
         this.ignorePageProgress = true;
         this.postId = postId;
         this.threadId = 0;
@@ -405,6 +429,15 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         updateNavbar();
         startRefresh();
         threadView.loadUrl("about:blank");
+    }
+
+    public boolean overrideBackPressed() {
+        if(threadBackstack.peek() != null){
+            loadThreadState(threadBackstack.pop());
+            return true;
+        }else{
+            return false;
+        }
     }
 
     private void loadSessionCookie(){
@@ -535,9 +568,9 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_REPLY){
             if(resultCode > 0){
-                loadThread(resultCode);
+                loadPost(resultCode, false);
             }else if(data != null && data.getIntExtra("thread_id", 0) > 0){
-                loadThread(data.getIntExtra("thread_id", 0), 0);
+                loadThread(data.getIntExtra("thread_id", 0), 0, false);
             }
         }else if(requestCode == REQUEST_NEW_PM && resultCode > 0){
             FastAlert.notice(this, R.string.reply_sent_pm);

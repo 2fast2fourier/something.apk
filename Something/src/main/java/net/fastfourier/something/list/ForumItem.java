@@ -73,7 +73,7 @@ public class ForumItem extends BaseFastItem<ForumItem.ForumHolder> {
 
     @Override
     public boolean onItemClick(Activity act, Fragment fragment) {
-        act.startActivity(new Intent(act, MainActivity.class).putExtra("forum_id", id).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
+        act.startActivity(new Intent(act, MainActivity.class).putExtra("forum_id", id).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         return false;
     }
 
