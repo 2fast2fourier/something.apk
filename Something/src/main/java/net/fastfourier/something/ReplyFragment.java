@@ -13,6 +13,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,7 +30,7 @@ import net.fastfourier.something.request.SomeError;
 /**
  * Created by matthewshepard on 2/10/14.
  */
-public class ReplyFragment extends SomeFragment implements DialogInterface.OnCancelListener, TextWatcher {
+public class ReplyFragment extends SomeFragment implements DialogInterface.OnCancelListener, TextWatcher, ActionMode.Callback {
     private enum BBCODE {BOLD, ITALICS, UNDERLINE, STRIKEOUT, URL, VIDEO, IMAGE, QUOTE, SPOILER, CODE}
     public static final int TYPE_REPLY = 2;
     public static final int TYPE_QUOTE = 3;
@@ -42,6 +43,8 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
 
     private EditText replyContent, replyTitle, replyUsername;
     private boolean replyEnabled = false;
+
+    private ActionMode selectionMode;
 
     private int threadId, postId, pmId, replyType;
     private String pmUsername;
@@ -107,6 +110,7 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
             replyUsername.addTextChangedListener(this);
             replyTitle.addTextChangedListener(this);
         }
+        replyContent.setCustomSelectionActionModeCallback(this);
         startRefresh();
     }
 
@@ -253,6 +257,82 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
                 replyContent.setSelection(selectionStart+startTag.length());
             }
         }
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        selectionMode = mode;
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        getActivity().getMenuInflater().inflate(R.menu.bbcode_block, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        if(item.getItemId() == R.id.bbcode){
+            showBBCodeMenu();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        selectionMode = null;
+    }
+
+    private void showBBCodeMenu() {
+        //we have to dismiss the actionbar, we can't put a submenu in the context actionbar without it auto-closing.
+        //https://code.google.com/p/android/issues/detail?id=23381
+        //dismissing the context actionbar kills the selection, so save and reselect.
+        final int selectionStart = replyContent.getSelectionStart();
+        final int selectionEnd = replyContent.getSelectionEnd();
+        if(selectionMode != null){
+            selectionMode.finish();
+            selectionMode = null;
+        }
+        replyContent.setSelection(selectionStart, selectionEnd);
+        new AlertDialog.Builder(getActivity()).setTitle(R.string.bbcode).setItems(R.array.bbcode_items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case 0:
+                        insertBBCode(BBCODE.BOLD, selectionStart, selectionEnd);
+                        break;
+                    case 1:
+                        insertBBCode(BBCODE.ITALICS, selectionStart, selectionEnd);
+                        break;
+                    case 2:
+                        insertBBCode(BBCODE.UNDERLINE, selectionStart, selectionEnd);
+                        break;
+                    case 3:
+                        insertBBCode(BBCODE.STRIKEOUT, selectionStart, selectionEnd);
+                        break;
+                    case 4:
+                        insertBBCode(BBCODE.IMAGE, selectionStart, selectionEnd);
+                        break;
+                    case 5:
+                        insertBBCode(BBCODE.URL, selectionStart, selectionEnd);
+                        break;
+                    case 6:
+                        insertBBCode(BBCODE.VIDEO, selectionStart, selectionEnd);
+                        break;
+                    case 7:
+                        insertBBCode(BBCODE.QUOTE, selectionStart, selectionEnd);
+                        break;
+                    case 8:
+                        insertBBCode(BBCODE.SPOILER, selectionStart, selectionEnd);
+                        break;
+                    case 9:
+                        insertBBCode(BBCODE.CODE, selectionStart, selectionEnd);
+                        break;
+                }
+            }
+        }).show();
     }
 
     @Override

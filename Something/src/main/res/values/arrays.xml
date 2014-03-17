@@ -40,4 +40,16 @@
         <item>Share Link to Thread</item>
         <item>Copy Thread Link</item>
     </array>
+    <array name="bbcode_items">
+        <item>@string/bbcode_bold</item>
+        <item>@string/bbcode_italics</item>
+        <item>@string/bbcode_underline</item>
+        <item>@string/bbcode_strikeout</item>
+        <item>@string/bbcode_imagetag</item>
+        <item>@string/bbcode_pasteurl</item>
+        <item>@string/bbcode_video</item>
+        <item>@string/bbcode_quote</item>
+        <item>@string/bbcode_spoiler</item>
+        <item>@string/bbcode_codeblock</item>
+    </array>
 </resources>
