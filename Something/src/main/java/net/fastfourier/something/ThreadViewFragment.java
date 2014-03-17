@@ -104,15 +104,6 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if(savedInstanceState != null && savedInstanceState.containsKey("thread_html")){
-            loadThreadState(savedInstanceState);
-        }else{
-            Intent intent = getActivity().getIntent();
-            threadId = intent.getIntExtra("thread_id", 0);
-            page = intent.getIntExtra("thread_page", 0);
-            postId = intent.getLongExtra("post_id", 0);
-        }
     }
 
     @Override
@@ -134,9 +125,18 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         updateNavbar();
         loadSessionCookie();
 
-        if(savedInstanceState == null && (threadId > 0 || postId > 0)){
-            setTitle("Loading...");
-            startRefresh();
+
+        if(savedInstanceState != null && savedInstanceState.containsKey("thread_html")){
+            loadThreadState(savedInstanceState);
+        }else{
+            Intent intent = getActivity().getIntent();
+            threadId = intent.getIntExtra("thread_id", 0);
+            page = intent.getIntExtra("thread_page", 0);
+            postId = intent.getLongExtra("post_id", 0);
+            if(threadId > 0 || postId > 0){
+                setTitle("Loading...");
+                startRefresh();
+            }
         }
     }
 
