@@ -123,6 +123,10 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         initWebview();
 
         updateNavbar();
+        CookieSyncManager cookieMan = CookieSyncManager.getInstance();
+        if(cookieMan != null){
+            cookieMan.sync();
+        }
 
 
         if(savedInstanceState != null && savedInstanceState.containsKey("thread_html")){
@@ -220,6 +224,10 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
             threadView.resumeTimers();
             updateActionbarColor(forumId);
         }
+        CookieSyncManager cookieMan = CookieSyncManager.getInstance();
+        if(cookieMan != null){
+            cookieMan.startSync();
+        }
     }
 
     public void onPaneObscured() {
@@ -242,6 +250,10 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         super.onPause();
         threadView.pauseTimers();
         threadView.onPause();
+        CookieSyncManager cookieMan = CookieSyncManager.getInstance();
+        if(cookieMan != null){
+            cookieMan.stopSync();
+        }
     }
 
     @Override
