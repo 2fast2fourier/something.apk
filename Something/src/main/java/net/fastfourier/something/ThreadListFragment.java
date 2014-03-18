@@ -310,7 +310,7 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
                 new PreferencesDialogFragment().show(getFragmentManager(), "preferences");
                 return true;
             case R.id.menu_logout:
-                SomePreferences.setString(SomePreferences.LOGIN_COOKIE_STRING, null);
+                SomePreferences.clearAuthentication();
                 startActivity(new Intent(getActivity(), LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 getActivity().finish();
                 return true;

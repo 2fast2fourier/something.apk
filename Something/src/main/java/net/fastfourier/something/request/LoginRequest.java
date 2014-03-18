@@ -5,6 +5,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import net.fastfourier.something.util.OkHttpStack;
+import net.fastfourier.something.util.SomePreferences;
 
 import org.jsoup.nodes.Document;
 
@@ -20,15 +21,13 @@ public class LoginRequest extends HTMLRequest<Boolean> {
         addParam("action", "login");
         addParam("username", username);
         addParam("password", password);
-
-        CookieManager.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
     }
 
     @Override
     public Boolean parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
-        if(OkHttpStack.saveCookies()){
+        if(SomePreferences.confirmLogin()){
             return true;
         }
-        throw new VolleyError("Failed to Login");
+        throw new SomeError("Failed to Login");
     }
 }

@@ -123,7 +123,6 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         initWebview();
 
         updateNavbar();
-        loadSessionCookie();
 
 
         if(savedInstanceState != null && savedInstanceState.containsKey("thread_html")){
@@ -359,7 +358,6 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     private Response.Listener<ThreadPageRequest.ThreadPage> pageListener = new Response.Listener<ThreadPageRequest.ThreadPage>() {
         @Override
         public void onResponse(ThreadPageRequest.ThreadPage response) {
-            loadSessionCookie();
             ignorePageProgress = false;
             disableNavLoading = false;
             threadId = response.threadId;
@@ -441,22 +439,6 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
             return true;
         }else{
             return false;
-        }
-    }
-
-    private void loadSessionCookie(){
-        if(SomePreferences.loggedIn){
-            CookieManager cookieMstr = CookieManager.getInstance();
-            Matcher cookieCutter = Pattern.compile("(\\w+)=(\\w+)").matcher(SomePreferences.cookieString);
-            while(cookieCutter.find()){
-                String name = cookieCutter.group(1);
-                String value = cookieCutter.group(2);
-                cookieMstr.setCookie("forums.somethingawful.com", name+"="+value+"; domain=forums.somethingawful.com");
-            }
-            CookieSyncManager cookieMan = CookieSyncManager.getInstance();
-            if(cookieMan != null){
-                cookieMan.sync();
-            }
         }
     }
 

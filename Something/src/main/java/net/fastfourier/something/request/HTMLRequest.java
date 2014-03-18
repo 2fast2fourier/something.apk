@@ -1,6 +1,5 @@
 package net.fastfourier.something.request;
 
-
 import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
 import com.salvadordalvik.fastlibrary.request.FastRequest;
@@ -21,9 +20,9 @@ import java.io.IOException;
 public abstract class HTMLRequest<T> extends FastRequest<T> {
     public HTMLRequest(String baseUrl, int method, Response.Listener<T> success, Response.ErrorListener error) {
         super(baseUrl, method, success, error);
-        if(SomePreferences.loggedIn){
-            addHeader("Cookie", SomePreferences.cookieString);
-        }
+//        if(SomePreferences.loggedIn){
+//            addHeader("Cookie", SomePreferences.cookieString);
+//        }
     }
 
     @Override
@@ -32,6 +31,11 @@ public abstract class HTMLRequest<T> extends FastRequest<T> {
         Element stdErr = document.getElementsByClass("standarderror").first();
         if(stdErr != null){
             throw new SomeError(stdErr.getElementsByClass("standard").first().getElementsByClass("inner").first().ownText());
+        }
+        if(document.getElementsByClass("notregistered").size() > 0){
+            //Not logged in.
+            SomePreferences.clearAuthentication();
+            throw new SessionError("Not Logged In");
         }
         return parseHtmlResponse(response, document);
     }

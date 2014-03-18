@@ -4,8 +4,18 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import net.fastfourier.something.R;
+import net.fastfourier.something.SomeApplication;
+
+import java.io.IOException;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by matthewshepard on 1/17/14.
@@ -32,8 +42,6 @@ public class SomePreferences {
     public static String fyadTheme = "fyad";
 
     public static boolean loggedIn;
-    public static final String LOGIN_COOKIE_STRING = "login_cookie_string";
-    public static String cookieString;
 
     public static final String HIDE_PREVIOUS_POSTS_BOOL = "hide_previous_posts";
     public static boolean hidePreviouslyReadPosts = true;
@@ -54,8 +62,7 @@ public class SomePreferences {
 
         favoriteForumId = newPrefs.getInt(THREADLIST_FAVORITE_FORUMID, DEFAULT_FAVORITE_FORUMID_INT);
 
-        cookieString = newPrefs.getString(LOGIN_COOKIE_STRING, null);
-        loggedIn = !TextUtils.isEmpty(cookieString) && cookieString.contains("bbuserid");
+        loggedIn = isLoggedIn();
 
         selectedTheme = newPrefs.getString(PRIMARY_THEME_STRING, "default");
         selectedSysTheme = newPrefs.getString(SYSTEM_THEME_STRING, "light");
@@ -121,5 +128,32 @@ public class SomePreferences {
             return R.style.Something_FYAD;
         }
         return R.style.Something_Light;
+    }
+
+    public static void clearAuthentication() {
+        loggedIn = false;
+        SomeApplication.clearCookies();
+    }
+
+    private static boolean isLoggedIn(){
+        try {
+            Map<String, List<String>> cookies = CookieManager.getDefault().get(URI.create("https://forums.somethingawful.com"), new HashMap<String, List<String>>());
+            List<String> cookieList = cookies.get("Cookie");
+            if(cookieList != null){
+                for(String cookie : cookieList){
+                    if(cookie.contains("bbuserid")){
+                        return true;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        };
+        return false;
+    }
+
+    public static boolean confirmLogin() {
+        loggedIn = isLoggedIn();
+        return loggedIn;
     }
 }

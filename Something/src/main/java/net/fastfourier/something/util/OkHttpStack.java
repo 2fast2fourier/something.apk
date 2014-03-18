@@ -5,6 +5,8 @@ import android.util.Log;
 import com.android.volley.toolbox.HurlStack;
 import com.squareup.okhttp.OkHttpClient;
 
+import org.apache.http.impl.client.BasicCookieStore;
+
 import java.io.IOException;
 import java.net.CookieManager;
 import java.net.HttpURLConnection;
@@ -33,23 +35,5 @@ public class OkHttpStack extends HurlStack{
 
     @Override protected HttpURLConnection createConnection(URL url) throws IOException {
         return client.open(url);
-    }
-
-    public static boolean saveCookies(){
-        try {
-            Map<String, List<String>> cookies = CookieManager.getDefault().get(URI.create("https://forums.somethingawful.com"), new HashMap<String, List<String>>());
-            List<String> cookieList = cookies.get("Cookie");
-            for(String cookie : cookieList){
-                if(cookie.contains("bbuserid")){
-                    SomePreferences.setString(SomePreferences.LOGIN_COOKIE_STRING, cookie);
-                    Log.e("SaveCookies", SomePreferences.cookieString);
-                    CookieManager.setDefault(null);
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        };
-        return false;
     }
 }

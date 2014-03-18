@@ -1,5 +1,7 @@
 package net.fastfourier.something;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,8 @@ import com.bugsense.trace.BugSenseHandler;
 import com.salvadordalvik.fastlibrary.FastFragment;
 import com.salvadordalvik.fastlibrary.alert.FastAlert;
 import com.salvadordalvik.fastlibrary.request.FastRequest;
+
+import net.fastfourier.something.request.SessionError;
 import net.fastfourier.something.request.SomeError;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
@@ -76,7 +80,14 @@ public abstract class SomeFragment extends FastFragment {
     @Override
     public void onFailure(FastRequest request, VolleyError error) {
         super.onFailure(request, error);
-        if(error instanceof SomeError){
+        if(error instanceof SessionError){
+            FastAlert.error(this, error.getMessage());
+            Activity activity = getActivity();
+            if(activity != null){
+                startActivity(new Intent(getActivity(), LoginActivity.class));
+                getActivity().finish();
+            }
+        }else if(error instanceof SomeError){
             FastAlert.error(this, error.getMessage());
         }else{
             BugSenseHandler.sendException(error);
