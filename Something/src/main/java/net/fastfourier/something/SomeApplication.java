@@ -21,24 +21,14 @@ import java.net.CookiePolicy;
  */
 public class SomeApplication extends Application {
 
-    private static PersistentCookieStore cookieStore;
-
     @Override
     public void onCreate() {
         super.onCreate();
         SomeDatabase.init(this);
-        cookieStore = new PersistentCookieStore(this);
-        CookieHandler.setDefault(new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL));
         FastVolley.init(this, new OkHttpStack());
         SomePreferences.init(this);
         MustCache.init(this);
         CookieSyncManager.createInstance(this);
         SomeTheme.init(this);
-    }
-
-    public static void clearCookies() {
-        if(cookieStore != null){
-            cookieStore.removeAll();
-        }
     }
 }

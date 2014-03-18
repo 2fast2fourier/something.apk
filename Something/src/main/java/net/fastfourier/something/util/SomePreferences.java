@@ -6,16 +6,25 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.salvadordalvik.fastlibrary.request.PersistentCookieStore;
+
 import net.fastfourier.something.R;
 import net.fastfourier.something.SomeApplication;
 
 import java.io.IOException;
 import java.net.CookieHandler;
 import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.HttpCookie;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by matthewshepard on 1/17/14.
@@ -26,6 +35,8 @@ public class SomePreferences {
      */
     //public static final String EXAMPLE_VARIABLE_NAME = "internal_variable_name";
     //public static int exampleVariable;
+
+    private static PersistentCookieStore cookieStore;
 
     public static final String THREADLIST_FAVORITE_FORUMID = "threadlist_favorite_forumid";
     private static final int DEFAULT_FAVORITE_FORUMID_INT = Constants.BOOKMARK_FORUMID;
@@ -57,6 +68,26 @@ public class SomePreferences {
     public static int threadPostPerPage = 40;
 
     private synchronized static void updatePreferences(SharedPreferences newPrefs){
+        String oldCookie = newPrefs.getString("login_cookie_string", null);
+        if(!TextUtils.isEmpty(oldCookie)){
+            Log.e("SomePreferences", "Old cookie detected, updating: "+oldCookie);
+            Matcher cookieCutter = Pattern.compile("(\\w+)=(\\w+)").matcher(oldCookie);
+            while(cookieCutter.find()){
+                String name = cookieCutter.group(1);
+                String value = cookieCutter.group(2);
+                HttpCookie cookie = new HttpCookie(name, value);
+                cookie.setMaxAge(16070400);
+                cookie.setDomain("forums.somethingawful.com");
+                cookie.setPath("/");
+                try {
+                    cookieStore.add(new URI("http://forums.somethingawful.com"), cookie);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+            }
+            newPrefs.edit().putString("login_cookie_string", null).commit();
+        }
+
         //Update cached preferences here:
         //exampleVariable = newPrefs.getInt(EXAMPLE_VARIABLE_NAME, 0);
 
@@ -76,14 +107,17 @@ public class SomePreferences {
     private static SharedPreferences preferenceStore;
 
     public synchronized static void init(Context context){
+        cookieStore = new PersistentCookieStore(context.getApplicationContext());
+        CookieManager.setDefault(new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL));
+
         preferenceStore = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        updatePreferences(preferenceStore);
         preferenceStore.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 updatePreferences(sharedPreferences);
             }
         });
-        updatePreferences(preferenceStore);
     }
 
     public synchronized static void setString(String key, String value){
@@ -132,16 +166,16 @@ public class SomePreferences {
 
     public static void clearAuthentication() {
         loggedIn = false;
-        SomeApplication.clearCookies();
+        cookieStore.removeAll();
     }
 
     private static boolean isLoggedIn(){
         try {
-            Map<String, List<String>> cookies = CookieManager.getDefault().get(URI.create("https://forums.somethingawful.com"), new HashMap<String, List<String>>());
+            Map<String, List<String>> cookies = CookieManager.getDefault().get(URI.create("http://forums.somethingawful.com"), new HashMap<String, List<String>>());
             List<String> cookieList = cookies.get("Cookie");
             if(cookieList != null){
                 for(String cookie : cookieList){
-                    if(cookie.contains("bbuserid")){
+                    if(cookie.contains("bbuserid") && !cookie.contains("deleted")){
                         return true;
                     }
                 }
