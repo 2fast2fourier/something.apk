@@ -20,22 +20,25 @@ import java.io.IOException;
 public abstract class HTMLRequest<T> extends FastRequest<T> {
     public HTMLRequest(String baseUrl, int method, Response.Listener<T> success, Response.ErrorListener error) {
         super(baseUrl, method, success, error);
-//        if(SomePreferences.loggedIn){
-//            addHeader("Cookie", SomePreferences.cookieString);
-//        }
     }
 
     @Override
     public T parseResponse(NetworkResponse response) throws Exception {
-        Document document = parseDocument(response);
-        Element stdErr = document.getElementsByClass("standarderror").first();
-        if(stdErr != null){
-            throw new SomeError(stdErr.getElementsByClass("standard").first().getElementsByClass("inner").first().ownText());
+        //Check login cookie status, SA will automatically set them to "deleted" if the session expired.
+        if(!SomePreferences.confirmLogin()){
+            SomePreferences.clearAuthentication();
+            throw new SessionError("Not Logged In");
         }
+        Document document = parseDocument(response);
         if(document.getElementsByClass("notregistered").size() > 0){
             //Not logged in.
             SomePreferences.clearAuthentication();
             throw new SessionError("Not Logged In");
+        }
+        Element stdErr = document.getElementsByClass("standarderror").first();
+        if(stdErr != null){
+            //Generic SA error messages
+            throw new SomeError(stdErr.getElementsByClass("standard").first().getElementsByClass("inner").first().ownText());
         }
         return parseHtmlResponse(response, document);
     }
@@ -44,18 +47,6 @@ public abstract class HTMLRequest<T> extends FastRequest<T> {
 
     private static Document parseDocument(NetworkResponse response) throws IOException {
         return Jsoup.parse(new ByteArrayInputStream(response.data), "CP1252", Constants.BASE_URL);
-    }
-
-    protected static String getFirstTextByClass(Element parent, String htmlClass, String fallback){
-        Elements targets = parent.getElementsByClass(htmlClass);
-        if(targets.size() > 0){
-            return targets.first().text().trim();
-        }
-        return fallback;
-    }
-
-    protected static int stripParseInt(String str){
-        return Integer.parseInt(str.replaceAll("\\D", ""));
     }
 
     @Override

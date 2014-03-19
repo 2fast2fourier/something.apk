@@ -54,9 +54,9 @@ public class SomePreferences {
 
     public static boolean loggedIn;
 
-    public static final String HIDE_PREVIOUS_POSTS_BOOL = "hide_previous_posts";
     public static boolean hidePreviouslyReadPosts = true;
 
+    //TODO add to preference pane
     public static final String HIDE_ALL_IMAGES_BOOL = "hide_all_images";
     public static boolean hideAllImages = false;
 
@@ -68,26 +68,6 @@ public class SomePreferences {
     public static int threadPostPerPage = 40;
 
     private synchronized static void updatePreferences(SharedPreferences newPrefs){
-        String oldCookie = newPrefs.getString("login_cookie_string", null);
-        if(!TextUtils.isEmpty(oldCookie)){
-            Log.e("SomePreferences", "Old cookie detected, updating: "+oldCookie);
-            Matcher cookieCutter = Pattern.compile("(\\w+)=(\\w+)").matcher(oldCookie);
-            while(cookieCutter.find()){
-                String name = cookieCutter.group(1);
-                String value = cookieCutter.group(2);
-                HttpCookie cookie = new HttpCookie(name, value);
-                cookie.setMaxAge(16070400);
-                cookie.setDomain("forums.somethingawful.com");
-                cookie.setPath("/");
-                try {
-                    cookieStore.add(new URI("http://forums.somethingawful.com"), cookie);
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                }
-            }
-            newPrefs.edit().putString("login_cookie_string", null).commit();
-        }
-
         //Update cached preferences here:
         //exampleVariable = newPrefs.getInt(EXAMPLE_VARIABLE_NAME, 0);
 

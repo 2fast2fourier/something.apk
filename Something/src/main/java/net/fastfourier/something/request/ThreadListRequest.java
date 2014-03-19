@@ -147,4 +147,16 @@ public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListR
             this.unreadPMCount = unreadPMCount;
         }
     }
+
+    private static int stripParseInt(String str){
+        return Integer.parseInt(str.replaceAll("\\D", ""));
+    }
+
+    private static String getFirstTextByClass(Element parent, String htmlClass, String fallback){
+        Elements targets = parent.getElementsByClass(htmlClass);
+        if(targets.size() > 0){
+            return targets.first().text().trim();
+        }
+        return fallback;
+    }
 }
