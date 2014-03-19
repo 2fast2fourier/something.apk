@@ -3,6 +3,7 @@ package net.fastfourier.something;
 import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SlidingPaneLayout;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -15,8 +16,8 @@ import net.fastfourier.something.widget.MarginDrawerLayout;
 /**
  * Created by matthewshepard on 2/7/14.
  */
-public class PrivateMessageListActivity extends SomeActivity implements MarginDrawerLayout.DrawerListener {
-    private MarginDrawerLayout drawerLayout;
+public class PrivateMessageListActivity extends SomeActivity implements SlidingPaneLayout.PanelSlideListener {
+    private SlidingPaneLayout drawerLayout;
     private PrivateMessageListFragment listFragment;
     private PrivateMessageFragment messageFragment;
 
@@ -24,10 +25,10 @@ public class PrivateMessageListActivity extends SomeActivity implements MarginDr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.private_message_activity);
-        drawerLayout = (MarginDrawerLayout) findViewById(R.id.pm_drawer);
-        drawerLayout.setDrawerListener(this);
+        drawerLayout = (SlidingPaneLayout) findViewById(R.id.pm_drawer);
+        drawerLayout.setPanelSlideListener(this);
         drawerLayout.setFocusableInTouchMode(false);
-        drawerLayout.openDrawer(Gravity.LEFT);
+        drawerLayout.openPane();
 
         listFragment = (PrivateMessageListFragment) getSupportFragmentManager().findFragmentById(R.id.pm_list_fragment);
         messageFragment = (PrivateMessageFragment) getSupportFragmentManager().findFragmentById(R.id.pm_fragment);
@@ -92,28 +93,28 @@ public class PrivateMessageListActivity extends SomeActivity implements MarginDr
 
 
     private boolean isMenuShowing(){
-        return drawerLayout == null || drawerLayout.isDrawerOpen(Gravity.LEFT);
+        return drawerLayout == null || drawerLayout.isOpen();
     }
 
     private void lockDrawer(boolean lock){
-        drawerLayout.setDrawerLockMode(lock ? DrawerLayout.LOCK_MODE_LOCKED_OPEN : DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
+//        drawerLayout.setDrawerLockMode(lock ? DrawerLayout.LOCK_MODE_LOCKED_OPEN : DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
     }
 
     private void showMenu(){
-        drawerLayout.openDrawer(Gravity.LEFT);
+        drawerLayout.openPane();
     }
 
     private void closeMenu(){
-        drawerLayout.closeDrawer(Gravity.LEFT);
+        drawerLayout.closePane();
     }
 
     @Override
-    public void onDrawerSlide(View drawerView, float slideOffset) {
+    public void onPanelSlide(View panel, float slideOffset) {
 
     }
 
     @Override
-    public void onDrawerOpened(View drawerView) {
+    public void onPanelOpened(View panel) {
         if(listFragment != null){
             listFragment.setMenuVisibility(true);
             listFragment.onPaneRevealed();
@@ -125,7 +126,7 @@ public class PrivateMessageListActivity extends SomeActivity implements MarginDr
     }
 
     @Override
-    public void onDrawerClosed(View drawerView) {
+    public void onPanelClosed(View panel) {
         if(messageFragment != null){
             messageFragment.onPaneRevealed();
             messageFragment.setMenuVisibility(true);
@@ -134,10 +135,5 @@ public class PrivateMessageListActivity extends SomeActivity implements MarginDr
             listFragment.setMenuVisibility(false);
             listFragment.onPaneObscured();
         }
-    }
-
-    @Override
-    public void onDrawerStateChanged(int newState) {
-
     }
 }
