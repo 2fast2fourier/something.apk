@@ -32,6 +32,8 @@ public class PagedAdapter extends SectionFastAdapter implements AbsListView.OnSc
         this.callback = callbacks;
         this.lastPage = 0;
         this.loadingPage = -1;
+        this.maxPage = 1;
+        replaceSection(getPageSection(1), new PageDividerItem(1, callback, this));
     }
 
     private int getPageSection(int page){
@@ -67,8 +69,9 @@ public class PagedAdapter extends SectionFastAdapter implements AbsListView.OnSc
             clearSection(getPageSection(ix));
         }
         lastPage = 0;
-        maxPage = 0;
+        maxPage = 1;
         loadingPage = -1;
+        replaceSection(getPageSection(1), new PageDividerItem(1, callback, this));
     }
 
     public void clearPagesAfter(int page) {
