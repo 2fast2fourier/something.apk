@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:id="@+id/pm_drawer">
         <fragment
-            android:layout_width="@dimen/nav_list_min_width"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:name="net.fastfourier.something.PrivateMessageListFragment"
             android:id="@+id/pm_list_fragment"
