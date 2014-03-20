@@ -2,17 +2,11 @@ package net.fastfourier.something;
 
 import android.app.ActionBar;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SlidingPaneLayout;
-import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-
 import net.fastfourier.something.widget.LockableSlidingPaneLayout;
-import net.fastfourier.something.widget.MarginDrawerLayout;
 
 /**
  * Created by matthewshepard on 2/7/14.

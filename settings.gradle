@@ -1,4 +1,3 @@
 include ':Something'
 include ':FastLibrary'
-include ':SlidingMenu:library'
 include ':ActionBar-PullToRefresh:library'

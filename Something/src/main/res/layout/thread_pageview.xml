@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:id="@+id/ptr_webview"
         android:layout_above="@+id/threadview_navbar"
-        android:layout_marginBottom="?android:actionBarSize"/>
+        android:layout_marginBottom="@dimen/thread_footer_height"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/thread_footer_height"

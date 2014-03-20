@@ -6,7 +6,3 @@
 	path = FastLibrary
 	url = git@github.com:Geekner/FastLibrary.git
 	branch = actionbar-ptr-dev
-[submodule "SlidingMenu"]
-	path = SlidingMenu
-	url = git@github.com:Geekner/SlidingMenu.git
-	branch = Something
