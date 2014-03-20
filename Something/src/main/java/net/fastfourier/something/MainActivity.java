@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SlidingPaneLayout;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -18,10 +19,11 @@ import com.bugsense.trace.BugSenseHandler;
 
 import net.fastfourier.something.util.SomePreferences;
 import net.fastfourier.something.util.SomeTheme;
+import net.fastfourier.something.widget.LockableSlidingPaneLayout;
 import net.fastfourier.something.widget.MarginDrawerLayout;
 
-public class MainActivity extends SomeActivity implements MarginDrawerLayout.DrawerListener {
-    private MarginDrawerLayout drawerLayout;
+public class MainActivity extends SomeActivity implements SlidingPaneLayout.PanelSlideListener {
+    private LockableSlidingPaneLayout drawerLayout;
 
     private ThreadListFragment threadList;
     private ThreadViewFragment threadView;
@@ -36,8 +38,8 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
         super.onCreate(savedInstanceState);
         BugSenseHandler.initAndStartSession(this, "cd75dfa8");
         setContentView(R.layout.activity_main);
-        drawerLayout = (MarginDrawerLayout) findViewById(R.id.main_drawer);
-        drawerLayout.setDrawerListener(this);
+        drawerLayout = (LockableSlidingPaneLayout) findViewById(R.id.main_drawer);
+        drawerLayout.setPanelSlideListener(this);
         drawerLayout.setFocusableInTouchMode(false);
         if(savedInstanceState != null && !savedInstanceState.getBoolean("menu_open")){
             closeMenu();
@@ -102,10 +104,7 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
             }
         }
         lockDrawer(!threadView.isThreadLoaded());
-        ActionBar ab = getActionBar();
-        if(ab != null){
-            ab.setDisplayHomeAsUpEnabled(!isMenuShowing() || forumList != null);
-        }
+        setDisplayUp(!isMenuShowing() || forumList != null);
     }
 
     @Override
@@ -187,10 +186,7 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
     public void hideForumsList(){
         getSupportFragmentManager().popBackStackImmediate();
         forumList = null;
-        ActionBar ab = getActionBar();
-        if(ab != null){
-            ab.setDisplayHomeAsUpEnabled(false);
-        }
+        setDisplayUp(false);
         setTitle(threadList.getTitle());
     }
 
@@ -210,10 +206,7 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
         trans.addToBackStack("open_forum_list");
         trans.commit();
 
-        ActionBar ab = getActionBar();
-        if(ab != null){
-            ab.setDisplayHomeAsUpEnabled(true);
-        }
+        setDisplayUp(true);
     }
 
     public void onThreadPageLoaded(int threadId) {
@@ -267,13 +260,29 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
         return threadView != null ? threadView.getThreadId() : 0;
     }
 
+    private boolean isMenuShowing(){
+        return drawerLayout == null || drawerLayout.isOpen();
+    }
+
+    private void lockDrawer(boolean lock){
+        drawerLayout.setLocked(lock);
+    }
+
+    private void showMenu(){
+        drawerLayout.openPane();
+    }
+
+    private void closeMenu(){
+        drawerLayout.closePane();
+    }
+
     @Override
-    public void onDrawerSlide(View drawerView, float slideOffset) {
+    public void onPanelSlide(View panel, float slideOffset) {
         onSlide(slideOffset);
     }
 
     @Override
-    public void onDrawerOpened(View drawerView) {
+    public void onPanelOpened(View panel) {
         if(threadList != null){
             Spanned title = threadList.getTitle();
             if(title != null && title.length() > 0){
@@ -290,15 +299,11 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
 
         interpActionbarColor = false;
         sliderSettled = true;
-
-        ActionBar ab = getActionBar();
-        if(ab != null){
-            ab.setDisplayHomeAsUpEnabled(forumList != null);
-        }
+        setDisplayUp(forumList != null);
     }
 
     @Override
-    public void onDrawerClosed(View drawerView) {
+    public void onPanelClosed(View panel) {
         if(threadView != null){
             CharSequence title = threadView.getTitle();
             if(title != null && title.length() > 0){
@@ -315,30 +320,13 @@ public class MainActivity extends SomeActivity implements MarginDrawerLayout.Dra
         interpActionbarColor = false;
         sliderSettled = true;
 
+        setDisplayUp(true);
+    }
+
+    private void setDisplayUp(boolean display){
         ActionBar ab = getActionBar();
         if(ab != null){
-            ab.setDisplayHomeAsUpEnabled(true);
+            ab.setDisplayHomeAsUpEnabled(display);
         }
-    }
-
-    @Override
-    public void onDrawerStateChanged(int newState) {
-
-    }
-
-    private boolean isMenuShowing(){
-        return drawerLayout == null || drawerLayout.isDrawerOpen(Gravity.LEFT);
-    }
-
-    private void lockDrawer(boolean lock){
-        drawerLayout.setDrawerLockMode(lock ? DrawerLayout.LOCK_MODE_LOCKED_OPEN : DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
-    }
-
-    private void showMenu(){
-        drawerLayout.openDrawer(Gravity.LEFT);
-    }
-
-    private void closeMenu(){
-        drawerLayout.closeDrawer(Gravity.LEFT);
     }
 }

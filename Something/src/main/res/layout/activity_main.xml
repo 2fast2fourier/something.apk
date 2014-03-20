@@ -5,20 +5,20 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="?primaryBackground">
-    <net.fastfourier.something.widget.MarginDrawerLayout
+    <net.fastfourier.something.widget.LockableSlidingPaneLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/main_drawer">
+        <RelativeLayout
+            android:layout_width="@dimen/nav_list_width"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:id="@+id/sliding_container"/>
         <fragment
             android:id="@+id/threadview_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:name="net.fastfourier.something.ThreadViewFragment"
             tools:layout="@layout/thread_pageview" />
-        <RelativeLayout
-            android:layout_width="@dimen/nav_list_width"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:id="@+id/sliding_container"/>
-    </net.fastfourier.something.widget.MarginDrawerLayout>
+    </net.fastfourier.something.widget.LockableSlidingPaneLayout>
 </FrameLayout>

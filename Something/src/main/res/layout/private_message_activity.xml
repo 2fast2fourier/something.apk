@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="?primaryBackground">
-    <android.support.v4.widget.SlidingPaneLayout
+    <net.fastfourier.something.widget.LockableSlidingPaneLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/pm_drawer">
@@ -20,5 +20,5 @@
             android:layout_height="match_parent"
             android:name="net.fastfourier.something.PrivateMessageFragment"
             android:id="@+id/pm_fragment" />
-    </android.support.v4.widget.SlidingPaneLayout>
+    </net.fastfourier.something.widget.LockableSlidingPaneLayout>
 </FrameLayout>

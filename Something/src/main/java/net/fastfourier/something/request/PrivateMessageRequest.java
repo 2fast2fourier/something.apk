@@ -65,7 +65,6 @@ public class PrivateMessageRequest extends HTMLRequest<PrivateMessageRequest.PMD
             postData.put("admin", null);
 
             HashMap<String, String> headerArgs = new HashMap<String, String>();
-            headerArgs.put("jumpToPostId", "0");
             headerArgs.put("theme", SomePreferences.selectedTheme);
             headerArgs.put("jumpToPostId", "0");
             headerArgs.put("previouslyRead", null);

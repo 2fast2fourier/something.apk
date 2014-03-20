@@ -11,13 +11,14 @@ import android.view.View;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
+import net.fastfourier.something.widget.LockableSlidingPaneLayout;
 import net.fastfourier.something.widget.MarginDrawerLayout;
 
 /**
  * Created by matthewshepard on 2/7/14.
  */
 public class PrivateMessageListActivity extends SomeActivity implements SlidingPaneLayout.PanelSlideListener {
-    private SlidingPaneLayout drawerLayout;
+    private LockableSlidingPaneLayout drawerLayout;
     private PrivateMessageListFragment listFragment;
     private PrivateMessageFragment messageFragment;
 
@@ -25,7 +26,7 @@ public class PrivateMessageListActivity extends SomeActivity implements SlidingP
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.private_message_activity);
-        drawerLayout = (SlidingPaneLayout) findViewById(R.id.pm_drawer);
+        drawerLayout = (LockableSlidingPaneLayout) findViewById(R.id.pm_drawer);
         drawerLayout.setPanelSlideListener(this);
         drawerLayout.setFocusableInTouchMode(false);
         drawerLayout.openPane();
@@ -97,7 +98,7 @@ public class PrivateMessageListActivity extends SomeActivity implements SlidingP
     }
 
     private void lockDrawer(boolean lock){
-//        drawerLayout.setDrawerLockMode(lock ? DrawerLayout.LOCK_MODE_LOCKED_OPEN : DrawerLayout.LOCK_MODE_UNLOCKED, Gravity.LEFT);
+        drawerLayout.setLocked(lock);
     }
 
     private void showMenu(){
