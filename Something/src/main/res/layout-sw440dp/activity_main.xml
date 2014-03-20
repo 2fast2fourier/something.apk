@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -8,17 +7,15 @@
     <net.fastfourier.something.widget.LockableSlidingPaneLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/pm_drawer">
-        <fragment
-            android:layout_width="@dimen/nav_list_min_width"
+        android:id="@+id/main_drawer">
+        <RelativeLayout
+            android:layout_width="360dp"
             android:layout_height="match_parent"
-            android:name="net.fastfourier.something.PrivateMessageListFragment"
-            android:id="@+id/pm_list_fragment"
-            android:layout_weight="1"/>
+            android:id="@+id/sliding_container"/>
         <fragment
+            android:id="@+id/threadview_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:name="net.fastfourier.something.PrivateMessageFragment"
-            android:id="@+id/pm_fragment" />
+            android:name="net.fastfourier.something.ThreadViewFragment"/>
     </net.fastfourier.something.widget.LockableSlidingPaneLayout>
 </FrameLayout>

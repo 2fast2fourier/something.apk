@@ -10,9 +10,8 @@
         android:layout_height="match_parent"
         android:id="@+id/main_drawer">
         <RelativeLayout
-            android:layout_width="@dimen/nav_list_width"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="left"
             android:id="@+id/sliding_container"/>
         <fragment
             android:id="@+id/threadview_fragment"
