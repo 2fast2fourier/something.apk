@@ -13,7 +13,7 @@
         android:layout_marginBottom="?android:actionBarSize"/>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="?android:actionBarSize"
+        android:layout_height="@dimen/thread_footer_height"
         android:orientation="horizontal"
         android:id="@+id/threadview_navbar"
         android:background="?attr/footerBackground"
@@ -24,8 +24,6 @@
             android:id="@+id/threadview_prev"
             android:src="@drawable/arrowleft"
             android:layout_toLeftOf="@+id/threadview_page"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
             android:paddingRight="16dp"
             android:paddingLeft="16dp"
             android:layout_centerVertical="true"
@@ -36,12 +34,10 @@
             android:text="@string/threadview_navbar_page"
             android:gravity="center"
             android:id="@+id/threadview_page"
-            android:layout_centerHorizontal="true"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
+            android:layout_centerInParent="true"
             android:paddingRight="16dp"
             android:paddingLeft="16dp"
-            android:minWidth="192dp"
+            android:minWidth="180dp"
             style="@android:style/TextAppearance.Holo.Widget.ActionBar.Title"
             android:textColor="#FFFFFF"/>
         <ImageView
@@ -50,8 +46,6 @@
             android:id="@+id/threadview_next"
             android:src="@drawable/arrowright"
             android:layout_toRightOf="@+id/threadview_page"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
             android:paddingRight="16dp"
             android:paddingLeft="16dp"
             android:layout_centerVertical="true"
@@ -59,7 +53,7 @@
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="?android:actionBarSize"
+        android:layout_height="@dimen/thread_footer_height"
         android:orientation="horizontal"
         android:id="@+id/threadview_pullfrombottom"
         android:background="?attr/footerBackground"
