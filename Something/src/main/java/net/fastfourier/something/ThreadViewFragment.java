@@ -350,9 +350,9 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         updateNavbar();
         FastVolley.cancelRequestByTag(THREAD_REQUEST_TAG);
         if(threadId > 0){
-            queueRequest(new ThreadPageRequest(threadId, page, pageListener, errorListener), THREAD_REQUEST_TAG);
+            queueRequest(new ThreadPageRequest(getActivity(), threadId, page, pageListener, errorListener), THREAD_REQUEST_TAG);
         }else if(postId > 0){
-            queueRequest(new ThreadPageRequest(postId, pageListener, errorListener));
+            queueRequest(new ThreadPageRequest(getActivity(), postId, pageListener, errorListener));
         }
         getHandler().postDelayed(enableNavigation, 1000);
     }
@@ -615,10 +615,13 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
                     @Override
                     public void run() {
                         FastAlert.process(getActivity(), getView(), getSafeString(R.string.mark_last_read_started));
-                        queueRequest(new MarkLastReadRequest(threadId, index, new Response.Listener<ThreadPageRequest.ThreadPage>() {
+                        queueRequest(new MarkLastReadRequest(getActivity(), threadId, index, new Response.Listener<ThreadPageRequest.ThreadPage>() {
                             @Override
                             public void onResponse(ThreadPageRequest.ThreadPage response) {
-                                FastAlert.notice(getActivity(), getView(), getSafeString(R.string.mark_last_read_success));
+                                Activity activity = getActivity();
+                                if(activity instanceof MainActivity && ((MainActivity) activity).isFragmentFocused(ThreadViewFragment.this)){
+                                    FastAlert.notice(activity, getView(), getSafeString(R.string.mark_last_read_success));
+                                }
                                 pageListener.onResponse(response);
                             }
                         }, new Response.ErrorListener() {

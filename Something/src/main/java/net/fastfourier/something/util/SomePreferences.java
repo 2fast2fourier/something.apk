@@ -2,6 +2,8 @@ package net.fastfourier.something.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -56,15 +58,21 @@ public class SomePreferences {
 
     public static boolean hidePreviouslyReadPosts = true;
 
-    //TODO add to preference pane
-    public static final String HIDE_ALL_IMAGES_BOOL = "hide_all_images";
-    public static boolean hideAllImages = false;
+    public static final String IMAGES_ENABLED_BOOL = "images_enabled";
+    public static final String IMAGES_WIFI_BOOL = "images_wifi";
+    public static boolean imagesEnabled = true;
+    public static boolean imagesWifi = false;
+
+    public static final String AVATARS_ENABLED_BOOL = "avatars_enabled";
+    public static final String AVATARS_WIFI_BOOL = "avatars_wifi";
+    public static boolean avatarsEnabled = true;
+    public static boolean avatarsWifi = false;
 
 
     public static final String LAST_FORUM_UPDATE_LONG = "last_forum_update";
     public static long lastForumUpdate;
 
-    //TODO postperpage
+    public static final String POST_PER_PAGE_INT = "post_per_page";
     public static int threadPostPerPage = 40;
 
     private synchronized static void updatePreferences(SharedPreferences newPrefs){
@@ -80,7 +88,36 @@ public class SomePreferences {
 
         systemTheme = getSystemTheme(selectedSysTheme);
 
+        threadPostPerPage = newPrefs.getInt(POST_PER_PAGE_INT, 40);
+
         lastForumUpdate = newPrefs.getLong(LAST_FORUM_UPDATE_LONG, 0);
+
+        imagesEnabled = newPrefs.getBoolean(IMAGES_ENABLED_BOOL, true);
+        imagesWifi = newPrefs.getBoolean(IMAGES_WIFI_BOOL, false);
+        avatarsEnabled = newPrefs.getBoolean(AVATARS_ENABLED_BOOL, true);
+        avatarsWifi = newPrefs.getBoolean(AVATARS_WIFI_BOOL, false);
+    }
+
+    public synchronized static boolean shouldShowImages(Context context){
+        if(imagesEnabled){
+            return true;
+        }else if(imagesWifi && context != null){
+            ConnectivityManager conMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo wifi = conMan.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            return wifi == null || wifi.isConnected();
+        }
+        return false;
+    }
+
+    public synchronized static boolean shouldShowAvatars(Context context){
+        if(avatarsEnabled){
+            return true;
+        }else if(avatarsWifi && context != null){
+            ConnectivityManager conMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo wifi = conMan.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            return wifi == null || wifi.isConnected();
+        }
+        return false;
     }
 
 

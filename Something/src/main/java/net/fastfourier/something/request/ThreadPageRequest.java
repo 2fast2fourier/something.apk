@@ -1,5 +1,6 @@
 package net.fastfourier.something.request;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.android.volley.NetworkResponse;
@@ -25,8 +26,9 @@ import java.util.regex.Pattern;
  */
 public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage> {
     private long jumpToPost = 0;
+    private Context context;
 
-    public ThreadPageRequest(int threadId, int page, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
+    public ThreadPageRequest(Context context, int threadId, int page, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
         super("http://forums.somethingawful.com/showthread.php", Request.Method.GET, success, error);
         addParam("threadid", threadId);
         if(page > 0){
@@ -37,27 +39,29 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
             addParam("goto", "newpost");
         }
         addParam("perpage", SomePreferences.threadPostPerPage);
+        this.context = context;
     }
 
-    public ThreadPageRequest(long postId, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
+    public ThreadPageRequest(Context context, long postId, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
         super("http://forums.somethingawful.com/showthread.php", Request.Method.GET, success, error);
         addParam("postid", postId);
         addParam("goto", "post");
         addParam("perpage", SomePreferences.threadPostPerPage);
-        jumpToPost = postId;
+        this.jumpToPost = postId;
+        this.context = context;
     }
 
     @Override
     public ThreadPage parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
-        return processThreadPage(document, SomePreferences.hideAllImages, SomePreferences.hidePreviouslyReadPosts, jumpToPost);
+        return processThreadPage(document, SomePreferences.shouldShowImages(context), SomePreferences.shouldShowAvatars(context), SomePreferences.hidePreviouslyReadPosts, jumpToPost);
     }
 
-    public static ThreadPage processThreadPage(Document document, boolean hideAllImages, boolean hidePreviouslyReadImages, long jumpToPost){
+    public static ThreadPage processThreadPage(Document document, boolean showImages, boolean showAvatars, boolean hidePreviouslyReadImages, long jumpToPost){
         ArrayList<HashMap<String, String>> posts = new ArrayList<HashMap<String, String>>();
 
         int currentPage, maxPage = 1, threadId, forumId, unread;
 
-        unread = parsePosts(document, posts, hideAllImages, hidePreviouslyReadImages);
+        unread = parsePosts(document, posts, showImages, showAvatars, hidePreviouslyReadImages);
 
         Element pages = document.getElementsByClass("pages").first();
         currentPage = FastUtils.safeParseInt(pages.getElementsByAttribute("selected").attr("value"), 1);
@@ -137,7 +141,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
     private static Pattern userJumpPattern = Pattern.compile("userid=(\\d+)");
 
-    private static int parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray, boolean hideImages, boolean hideSeenImages){
+    private static int parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray, boolean showImages, boolean showAvatars, boolean hideSeenImages){
         int unread = 0;
         Elements posts = doc.getElementsByClass("post");
         for(Element post : posts){
@@ -167,7 +171,22 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 }
 
                 Element postBody = post.getElementsByClass("postbody").first();
-                if(hideImages || (hideSeenImages && previouslyRead)){
+                if(!showImages){
+                    for(Element imageNode : postBody.getElementsByTag("img")){
+                        String src = imageNode.attr("src"), imgTitle = imageNode.attr("title");
+                        if(TextUtils.isEmpty(imgTitle)){//only emotes have titles
+                            imageNode.tagName("a");
+                            imageNode.addClass("hiddenimg");
+                            imageNode.attr("href", src);
+                            imageNode.text(src);
+                        }else{
+                            imageNode.tagName("span");
+                            imageNode.addClass("hiddenavatar");
+                            imageNode.text(imgTitle);
+                        }
+                        imageNode.removeAttr("src");
+                    }
+                }else if(hideSeenImages && previouslyRead){
                     for(Element imageNode : postBody.getElementsByTag("img")){
                         imageNode.addClass("seenimg");
                         imageNode.attr("hideimg", imageNode.attr("src"));
@@ -178,7 +197,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
                 postData.put("username", author);
                 postData.put("avatarText", avTitle);
-                postData.put("avatarURL", avatarUrl.length() > 0 ? avatarUrl : null);//mustache doesn't recognize an empty string
+                postData.put("avatarURL", ( showAvatars && avatarUrl != null &&  avatarUrl.length() > 0 ) ? avatarUrl : null);
                 postData.put("postcontent", postContent);
                 postData.put("postDate", postDate);
                 postData.put("userID", userId);
@@ -187,8 +206,6 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
 //                postData.put("regDate", post.getRegDate());
 //                postData.put("lastReadUrl",  post.getLastReadUrl());
-                //TODO handle image/avatar disable preference
-//                postData.put("avatarURL", (aPrefs.canLoadAvatars() && post.getAvatar() != null &&  post.getAvatar().length()>0) ? post.getAvatar() : null);
                 //TODO nullable, can wait to implement
 //                postData.put("isOP", (aPrefs.highlightOP && post.isOp())?"op":null);
 //                postData.put("isMarked", (aPrefs.markedUsers.contains(post.getUsername()))?"marked":null);

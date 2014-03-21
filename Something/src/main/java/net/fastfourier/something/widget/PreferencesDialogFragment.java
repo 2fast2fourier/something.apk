@@ -6,9 +6,15 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.common.io.CharStreams;
 import com.google.common.io.Closeables;
@@ -25,12 +31,13 @@ import java.util.regex.Pattern;
 /**
  * Created by matthewshepard on 2/1/14.
  */
-public class PreferencesDialogFragment extends FastDialogFragment implements View.OnClickListener {
+public class PreferencesDialogFragment extends FastDialogFragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
     private String[] themes, systemThemes, friendlyThemeNames;
     private int[] themeColors;
     private GridLayout primaryThemes;
     private TextView themeTitle;
     private boolean restartRequired = false;
+    private int[] perPageOptions;
 
     public PreferencesDialogFragment() {
         super(R.layout.preference_dialog, R.string.preference_dialog_title);
@@ -96,6 +103,59 @@ public class PreferencesDialogFragment extends FastDialogFragment implements Vie
         updateThemeIcons();
 
         frag.findViewById(R.id.preference_apply).setOnClickListener(this);
+
+        int currentSelected = 0;
+        perPageOptions = getResources().getIntArray(R.array.post_per_page_items);
+        String[] perPageStrings = new String[perPageOptions.length];
+        for(int ix=0;ix<perPageOptions.length;ix++){
+            perPageStrings[ix] = Integer.toString(perPageOptions[ix]);
+            if(SomePreferences.threadPostPerPage == perPageOptions[ix]){
+                currentSelected = ix;
+            }
+        }
+
+        RadioGroup images = (RadioGroup) frag.findViewById(R.id.preferences_image_group);
+        if(SomePreferences.imagesEnabled){
+            RadioButton image = (RadioButton) frag.findViewById(R.id.preference_image_enabled);
+            image.setChecked(true);
+        }else if(SomePreferences.imagesWifi){
+            RadioButton image = (RadioButton) frag.findViewById(R.id.preference_image_wifi);
+            image.setChecked(true);
+        }else{
+            RadioButton image = (RadioButton) frag.findViewById(R.id.preference_image_disabled);
+            image.setChecked(true);
+        }
+        images.setOnCheckedChangeListener(this);
+
+        RadioGroup avatars = (RadioGroup) frag.findViewById(R.id.preferences_avatar_group);
+        if(SomePreferences.avatarsEnabled){
+            RadioButton image = (RadioButton) frag.findViewById(R.id.preference_avatar_enabled);
+            image.setChecked(true);
+        }else if(SomePreferences.avatarsWifi){
+            RadioButton image = (RadioButton) frag.findViewById(R.id.preference_avatar_wifi);
+            image.setChecked(true);
+        }else{
+            RadioButton image = (RadioButton) frag.findViewById(R.id.preference_avatar_disabled);
+            image.setChecked(true);
+        }
+        avatars.setOnCheckedChangeListener(this);
+
+        Spinner perPage = (Spinner) frag.findViewById(R.id.preferences_postperpage_spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, perPageStrings);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        perPage.setAdapter(adapter);
+        perPage.setSelection(currentSelected, false);
+        perPage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                SomePreferences.setInt(SomePreferences.POST_PER_PAGE_INT, perPageOptions[position]);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                SomePreferences.setInt(SomePreferences.POST_PER_PAGE_INT, 40);
+            }
+        });
     }
 
     @Override
@@ -145,6 +205,36 @@ public class PreferencesDialogFragment extends FastDialogFragment implements Vie
                     theme.setImageDrawable(selectedColor);
                 }
             }
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        switch (checkedId){
+            case R.id.preference_image_enabled:
+                SomePreferences.setBoolean(SomePreferences.IMAGES_ENABLED_BOOL, true);
+                SomePreferences.setBoolean(SomePreferences.IMAGES_WIFI_BOOL, false);
+                break;
+            case R.id.preference_image_wifi:
+                SomePreferences.setBoolean(SomePreferences.IMAGES_ENABLED_BOOL, false);
+                SomePreferences.setBoolean(SomePreferences.IMAGES_WIFI_BOOL, true);
+                break;
+            case R.id.preference_image_disabled:
+                SomePreferences.setBoolean(SomePreferences.IMAGES_ENABLED_BOOL, false);
+                SomePreferences.setBoolean(SomePreferences.IMAGES_WIFI_BOOL, false);
+                break;
+            case R.id.preference_avatar_enabled:
+                SomePreferences.setBoolean(SomePreferences.AVATARS_ENABLED_BOOL, true);
+                SomePreferences.setBoolean(SomePreferences.AVATARS_WIFI_BOOL, false);
+                break;
+            case R.id.preference_avatar_wifi:
+                SomePreferences.setBoolean(SomePreferences.AVATARS_ENABLED_BOOL, false);
+                SomePreferences.setBoolean(SomePreferences.AVATARS_WIFI_BOOL, true);
+                break;
+            case R.id.preference_avatar_disabled:
+                SomePreferences.setBoolean(SomePreferences.AVATARS_ENABLED_BOOL, false);
+                SomePreferences.setBoolean(SomePreferences.AVATARS_WIFI_BOOL, false);
+                break;
         }
     }
 }

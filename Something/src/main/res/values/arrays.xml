@@ -52,4 +52,11 @@
         <item>@string/bbcode_spoiler</item>
         <item>@string/bbcode_codeblock</item>
     </array>
+    <integer-array name="post_per_page_items">
+        <item>40</item>
+        <item>30</item>
+        <item>20</item>
+        <item>10</item>
+        <item>5</item>
+    </integer-array>
 </resources>

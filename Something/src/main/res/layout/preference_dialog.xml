@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:padding="8dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
@@ -15,18 +17,95 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/preference_theme_container"
-        android:layout_below="@+id/preferences_theme"
         android:columnCount="@integer/theme_column_count"
         android:padding="8dp">
     </GridLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/preference_images"
+        android:id="@+id/preferences_images" />
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/preferences_image_group"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/preference_image_enabled"
+            android:layout_weight="1"
+            android:id="@+id/preference_image_enabled" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/preference_image_wifi"
+            android:layout_weight="1"
+            android:id="@+id/preference_image_wifi" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/preference_image_disabled"
+            android:layout_weight="1"
+            android:id="@+id/preference_image_disabled" />
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/preference_avatars"
+        android:id="@+id/preferences_avatars" />
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/preferences_avatar_group"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/preference_image_enabled"
+            android:layout_weight="1"
+            android:id="@+id/preference_avatar_enabled" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/preference_image_wifi"
+            android:layout_weight="1"
+            android:id="@+id/preference_avatar_wifi" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/preference_image_disabled"
+            android:layout_weight="1"
+            android:id="@+id/preference_avatar_disabled" />
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/preferences_postperpage"
+        android:id="@+id/preferences_postperpage" />
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/preferences_postperpage_spinner"/>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_alignParentRight="true"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="right"
         android:id="@+id/preference_apply"
-        android:layout_below="@id/preference_theme_container"
         android:text="@string/preference_apply"/>
 
-</RelativeLayout>
+</LinearLayout>

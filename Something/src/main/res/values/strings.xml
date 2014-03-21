@@ -108,5 +108,11 @@
     <string name="share_url_title">Share Link</string>
     <string name="link_copied">Copied Link</string>
     <string name="marked_unread">Marked Unread</string>
+    <string name="preference_image_enabled">Enabled</string>
+    <string name="preference_image_wifi">WiFi Only</string>
+    <string name="preference_image_disabled">Disabled</string>
+    <string name="preference_images">Images</string>
+    <string name="preference_avatars">Avatars</string>
+    <string name="preferences_postperpage">Posts Per Page</string>
 
 </resources>

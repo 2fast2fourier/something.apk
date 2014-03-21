@@ -16,6 +16,7 @@ import com.salvadordalvik.fastlibrary.request.FastVolley;
 import net.fastfourier.something.MainActivity;
 
 import net.fastfourier.something.R;
+import net.fastfourier.something.util.SomePreferences;
 import net.fastfourier.something.util.SomeTheme;
 
 /**
@@ -91,9 +92,9 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         }
         holder.unread.setAlpha(unread > 0 ? 1.0f : 0.5f);
         if(unread >= 0){
-            holder.subtext.setText(" "+(replies/40+1)+" - Killed By: "+lastPost);
+            holder.subtext.setText(" "+(replies/SomePreferences.threadPostPerPage+1)+" - Killed By: "+lastPost);
         }else{
-            holder.subtext.setText(" "+(replies/40+1)+" - OP: "+author);
+            holder.subtext.setText(" "+(replies/SomePreferences.threadPostPerPage+1)+" - OP: "+author);
         }
         if(!TextUtils.isEmpty(tagUrl)){
             holder.tagImage.setImageUrl(tagUrl, FastVolley.getImageLoader());
