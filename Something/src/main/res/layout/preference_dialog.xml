@@ -95,17 +95,21 @@
         android:layout_marginTop="4dp"
         android:text="@string/preferences_postperpage"
         android:id="@+id/preferences_postperpage" />
-    <Spinner
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/preferences_postperpage_spinner"/>
+        android:layout_height="wrap_content">
+        <Spinner
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/preferences_postperpage_spinner"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_gravity="right"
-        android:id="@+id/preference_apply"
-        android:text="@string/preference_apply"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:id="@+id/preference_apply"
+            android:layout_alignParentRight="true"
+            android:text="@string/preference_apply"/>
+        </RelativeLayout>
 
 </LinearLayout>
