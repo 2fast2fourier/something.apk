@@ -93,7 +93,7 @@ public class SomePreferences {
 
         threadPostPerPage = newPrefs.getInt(POST_PER_PAGE_INT, 40);
 
-        fontSize = newPrefs.getInt(FONT_SIZE_INT, 14);
+        fontSize = newPrefs.getInt(FONT_SIZE_INT, 16);
 
         lastForumUpdate = newPrefs.getLong(LAST_FORUM_UPDATE_LONG, 0);
 

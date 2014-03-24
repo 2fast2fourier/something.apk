@@ -177,7 +177,7 @@ public class PreferencesDialogFragment extends FastDialogFragment implements Vie
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                SomePreferences.setInt(SomePreferences.FONT_SIZE_INT, 14);
+                SomePreferences.setInt(SomePreferences.FONT_SIZE_INT, 16);
             }
         });
     }
