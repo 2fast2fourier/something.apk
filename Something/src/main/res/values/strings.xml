@@ -114,5 +114,10 @@
     <string name="preference_images">Images</string>
     <string name="preference_avatars">Avatars</string>
     <string name="preferences_postperpage">Posts Per Page</string>
+    <string name="preference_font_example">Example</string>
+    <string name="preference_font_small">Small</string>
+    <string name="preference_font_normal">Normal</string>
+    <string name="preference_font_large">Large</string>
+    <string name="preference_font_title">Font Size</string>
 
 </resources>

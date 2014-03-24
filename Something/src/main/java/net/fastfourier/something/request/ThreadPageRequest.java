@@ -84,6 +84,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
         HashMap<String, String> headerArgs = new HashMap<String, String>();
         headerArgs.put("jumpToPostId", Long.toString(jumpToPost));
+        headerArgs.put("fontSize", Integer.toString(SomePreferences.fontSize));
         headerArgs.put("theme", getTheme(forumId));
         headerArgs.put("previouslyRead", previouslyRead > 0 && unread > 0 ? previouslyRead+" Previous Post"+(previouslyRead > 1 ? "s":"") : null);
         MustCache.applyHeaderTemplate(builder, headerArgs);

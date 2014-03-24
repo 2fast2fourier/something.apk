@@ -73,7 +73,10 @@ public class SomePreferences {
     public static long lastForumUpdate;
 
     public static final String POST_PER_PAGE_INT = "post_per_page";
-    public static int threadPostPerPage = 40;
+    public static int threadPostPerPage;
+
+    public static final String FONT_SIZE_INT = "font_size";
+    public static int fontSize;
 
     private synchronized static void updatePreferences(SharedPreferences newPrefs){
         //Update cached preferences here:
@@ -89,6 +92,8 @@ public class SomePreferences {
         systemTheme = getSystemTheme(selectedSysTheme);
 
         threadPostPerPage = newPrefs.getInt(POST_PER_PAGE_INT, 40);
+
+        fontSize = newPrefs.getInt(FONT_SIZE_INT, 14);
 
         lastForumUpdate = newPrefs.getLong(LAST_FORUM_UPDATE_LONG, 0);
 

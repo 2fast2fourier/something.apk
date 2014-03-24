@@ -154,7 +154,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     }
 
     private float getScrollDistance(){
-        return Math.max(Math.min(FastUtils.calculateScrollDistance(getActivity(), 2.5f), 0.666f), 0.333f);
+        return Math.max(Math.min(FastUtils.calculateScrollDistance(getActivity(), 2f), 0.666f), 0.333f);
     }
 
     @SuppressLint("SetJavaScriptEnabled")

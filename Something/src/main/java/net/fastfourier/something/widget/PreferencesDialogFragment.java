@@ -37,7 +37,7 @@ public class PreferencesDialogFragment extends FastDialogFragment implements Vie
     private GridLayout primaryThemes;
     private TextView themeTitle;
     private boolean restartRequired = false;
-    private int[] perPageOptions;
+    private int[] perPageValues, fontSizeValues;
 
     public PreferencesDialogFragment() {
         super(R.layout.preference_dialog, R.string.preference_dialog_title);
@@ -105,11 +105,11 @@ public class PreferencesDialogFragment extends FastDialogFragment implements Vie
         frag.findViewById(R.id.preference_apply).setOnClickListener(this);
 
         int currentSelected = 0;
-        perPageOptions = getResources().getIntArray(R.array.post_per_page_items);
-        String[] perPageStrings = new String[perPageOptions.length];
-        for(int ix=0;ix<perPageOptions.length;ix++){
-            perPageStrings[ix] = Integer.toString(perPageOptions[ix]);
-            if(SomePreferences.threadPostPerPage == perPageOptions[ix]){
+        perPageValues = getResources().getIntArray(R.array.post_per_page_items);
+        String[] perPageStrings = new String[perPageValues.length];
+        for(int ix=0;ix< perPageValues.length;ix++){
+            perPageStrings[ix] = Integer.toString(perPageValues[ix]);
+            if(SomePreferences.threadPostPerPage == perPageValues[ix]){
                 currentSelected = ix;
             }
         }
@@ -148,12 +148,36 @@ public class PreferencesDialogFragment extends FastDialogFragment implements Vie
         perPage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                SomePreferences.setInt(SomePreferences.POST_PER_PAGE_INT, perPageOptions[position]);
+                SomePreferences.setInt(SomePreferences.POST_PER_PAGE_INT, perPageValues[position]);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 SomePreferences.setInt(SomePreferences.POST_PER_PAGE_INT, 40);
+            }
+        });
+
+        Spinner fontSpinner = (Spinner) frag.findViewById(R.id.preferences_font_spinner);
+        ArrayAdapter fontAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.font_size_items, android.R.layout.simple_spinner_item);
+        fontAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        fontSpinner.setAdapter(fontAdapter);
+        fontSizeValues = getResources().getIntArray(R.array.font_size_values);
+        int currentFont = 3;
+        for(int ix=0;ix<fontSizeValues.length;ix++){
+            if(SomePreferences.fontSize == fontSizeValues[ix]){
+                currentFont = ix;
+            }
+        }
+        fontSpinner.setSelection(currentFont, false);
+        fontSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                SomePreferences.setInt(SomePreferences.FONT_SIZE_INT, fontSizeValues[position]);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                SomePreferences.setInt(SomePreferences.FONT_SIZE_INT, 14);
             }
         });
     }

@@ -59,4 +59,22 @@
         <item>10</item>
         <item>5</item>
     </integer-array>
+    <string-array name="font_size_items" >
+        <item>Tiny</item>
+        <item>Very Small</item>
+        <item>Small</item>
+        <item>Normal</item>
+        <item>Large</item>
+        <item>Extra Large</item>
+        <item>5XLT</item>
+    </string-array>
+    <integer-array name="font_size_values">
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+    </integer-array>
 </resources>

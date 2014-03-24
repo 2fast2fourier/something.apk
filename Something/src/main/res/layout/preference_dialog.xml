@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:padding="8dp"
     android:orientation="vertical">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/preference_theme"
         android:id="@+id/preferences_theme" />
@@ -51,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/preference_image_disabled"
-            android:layout_weight="1"
+            android:layout_weight="4"
             android:id="@+id/preference_image_disabled" />
     </RadioGroup>
 
@@ -85,7 +85,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/preference_image_disabled"
-            android:layout_weight="1"
+            android:layout_weight="4"
             android:id="@+id/preference_avatar_disabled" />
     </RadioGroup>
 
@@ -93,13 +93,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:text="@string/preference_font_title"
+        android:id="@+id/preferences_fonts" />
+    <Spinner
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/preferences_font_spinner"/>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:text="@string/preferences_postperpage"
         android:id="@+id/preferences_postperpage" />
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content">
         <Spinner
-            android:layout_width="100dp"
+            android:layout_width="140dp"
             android:layout_height="wrap_content"
             android:id="@+id/preferences_postperpage_spinner"/>
 

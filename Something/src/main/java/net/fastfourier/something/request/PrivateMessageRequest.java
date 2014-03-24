@@ -67,6 +67,7 @@ public class PrivateMessageRequest extends HTMLRequest<PrivateMessageRequest.PMD
             HashMap<String, String> headerArgs = new HashMap<String, String>();
             headerArgs.put("theme", SomePreferences.selectedTheme);
             headerArgs.put("jumpToPostId", "0");
+            headerArgs.put("fontSize", Integer.toString(SomePreferences.fontSize));
             headerArgs.put("previouslyRead", null);
             MustCache.applyHeaderTemplate(html, headerArgs);
 
