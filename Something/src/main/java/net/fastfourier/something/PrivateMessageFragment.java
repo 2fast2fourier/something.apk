@@ -253,4 +253,9 @@ public class PrivateMessageFragment extends SomeFragment implements Response.Err
     public int getPmId() {
         return pmId;
     }
+
+    @Override
+    public CharSequence getTitle() {
+        return pmTitle;
+    }
 }

@@ -166,4 +166,9 @@ public class PrivateMessageListFragment extends SomeFragment implements Response
             }
         }
     }
+
+    @Override
+    public CharSequence getTitle() {
+        return getSafeString(R.string.private_messages);
+    }
 }

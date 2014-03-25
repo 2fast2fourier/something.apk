@@ -91,6 +91,14 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
         header.setSelected(forumId == Constants.BOOKMARK_FORUMID);
     }
 
+    public static ThreadListFragment newInstance(int forumId){
+        ThreadListFragment frag = new ThreadListFragment();
+        Bundle args = new Bundle();
+        args.putInt("forum_id", forumId);
+        frag.setArguments(args);
+        return frag;
+    }
+
     @Override
     protected Options generatePullToRefreshOptions() {
         return Options.create().scrollDistance(getScrollDistance()).build();

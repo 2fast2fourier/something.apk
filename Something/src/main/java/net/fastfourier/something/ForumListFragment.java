@@ -122,4 +122,9 @@ public class ForumListFragment extends SomeFragment implements FastQueryTask.Que
             ((MainActivity)act).setTitle(title, this);
         }
     }
+
+    @Override
+    public CharSequence getTitle() {
+        return "Forums";
+    }
 }

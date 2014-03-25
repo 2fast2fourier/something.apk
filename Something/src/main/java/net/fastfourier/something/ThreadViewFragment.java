@@ -224,6 +224,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
             threadView.onResume();
             threadView.resumeTimers();
             updateActionbarColor(forumId);
+            setTitle(threadTitle);
         }
         CookieSyncManager cookieMan = CookieSyncManager.getInstance();
         if(cookieMan != null){

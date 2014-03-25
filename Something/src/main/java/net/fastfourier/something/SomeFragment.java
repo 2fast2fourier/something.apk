@@ -93,4 +93,6 @@ public abstract class SomeFragment extends FastFragment {
             BugSenseHandler.sendException(error);
         }
     }
+
+    public abstract CharSequence getTitle();
 }

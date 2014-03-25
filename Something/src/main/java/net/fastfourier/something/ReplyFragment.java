@@ -31,6 +31,7 @@ import net.fastfourier.something.request.SomeError;
  * Created by matthewshepard on 2/10/14.
  */
 public class ReplyFragment extends SomeFragment implements DialogInterface.OnCancelListener, TextWatcher, ActionMode.Callback {
+
     private enum BBCODE {BOLD, ITALICS, UNDERLINE, STRIKEOUT, URL, VIDEO, IMAGE, QUOTE, SPOILER, CODE}
     public static final int TYPE_REPLY = 2;
     public static final int TYPE_QUOTE = 3;
@@ -594,5 +595,10 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     @Override
     public void afterTextChanged(Editable s) {
         invalidateOptionsMenu();
+    }
+
+    @Override
+    public CharSequence getTitle() {
+        return "Reply";
     }
 }
