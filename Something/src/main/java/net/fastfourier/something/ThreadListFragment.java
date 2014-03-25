@@ -280,9 +280,6 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
         star.setVisible(forumId != Constants.BOOKMARK_FORUMID);
         star.setChecked(starred);
 
-        android.view.MenuItem home = menu.findItem(R.id.menu_forum_home);
-        home.setVisible(forumId == SomePreferences.favoriteForumId && forumId != Constants.BOOKMARK_FORUMID);
-
         android.view.MenuItem pm = menu.findItem(R.id.menu_private_messages);
         View pmView = pm.getActionView();
         View notification = pmView.findViewById(R.id.pm_count);
@@ -306,13 +303,6 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
                 starred = ForumItem.toggleStar(forumId);
                 invalidateOptionsMenu();
                 updateStarredForums();
-                return true;
-            case R.id.menu_forum_home:
-                if(SomePreferences.favoriteForumId == forumId){
-                    showForum(Constants.BOOKMARK_FORUMID);
-                }else{
-                    showForum(SomePreferences.favoriteForumId);
-                }
                 return true;
             case R.id.menu_preferences:
                 new PreferencesDialogFragment().show(getFragmentManager(), "preferences");
