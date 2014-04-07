@@ -73,10 +73,10 @@ public class PageSelectDialogFragment extends FastDialogFragment implements View
                 selectPage(selected);
                 break;
             case R.id.page_select_first:
-                selectPage(1);
+                picker.setValue(1);
                 break;
             case R.id.page_select_last:
-                selectPage(maxPage);
+                picker.setValue(maxPage);
                 break;
         }
     }

@@ -291,7 +291,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
             threadTitle = Html.fromHtml(rawThreadTitle);
             setTitle(threadTitle);
         }
-
+        updateNavbar();
         threadView.loadDataWithBaseURL(Constants.BASE_URL, pageHtml, "text/html", "utf-8", null);
     }
 
