@@ -28,7 +28,7 @@ public class PMReplyDataRequest extends HTMLRequest<PMReplyDataRequest.PMReplyDa
         String username = document.getElementsByAttributeValue("name", "touser").val();
         String replyContent = document.getElementsByAttributeValue("name", "message").text();
         String title = document.getElementsByAttributeValue("name", "title").val();
-        return new PMReplyData(pmId, replyContent, username, title);
+        return new PMReplyData(pmId, unencodeHtml(replyContent), username, unencodeHtml(title));
     }
 
     public static class PMReplyData {

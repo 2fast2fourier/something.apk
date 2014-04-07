@@ -51,7 +51,7 @@ public class ReplyDataRequest extends HTMLRequest<ReplyDataRequest.ReplyDataResp
         boolean bookmark = document.getElementsByAttributeValue("name", "bookmark").hasAttr("checked");
         boolean emotes = document.getElementsByAttributeValue("name", "disablesmilies").hasAttr("checked");
 
-        return new ReplyDataResponse(signature, bookmark, emotes, formKey, formCookie, replyContent, threadTitle, threadId, postId, type);
+        return new ReplyDataResponse(signature, bookmark, emotes, formKey, formCookie, unencodeHtml(replyContent), threadTitle, threadId, postId, type);
     }
 
     public static class ReplyDataResponse{

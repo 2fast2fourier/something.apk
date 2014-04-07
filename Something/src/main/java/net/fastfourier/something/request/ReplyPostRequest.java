@@ -30,7 +30,7 @@ public class ReplyPostRequest extends HTMLRequest<ReplyPostRequest.ReplyPostResu
         }
         addParam("formkey", reply.formKey);
         addParam("form_cookie", reply.formCookie);
-        addParam("message", reply.replyMessage);
+        addParam("message", encodeHtml(reply.replyMessage));
         addParam("parseurl", "yes");
         if(reply.bookmark){
             addParam("bookmark", "yes");

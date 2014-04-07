@@ -6,6 +6,7 @@ import com.salvadordalvik.fastlibrary.request.FastRequest;
 import net.fastfourier.something.util.Constants;
 import net.fastfourier.something.util.SomePreferences;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,6 +14,8 @@ import org.jsoup.select.Elements;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by matthewshepard on 1/17/14.
@@ -52,5 +55,47 @@ public abstract class HTMLRequest<T> extends FastRequest<T> {
     @Override
     protected String getBodyCharset() {
         return "CP1252";
+    }
+
+
+    private static final Pattern unencodeCharactersPattern = Pattern.compile("&#(\\d+);");
+    private static final Pattern encodeCharactersPattern = Pattern.compile("([^\\x00-\\xFF])");
+    /**
+     * HTML encoding routine pulled from Awful. Used for posting replies/PMs/ect.
+     * Encodes non-CP1252 characters by manually wrapping them within HTML entities.
+     * Probably fails for some character entities.
+     * TODO replace this for the love of god
+     * @param str regular string
+     * @return encoded string
+     */
+    public static String encodeHtml(String str) {
+        StringBuffer unencodedContent = new StringBuffer(str.length());
+        Matcher fixCharMatch = encodeCharactersPattern.matcher(str);
+        while (fixCharMatch.find()) {
+            fixCharMatch.appendReplacement(unencodedContent, "&#" + fixCharMatch.group(1).codePointAt(0) + ";");
+        }
+        fixCharMatch.appendTail(unencodedContent);
+        return unencodedContent.toString();
+    }
+
+    /**
+     * HTML decoding routine pulled from Awful. Used for quotes/PM replies/ect.
+     * Probably fails for some character entities.
+     * TODO replace this for the love of god
+     * @param html html-encoded string
+     * @return regular string
+     */
+    public static String unencodeHtml(String html) {
+        if (html == null) {
+            return "";
+        }
+        String processed = StringEscapeUtils.unescapeHtml4(html);
+        StringBuffer unencodedContent = new StringBuffer(processed.length());
+        Matcher fixCharMatch = unencodeCharactersPattern.matcher(processed);
+        while (fixCharMatch.find()) {
+            fixCharMatch.appendReplacement(unencodedContent, Character.toString((char) Integer.parseInt(fixCharMatch.group(1))));
+        }
+        fixCharMatch.appendTail(unencodedContent);
+        return unencodedContent.toString();
     }
 }

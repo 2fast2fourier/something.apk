@@ -17,8 +17,8 @@ public class PMSendRequest extends HTMLRequest<PMSendRequest.PMSendResult> {
             addParam("prevmessageid", reply.replyToPMId);
         }
         addParam("touser", reply.replyUsername);
-        addParam("title", reply.replyTitle);
-        addParam("message", reply.replyMessage);
+        addParam("title", encodeHtml(reply.replyTitle));
+        addParam("message", encodeHtml(reply.replyMessage));
         addParam("parseurl", "yes");
         addParam("savecopy", "yes");
         addParam("iconid", 0);
