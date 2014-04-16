@@ -150,7 +150,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
 
     @Override
     protected Options generatePullToRefreshOptions() {
-        return Options.create().scrollDistance(getScrollDistance()).headerTransformer(header).build();
+        return Options.create().scrollDistance(getScrollDistance()).headerTransformer(header).refreshOnUp(true).build();
     }
 
     private float getScrollDistance(){
