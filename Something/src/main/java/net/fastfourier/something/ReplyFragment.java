@@ -8,6 +8,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -21,6 +22,8 @@ import android.widget.EditText;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+
+import net.fastfourier.something.data.SomeDatabase;
 import net.fastfourier.something.request.PMReplyDataRequest;
 import net.fastfourier.something.request.PMSendRequest;
 import net.fastfourier.something.request.ReplyDataRequest;
@@ -113,6 +116,30 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
         }
         replyContent.setCustomSelectionActionModeCallback(this);
         startRefresh();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(shouldSaveDraft()){
+            if(replyType == TYPE_PM){
+                if(preparePMData()){
+                    SomeDatabase.getDatabase().insertRows(SomeDatabase.TABLE_SAVED_DRAFT, SQLiteDatabase.CONFLICT_REPLACE, pmReplyData.toContentValues());
+                }
+            }else{
+                if(prepareReplyData()){
+                    SomeDatabase.getDatabase().insertRows(SomeDatabase.TABLE_SAVED_DRAFT, SQLiteDatabase.CONFLICT_REPLACE, replyData.toContentValues());
+                }
+            }
+        }
+    }
+
+    private boolean shouldSaveDraft() {
+        if(replyType == TYPE_PM){
+            return pmReplyData != null && replyContent.length() > 0 && !replyContent.getText().toString().trim().equalsIgnoreCase(pmReplyData.replyContent.trim());
+        }else{
+            return replyData != null && replyContent.length() > 0 && !replyContent.getText().toString().trim().equalsIgnoreCase(replyData.originalContent.trim());
+        }
     }
 
     @Override
@@ -392,14 +419,11 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     }
 
     private void postReply(){
-        Editable content = replyContent.getText();
         switch (replyType){
             case TYPE_REPLY:
             case TYPE_QUOTE:
             case TYPE_EDIT:
-                if(replyData != null && content != null && content.length() > 0){
-                    replyData.replyMessage = content.toString().trim();
-                    Log.e("ReplyFragment", replyData.replyMessage);
+                if(prepareReplyData()){
                     queueRequest(new ReplyPostRequest(replyData, postingResult, postingErrorListener));
                     dialog = ProgressDialog.show(getActivity(), getSafeString(R.string.posting_title), getSafeString(R.string.posting_message), true, false, this);
                 }else{
@@ -408,20 +432,37 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
                 }
                 break;
             case TYPE_PM:
-                Editable title = replyTitle.getText();
-                Editable username = replyUsername.getText();
-                if(pmReplyData != null && title != null && username != null && content != null && content.length() > 0){
-                    pmReplyData.replyMessage = content.toString().trim();
-                    pmReplyData.replyUsername = username.toString().trim();
-                    pmReplyData.replyTitle = title.toString().trim();
+                if(preparePMData()){
                     queueRequest(new PMSendRequest(pmReplyData, pmSendResult, postingErrorListener));
                     dialog = ProgressDialog.show(getActivity(), getSafeString(R.string.sending_title), getSafeString(R.string.posting_message), true, false, this);
                 }else{
                     //this shouldn't happen, throw and log via bugsense
-                    throw new IllegalArgumentException("MISSING REPLY DATA");
+                    throw new IllegalArgumentException("MISSING PM REPLY DATA");
                 }
                 break;
         }
+    }
+
+    private boolean prepareReplyData(){
+        Editable content = replyContent.getText();
+        if(replyData != null && content != null && content.length() > 0) {
+            replyData.replyMessage = content.toString().trim();
+            return true;
+        }
+        return false;
+    }
+
+    private boolean preparePMData(){
+        Editable content = replyContent.getText();
+        Editable title = replyTitle.getText();
+        Editable username = replyUsername.getText();
+        if(pmReplyData != null && title != null && username != null && content != null && content.length() > 0) {
+            pmReplyData.replyMessage = content.toString().trim();
+            pmReplyData.replyUsername = username.toString().trim();
+            pmReplyData.replyTitle = title.toString().trim();
+            return true;
+        }
+        return false;
     }
 
     private Response.Listener<PMSendRequest.PMSendResult> pmSendResult = new Response.Listener<PMSendRequest.PMSendResult>() {
@@ -490,13 +531,13 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
                     setTitle("Reply: "+replyDataResponse.threadTitle);
                     break;
                 case TYPE_QUOTE:
-                    replyContent.setText(replyDataResponse.replyContent+"\n\n");
-                    replyContent.setSelection(replyDataResponse.replyContent.length() + 2);
+                    replyContent.setText(replyDataResponse.originalContent +"\n\n");
+                    replyContent.setSelection(replyDataResponse.originalContent.length() + 2);
                     setTitle("Reply: "+replyDataResponse.threadTitle);
                     break;
                 case TYPE_EDIT:
-                    replyContent.setText(replyDataResponse.replyContent+"\n\n");
-                    replyContent.setSelection(replyDataResponse.replyContent.length() + 2);
+                    replyContent.setText(replyDataResponse.originalContent +"\n\n");
+                    replyContent.setSelection(replyDataResponse.originalContent.length() + 2);
                     setTitle("Edit: "+replyDataResponse.threadTitle);
                     break;
             }

@@ -56,7 +56,7 @@ public class ReplyDataRequest extends HTMLRequest<ReplyDataRequest.ReplyDataResp
 
     public static class ReplyDataResponse{
         public final boolean signature, bookmark, emotes;
-        public final String formKey, formCookie, replyContent, threadTitle;
+        public final String formKey, formCookie, originalContent, threadTitle;
         public final int threadId, postId, type;
         public String replyMessage;
 
@@ -66,7 +66,7 @@ public class ReplyDataRequest extends HTMLRequest<ReplyDataRequest.ReplyDataResp
             this.emotes = emotes;
             this.formKey = formKey;
             this.formCookie = formCookie;
-            this.replyContent = replyContent;
+            this.originalContent = replyContent;
             this.threadTitle = threadTitle;
             this.threadId = threadId;
             this.postId = postId;
@@ -74,21 +74,38 @@ public class ReplyDataRequest extends HTMLRequest<ReplyDataRequest.ReplyDataResp
         }
 
         public ReplyDataResponse(Cursor data){
-            this.signature = data.getInt(data.getColumnIndex("")) > 0;
-            this.bookmark = false;
-            this.emotes = false;
-            this.formKey = "";
-            this.formCookie = "";
-            this.replyContent = "";
-            this.threadTitle = "";
-            this.threadId = 0;
-            this.postId = 0;
-            this.type = 0;
+            this.signature = data.getInt(data.getColumnIndex("reply_signature")) != 0;
+            this.bookmark = data.getInt(data.getColumnIndex("reply_bookmark")) != 0;
+            this.emotes = data.getInt(data.getColumnIndex("reply_emotes")) != 0;
+            this.formKey = data.getString(data.getColumnIndex("reply_formkey"));
+            this.formCookie = data.getString(data.getColumnIndex("reply_formcookie"));
+            this.originalContent = data.getString(data.getColumnIndex("reply_original_content"));
+            this.replyMessage = data.getString(data.getColumnIndex("reply_user_content"));
+            this.threadTitle = data.getString(data.getColumnIndex("reply_title"));
+            this.threadId = data.getInt(data.getColumnIndex("reply_thread_id"));
+            this.postId = data.getInt(data.getColumnIndex("reply_post_id"));
+            this.type = data.getInt(data.getColumnIndex("reply_type"));
         }
 
         public ContentValues toContentValues(){
             ContentValues cv = new ContentValues();
+            cv.put("reply_id", generateReplyUID(threadId, postId, type));
+            cv.put("reply_thread_id", threadId);
+            cv.put("reply_post_id", postId);
+            cv.put("reply_type", type);
+            cv.put("reply_original_content", originalContent);
+            cv.put("reply_user_content", replyMessage);
+            cv.put("reply_formcookie", formCookie);
+            cv.put("reply_formkey", formKey);
+            cv.put("reply_title", threadTitle);
+            cv.put("reply_signature", signature);
+            cv.put("reply_bookmark", bookmark);
+            cv.put("reply_emotes", emotes);
             return cv;
+        }
+
+        private static long generateReplyUID(int threadId, int postId, int type){
+            return ((long)type) << 56 | ((long)postId) << 32 | threadId;
         }
     }
 }

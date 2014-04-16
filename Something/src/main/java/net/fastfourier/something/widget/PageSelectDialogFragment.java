@@ -68,12 +68,13 @@ public class PageSelectDialogFragment extends FastDialogFragment implements View
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.page_select_button:
-                //NumberPicker won't update its internal value until the user finishes typing,
+                //NumberPicker won't update its internal value until the user finishes typing and presses done,
                 //but it will update when it loses focus.
                 //this is so fucking stupid
                 picker.clearFocus();
                 selectPage(picker.getValue());
-                break;            case R.id.page_select_first:
+                break;
+            case R.id.page_select_first:
                 picker.setValue(1);
                 break;
             case R.id.page_select_last:

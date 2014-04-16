@@ -1,8 +1,14 @@
 package net.fastfourier.something.request;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.text.TextUtils;
+
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
+
+import net.fastfourier.something.ReplyFragment;
 
 import org.jsoup.nodes.Document;
 
@@ -42,6 +48,32 @@ public class PMReplyDataRequest extends HTMLRequest<PMReplyDataRequest.PMReplyDa
             this.replyContent = replyContent;
             this.replyUsername = username;
             this.replyTitle = title;
+        }
+
+
+
+        public PMReplyData(Cursor data){
+            this.replyTitle = data.getString(data.getColumnIndex("reply_title"));
+            this.replyContent = data.getString(data.getColumnIndex("reply_original_content"));
+            this.replyMessage = data.getString(data.getColumnIndex("reply_user_content"));
+            this.replyUsername = data.getString(data.getColumnIndex("reply_username"));
+            this.replyToPMId = data.getInt(data.getColumnIndex("reply_post_id"));
+        }
+
+        public ContentValues toContentValues(){
+            ContentValues cv = new ContentValues();
+            cv.put("reply_id", generateReplyUID(replyUsername.hashCode(), replyToPMId, ReplyFragment.TYPE_PM));
+            cv.put("reply_post_id", replyToPMId);
+            cv.put("reply_type", ReplyFragment.TYPE_PM);
+            cv.put("reply_original_content", replyContent);
+            cv.put("reply_user_content", replyMessage);
+            cv.put("reply_username", replyUsername);
+            cv.put("reply_title", replyTitle);
+            return cv;
+        }
+
+        private static long generateReplyUID(int threadId, int postId, int type){
+            return ((long)type) << 56 | ((long)postId) << 32 | threadId;
         }
     }
 }
