@@ -12,8 +12,8 @@ import net.fastfourier.something.R;
 /**
  * Created by matthewshepard on 2/1/14.
  */
-public class PageSelectDialogFragment extends FastDialogFragment implements View.OnClickListener, NumberPicker.OnValueChangeListener {
-    private int maxPage, current, selected;
+public class PageSelectDialogFragment extends FastDialogFragment implements View.OnClickListener {
+    private int maxPage;
 
     private NumberPicker picker;
 
@@ -38,16 +38,14 @@ public class PageSelectDialogFragment extends FastDialogFragment implements View
     @Override
     public void viewCreated(View frag, Bundle savedInstanceState) {
         Bundle args = getArguments();
-        current = args.getInt("current");
+        int current = args.getInt("current");
         maxPage = args.getInt("max");
-        selected = current;
 
         picker = (NumberPicker) frag.findViewById(R.id.page_number_picker);
         picker.setMinValue(1);
         picker.setMaxValue(maxPage);
         picker.setValue(current);
         picker.setWrapSelectorWheel(false);
-        picker.setOnValueChangedListener(this);
         frag.findViewById(R.id.page_select_button).setOnClickListener(this);
         frag.findViewById(R.id.page_select_first).setOnClickListener(this);
         frag.findViewById(R.id.page_select_last).setOnClickListener(this);
@@ -70,19 +68,17 @@ public class PageSelectDialogFragment extends FastDialogFragment implements View
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.page_select_button:
-                selectPage(selected);
-                break;
-            case R.id.page_select_first:
+                //NumberPicker won't update its internal value until the user finishes typing,
+                //but it will update when it loses focus.
+                //this is so fucking stupid
+                picker.clearFocus();
+                selectPage(picker.getValue());
+                break;            case R.id.page_select_first:
                 picker.setValue(1);
                 break;
             case R.id.page_select_last:
                 picker.setValue(maxPage);
                 break;
         }
-    }
-
-    @Override
-    public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-        selected = newVal;
     }
 }
