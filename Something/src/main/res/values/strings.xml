@@ -119,5 +119,6 @@
     <string name="preference_font_normal">Normal</string>
     <string name="preference_font_large">Large</string>
     <string name="preference_font_title">Font Size</string>
+    <string name="reply_draft_title_edit">Saved Edit</string>
 
 </resources>

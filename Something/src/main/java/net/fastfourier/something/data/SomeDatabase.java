@@ -131,7 +131,8 @@ public class SomeDatabase extends FastDatabase {
                 "reply_username TEXT," +
                 "reply_signature INTEGER," +
                 "reply_bookmark INTEGER," +
-                "reply_emotes INTEGER" +
+                "reply_emotes INTEGER," +
+                "reply_saved_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP" +
                 ")");
     }
 }

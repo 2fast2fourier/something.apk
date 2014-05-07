@@ -8,9 +8,11 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -22,6 +24,7 @@ import android.widget.EditText;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.salvadordalvik.fastlibrary.data.FastQueryTask;
 
 import net.fastfourier.something.data.SomeDatabase;
 import net.fastfourier.something.request.PMReplyDataRequest;
@@ -29,6 +32,8 @@ import net.fastfourier.something.request.PMSendRequest;
 import net.fastfourier.something.request.ReplyDataRequest;
 import net.fastfourier.something.request.ReplyPostRequest;
 import net.fastfourier.something.request.SomeError;
+
+import java.util.List;
 
 /**
  * Created by matthewshepard on 2/10/14.
@@ -512,6 +517,7 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
             }
             dismissDialog();
             invalidateOptionsMenu();
+            querySavedPM();
         }
     };
 
@@ -543,6 +549,11 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
             }
             dismissDialog();
             invalidateOptionsMenu();
+            if(replyType == TYPE_EDIT){
+                querySavedEdit();
+            }else{
+                querySavedDrafts();
+            }
         }
     };
 
@@ -615,6 +626,97 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
             }
         }
     };
+
+    private void querySavedDrafts(){
+        new FastQueryTask<ReplyDataRequest.ReplyDataResponse>(SomeDatabase.getDatabase(),
+            new FastQueryTask.QueryResultCallback<ReplyDataRequest.ReplyDataResponse>() {
+                @Override
+                public int[] findColumns(Cursor data) {
+                    return FastQueryTask.findColumnIndicies(data, ReplyDataRequest.ReplyDataResponse.COLUMNS);
+                }
+
+                @Override
+                public void queryResult(List<ReplyDataRequest.ReplyDataResponse> results) {
+                    for(ReplyDataRequest.ReplyDataResponse draft : results){
+
+                    }
+                }
+
+                @Override
+                public ReplyDataRequest.ReplyDataResponse createItem(Cursor data, int[] columns) {
+                    return new ReplyDataRequest.ReplyDataResponse(data);
+                }
+            })
+        .query(SomeDatabase.TABLE_SAVED_DRAFT, "reply_saved_timestamp DESC", "reply_thread_id=? AND reply_type!=?", Long.toString(threadId), Long.toString(TYPE_EDIT));
+    }
+
+    private void querySavedEdit(){
+        new FastQueryTask<ReplyDataRequest.ReplyDataResponse>(SomeDatabase.getDatabase(),
+            new FastQueryTask.QueryResultCallback<ReplyDataRequest.ReplyDataResponse>() {
+                @Override
+                public int[] findColumns(Cursor data) {
+                    return FastQueryTask.findColumnIndicies(data, ReplyDataRequest.ReplyDataResponse.COLUMNS);
+                }
+
+                @Override
+                public void queryResult(List<ReplyDataRequest.ReplyDataResponse> results) {
+                    if(results.size() > 0 && getActivity() != null){
+                        ReplyDataRequest.ReplyDataResponse draft = results.get(0);
+                        new AlertDialog.Builder(getActivity())
+                                .setIcon(R.drawable.ic_menu_reply)
+                                .setTitle(getString(R.string.reply_draft_title_edit))
+//                                .setMessage("message")
+                                .setPositiveButton("Keep", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+//                                        if (mReplyType == AwfulMessage.TYPE_QUOTE) {
+//                                            originalReplyData = draftReplyData + "\n" + originalReplyData;
+//                                        } else if (mReplyType == AwfulMessage.TYPE_NEW_REPLY || mReplyType == AwfulMessage.TYPE_EDIT) {
+//                                            originalReplyData = draftReplyData + "\n\n";
+//                                        }
+//                                        mMessage.setText(originalReplyData);
+//                                        mMessage.setSelection(originalReplyData.length());
+                                    }
+                                })
+                                .setNegativeButton("Ignore", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                }).show();
+                    }
+                }
+
+                @Override
+                public ReplyDataRequest.ReplyDataResponse createItem(Cursor data, int[] columns) {
+                    return new ReplyDataRequest.ReplyDataResponse(data);
+                }
+            })
+            .query(SomeDatabase.TABLE_SAVED_DRAFT, "reply_saved_timestamp DESC", "reply_post_id=? AND reply_type=?", Long.toString(postId), Long.toString(replyType));
+    }
+
+    private void querySavedPM(){
+        new FastQueryTask<ReplyDataRequest.ReplyDataResponse>(SomeDatabase.getDatabase(),
+            new FastQueryTask.QueryResultCallback<ReplyDataRequest.ReplyDataResponse>() {
+                @Override
+                public int[] findColumns(Cursor data) {
+                    return FastQueryTask.findColumnIndicies(data, ReplyDataRequest.ReplyDataResponse.COLUMNS);
+                }
+
+                @Override
+                public void queryResult(List<ReplyDataRequest.ReplyDataResponse> results) {
+                    for(ReplyDataRequest.ReplyDataResponse draft : results){
+
+                    }
+                }
+
+                @Override
+                public ReplyDataRequest.ReplyDataResponse createItem(Cursor data, int[] columns) {
+                    return new ReplyDataRequest.ReplyDataResponse(data);
+                }
+            })
+            .query(SomeDatabase.TABLE_SAVED_DRAFT, "reply_saved_timestamp DESC", "reply_post_id=? AND reply_type=?", Long.toString(postId), Long.toString(replyType));
+    }
 
     @Override
     public void onCancel(DialogInterface dialog) {

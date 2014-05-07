@@ -55,6 +55,20 @@ public class ReplyDataRequest extends HTMLRequest<ReplyDataRequest.ReplyDataResp
     }
 
     public static class ReplyDataResponse{
+        public static final String[] COLUMNS = {
+                "reply_signature",
+                "reply_bookmark",
+                "reply_emotes",
+                "reply_formkey",
+                "reply_formcookie",
+                "reply_original_content",
+                "reply_user_content",
+                "reply_title",
+                "reply_thread_id",
+                "reply_post_id",
+                "reply_type"
+        };
+
         public final boolean signature, bookmark, emotes;
         public final String formKey, formCookie, originalContent, threadTitle;
         public final int threadId, postId, type;
@@ -104,7 +118,7 @@ public class ReplyDataRequest extends HTMLRequest<ReplyDataRequest.ReplyDataResp
             return cv;
         }
 
-        private static long generateReplyUID(int threadId, int postId, int type){
+        public static long generateReplyUID(int threadId, int postId, int type){
             return ((long)type) << 56 | ((long)postId) << 32 | threadId;
         }
     }
