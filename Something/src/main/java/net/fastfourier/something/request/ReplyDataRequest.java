@@ -43,7 +43,7 @@ public class ReplyDataRequest extends HTMLRequest<ReplyDataRequest.ReplyDataResp
     }
 
     @Override
-    public ReplyDataResponse parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
+    public ReplyDataResponse parseHtmlResponse(Request<ReplyDataResponse> request, NetworkResponse response, Document document) throws Exception {
         String formKey = document.getElementsByAttributeValue("name", "formkey").val();
         String formCookie = document.getElementsByAttributeValue("name", "form_cookie").val();
         String replyContent = document.getElementsByAttributeValue("name", "message").text();

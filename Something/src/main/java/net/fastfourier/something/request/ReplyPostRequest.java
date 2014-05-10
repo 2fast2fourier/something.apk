@@ -44,7 +44,7 @@ public class ReplyPostRequest extends HTMLRequest<ReplyPostRequest.ReplyPostResu
     }
 
     @Override
-    public ReplyPostResult parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
+    public ReplyPostResult parseHtmlResponse(Request<ReplyPostResult> request, NetworkResponse response, Document document) throws Exception {
         int postId = 0, threadId = 0;
         Element redirect = document.getElementsByAttributeValue("http-equiv","Refresh").first();
         if(redirect != null){

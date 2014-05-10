@@ -2,7 +2,6 @@ package net.fastfourier.something.request;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.text.TextUtils;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -27,7 +26,7 @@ public class PMReplyDataRequest extends HTMLRequest<PMReplyDataRequest.PMReplyDa
     }
 
     @Override
-    public PMReplyData parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
+    public PMReplyData parseHtmlResponse(Request<PMReplyData> request, NetworkResponse response, Document document) throws Exception {
         int pmId = 0;
         String id = document.getElementsByAttributeValue("name", "prevmessageid").val();
         if(id != null && id.matches("\\d+")){

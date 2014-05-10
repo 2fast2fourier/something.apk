@@ -25,7 +25,7 @@ public class PMSendRequest extends HTMLRequest<PMSendRequest.PMSendResult> {
     }
 
     @Override
-    public PMSendResult parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
+    public PMSendResult parseHtmlResponse(Request<PMSendResult> request, NetworkResponse response, Document document) throws Exception {
         return new PMSendResult();
     }
 

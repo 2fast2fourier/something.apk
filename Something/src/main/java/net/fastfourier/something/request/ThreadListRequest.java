@@ -6,7 +6,6 @@ import android.util.Log;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.bugsense.trace.BugSenseHandler;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
 import net.fastfourier.something.data.ForumProcessTask;
 import net.fastfourier.something.data.ThreadManager;
@@ -49,7 +48,7 @@ public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListR
     }
 
     @Override
-    public ThreadListResponse parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
+    public ThreadListResponse parseHtmlResponse(Request<ThreadListResponse> request, NetworkResponse response, Document document) throws Exception {
         ArrayList<ThreadItem> threads = new ArrayList<ThreadItem>();
         Element threadList = document.getElementById("forum");
         for(Element thread : threadList.getElementsByClass("thread")){

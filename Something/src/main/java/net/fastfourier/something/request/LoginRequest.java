@@ -3,14 +3,10 @@ package net.fastfourier.something.request;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import net.fastfourier.something.util.OkHttpStack;
+
 import net.fastfourier.something.util.SomePreferences;
 
 import org.jsoup.nodes.Document;
-
-import java.net.CookieManager;
-import java.net.CookiePolicy;
 
 /**
  * Created by matthewshepard on 1/31/14.
@@ -24,7 +20,7 @@ public class LoginRequest extends HTMLRequest<Boolean> {
     }
 
     @Override
-    public Boolean parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
+    public Boolean parseHtmlResponse(Request<Boolean> request, NetworkResponse response, Document document) throws Exception {
         if(SomePreferences.confirmLogin()){
             return true;
         }

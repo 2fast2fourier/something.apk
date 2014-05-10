@@ -1,16 +1,17 @@
 package net.fastfourier.something.request;
 
 import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.salvadordalvik.fastlibrary.request.FastRequest;
 import net.fastfourier.something.util.Constants;
+import net.fastfourier.something.util.OkHttpStack;
 import net.fastfourier.something.util.SomePreferences;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -26,7 +27,7 @@ public abstract class HTMLRequest<T> extends FastRequest<T> {
     }
 
     @Override
-    public T parseResponse(NetworkResponse response) throws Exception {
+    public T parseResponse(Request<T> request, NetworkResponse response) throws Exception {
         //Check login cookie status, SA will automatically set them to "deleted" if the session expired.
         if(!SomePreferences.confirmLogin()){
             SomePreferences.clearAuthentication();
@@ -43,10 +44,10 @@ public abstract class HTMLRequest<T> extends FastRequest<T> {
             //Generic SA error messages
             throw new SomeError(stdErr.getElementsByClass("standard").first().getElementsByClass("inner").first().ownText());
         }
-        return parseHtmlResponse(response, document);
+        return parseHtmlResponse(request, response, document);
     }
 
-    public abstract T parseHtmlResponse(NetworkResponse response, Document document) throws Exception;
+    public abstract T parseHtmlResponse(Request<T> request, NetworkResponse response, Document document) throws Exception;
 
     private static Document parseDocument(NetworkResponse response) throws IOException {
         return Jsoup.parse(new ByteArrayInputStream(response.data), "CP1252", Constants.BASE_URL);
@@ -97,5 +98,33 @@ public abstract class HTMLRequest<T> extends FastRequest<T> {
         }
         fixCharMatch.appendTail(unencodedContent);
         return unencodedContent.toString();
+    }
+
+    @Override
+    protected Request<T> generateRequest(String url, Response.Listener<T> success, Response.ErrorListener error) {
+        return new HTMLInternalRequest(url, success, error);
+    }
+
+    protected class HTMLInternalRequest extends FastInternalRequest implements OkHttpStack.Redirectable{
+        private String redirectUrl;
+
+        public HTMLInternalRequest(String url, Response.Listener<T> success, Response.ErrorListener error) {
+            super(url, success, error);
+        }
+
+        @Override
+        public void onRedirect(String redirectUrl) {
+            this.redirectUrl = redirectUrl;
+        }
+
+        @Override
+        public boolean hasRedirect() {
+            return redirectUrl != null;
+        }
+
+        @Override
+        public String getRedirectUrl() {
+            return redirectUrl;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package net.fastfourier.something.request;
 
 import android.content.Context;
+import android.net.Uri;
 import android.text.TextUtils;
 
 import com.android.volley.NetworkResponse;
@@ -16,6 +17,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -52,16 +54,25 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
     }
 
     @Override
-    public ThreadPage parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
-        return processThreadPage(document, SomePreferences.shouldShowImages(context), SomePreferences.shouldShowAvatars(context), SomePreferences.hidePreviouslyReadPosts, jumpToPost);
+    public ThreadPage parseHtmlResponse(Request<ThreadPage> request, NetworkResponse response, Document document) throws Exception {
+        return processThreadPage(document, SomePreferences.shouldShowImages(context), SomePreferences.shouldShowAvatars(context), SomePreferences.hidePreviouslyReadPosts, jumpToPost, ((HTMLInternalRequest)request).getRedirectUrl());
     }
 
-    public static ThreadPage processThreadPage(Document document, boolean showImages, boolean showAvatars, boolean hidePreviouslyReadImages, long jumpToPost){
+    public static ThreadPage processThreadPage(Document document, boolean showImages, boolean showAvatars, boolean hidePreviouslyReadImages, long jumpToPost, String redirectedUrl){
         ArrayList<HashMap<String, String>> posts = new ArrayList<HashMap<String, String>>();
 
         int currentPage, maxPage = 1, threadId, forumId, unread;
 
-        unread = parsePosts(document, posts, showImages, showAvatars, hidePreviouslyReadImages);
+        String ptiFragment = null;
+        if(!TextUtils.isEmpty(redirectedUrl)){
+            Uri url = Uri.parse(redirectedUrl);
+            ptiFragment = url.getFragment();
+            if("lastpost".matches(ptiFragment)){
+                ptiFragment = null;
+            }
+        }
+
+        unread = parsePosts(document, posts, showImages, showAvatars, hidePreviouslyReadImages, ptiFragment);
 
         Element pages = document.getElementsByClass("pages").first();
         currentPage = FastUtils.safeParseInt(pages.getElementsByAttribute("selected").attr("value"), 1);
@@ -142,8 +153,9 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
     private static Pattern userJumpPattern = Pattern.compile("userid=(\\d+)");
 
-    private static int parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray, boolean showImages, boolean showAvatars, boolean hideSeenImages){
+    private static int parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray, boolean showImages, boolean showAvatars, boolean hideSeenImages, String unreadPti){
         int unread = 0;
+        boolean previouslyRead = unreadPti != null;
         Elements posts = doc.getElementsByClass("post");
         for(Element post : posts){
             String rawId = post.id().replaceAll("\\D", "");
@@ -171,8 +183,12 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                     userId = userIdMatcher.group(1);
                 }
 
-                boolean previouslyRead = post.getElementsByClass("seen1").size() > 0 || post.getElementsByClass("seen2").size() > 0;
-                if(!previouslyRead){
+                if(previouslyRead){
+                    previouslyRead = post.getElementById(unreadPti) == null;
+                }
+
+                boolean seen = previouslyRead || post.getElementsByClass("seen1").size() > 0 || post.getElementsByClass("seen2").size() > 0;
+                if(!seen){
                     unread++;
                 }
 
@@ -207,17 +223,15 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 postData.put("postcontent", postContent);
                 postData.put("postDate", postDate);
                 postData.put("userID", userId);
-                postData.put("seen", previouslyRead ? "read" : "unread");
+                postData.put("seen", seen ? "read" : "unread");
                 postData.put("postIndex",  postIndex);
 
 //                postData.put("regDate", post.getRegDate());
-//                postData.put("lastReadUrl",  post.getLastReadUrl());
                 //TODO nullable, can wait to implement
 //                postData.put("isOP", (aPrefs.highlightOP && post.isOp())?"op":null);
 //                postData.put("isMarked", (aPrefs.markedUsers.contains(post.getUsername()))?"marked":null);
 //                postData.put("isSelf", (aPrefs.highlightSelf && post.getUsername().equals(aPrefs.username)) ? "self" : null);
 //                postData.put("notOnProbation", (aPrefs.isOnProbation())?null:"notOnProbation");
-//                postData.put("editable", (post.isEditable())?"editable":null);
 
                 //TODO split ik and mod
                 postData.put("mod", (mod || ik)?"mod":null);

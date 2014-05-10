@@ -25,7 +25,7 @@ public class PrivateMessageRequest extends HTMLRequest<PrivateMessageRequest.PMD
     }
 
     @Override
-    public PMData parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
+    public PMData parseHtmlResponse(Request<PMData> request, NetworkResponse response, Document document) throws Exception {
 
         StringBuilder pmHtml = new StringBuilder();
         parsePM(document, pmHtml, pmTitle);

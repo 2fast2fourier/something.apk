@@ -20,7 +20,7 @@ public class BookmarkRequest extends HTMLRequest<Boolean> {
     }
 
     @Override
-    public Boolean parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
+    public Boolean parseHtmlResponse(Request<Boolean> request, NetworkResponse response, Document document) throws Exception {
         return add;
     }
 }

@@ -33,7 +33,7 @@ public class PrivateMessageListRequest extends HTMLRequest<PrivateMessageListReq
     }
 
     @Override
-    public PMListResult parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
+    public PMListResult parseHtmlResponse(Request<PMListResult> request, NetworkResponse response, Document document) throws Exception {
         ArrayList<PrivateMessageFolderItem> pmFolders = new ArrayList<PrivateMessageFolderItem>();
         ArrayList<PrivateMessageItem> pm = new ArrayList<PrivateMessageItem>();
         Elements messages = document.getElementsByTag("tbody").first().getElementsByTag("tr");

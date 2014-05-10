@@ -22,7 +22,7 @@ public class PMDeleteRequest extends HTMLRequest {
     }
 
     @Override
-    public Object parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
+    public Object parseHtmlResponse(Request request, NetworkResponse response, Document document) throws Exception {
         return null;
     }
 }

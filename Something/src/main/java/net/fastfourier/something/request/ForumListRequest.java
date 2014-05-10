@@ -18,7 +18,7 @@ public class ForumListRequest extends HTMLRequest<Void> {
     }
 
     @Override
-    public Void parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
+    public Void parseHtmlResponse(Request<Void> request, NetworkResponse response, Document document) throws Exception {
         ForumProcessTask.processForums(document);
         return null;
     }
