@@ -150,12 +150,17 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
             if(!TextUtils.isEmpty(rawId)){
                 HashMap<String, String> postData = new HashMap<String, String>();
                 postData.put("postID", rawId);
-                String author = post.getElementsByClass("author").text();
+                Element auth = post.getElementsByClass("author").first();
+                String author = auth.text();
                 Element title = post.getElementsByClass("title").first();
                 String avTitle = title.text();
                 String avatarUrl = title.getElementsByTag("img").attr("src");
                 String postDate = post.getElementsByClass("postdate").text().replaceAll("[#?]", "").trim();
                 String postIndex = post.attr("data-idx");
+
+                boolean admin = auth.hasClass("role-admin");
+                boolean mod = auth.hasClass("role-mod");
+                boolean ik = auth.hasClass("role-ik");
 
                 boolean editable = post.getElementsByAttributeValueContaining("href","editpost.php?action=editpost").size() > 0;
 
@@ -213,8 +218,10 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 //                postData.put("isSelf", (aPrefs.highlightSelf && post.getUsername().equals(aPrefs.username)) ? "self" : null);
 //                postData.put("notOnProbation", (aPrefs.isOnProbation())?null:"notOnProbation");
 //                postData.put("editable", (post.isEditable())?"editable":null);
-//                postData.put("mod", (post.isMod())?"mod":null);
-//                postData.put("admin", (post.isAdmin())?"admin":null);
+
+                //TODO split ik and mod
+                postData.put("mod", (mod || ik)?"mod":null);
+                postData.put("admin", admin ?"admin":null);
 
                 postData.put("regDate", "");
                 postData.put("isOP", null);
@@ -222,8 +229,6 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 postData.put("isSelf", null);
                 postData.put("notOnProbation", "notOnProbation");
                 postData.put("editable", editable ? "editable" : null);
-                postData.put("mod", null);
-                postData.put("admin", null);
 
                 postArray.add(postData);
             }
