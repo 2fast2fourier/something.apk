@@ -87,7 +87,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     private int forumId;
     private CharSequence threadTitle;
     private String pageHtml, rawThreadTitle;
-    private boolean bookmarked;
+    private boolean bookmarked, canReply;
 
     private LinkedList<Bundle> threadBackstack = new LinkedList<Bundle>();
 
@@ -275,6 +275,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         outState.putLong("post_id", postId);
         outState.putInt("thread_forum_id", forumId);
         outState.putBoolean("thread_bookmarked", bookmarked);
+        outState.putBoolean("thread_canreply", canReply);
         return outState;
     }
 
@@ -286,6 +287,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         postId = inState.getLong("post_id", 0);
         forumId = inState.getInt("thread_forum_id", 0);
         bookmarked = inState.getBoolean("thread_bookmarked");
+        canReply = inState.getBoolean("thread_canreply");
         rawThreadTitle = inState.getString("thread_title");
         if(!TextUtils.isEmpty(rawThreadTitle)){
             threadTitle = Html.fromHtml(rawThreadTitle);
@@ -309,6 +311,11 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         if(bookmark != null){
             bookmark.setIcon(bookmarked ? R.drawable.star : R.drawable.star_empty);
             bookmark.setTitle(bookmarked ? R.string.menu_thread_unbookmark : R.string.menu_thread_bookmark);
+        }
+        MenuItem reply = menu.findItem(R.id.menu_thread_reply);
+        if(reply != null){
+            reply.setEnabled(canReply);
+            reply.setTitle(canReply ? R.string.menu_thread_reply : R.string.menu_thread_reply_closed);
         }
     }
 
@@ -385,6 +392,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
             pageHtml = response.pageHtml;
             rawThreadTitle = response.threadTitle;
             bookmarked = response.bookmarked;
+            canReply = response.canReply;
             Activity act = getActivity();
             if (act instanceof MainActivity) {
                 MainActivity main = (MainActivity) act;

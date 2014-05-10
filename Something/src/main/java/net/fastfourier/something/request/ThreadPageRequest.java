@@ -10,6 +10,7 @@ import com.android.volley.Response;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
 import net.fastfourier.something.data.ThreadManager;
 import net.fastfourier.something.list.ThreadItem;
+import net.fastfourier.something.util.Constants;
 import net.fastfourier.something.util.MustCache;
 import net.fastfourier.something.util.SomePreferences;
 
@@ -17,7 +18,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -72,7 +72,6 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
             }
         }
 
-        unread = parsePosts(document, posts, showImages, showAvatars, hidePreviouslyReadImages, ptiFragment);
 
         Element pages = document.getElementsByClass("pages").first();
         currentPage = FastUtils.safeParseInt(pages.getElementsByAttribute("selected").attr("value"), 1);
@@ -88,6 +87,11 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         Element body = document.getElementsByTag("body").first();
         forumId = Integer.parseInt(body.attr("data-forum"));
         threadId = Integer.parseInt(body.attr("data-thread"));
+
+        Elements threadbars = document.getElementsByClass("threadbar");
+        boolean canReply = !Constants.isArchiveForum(forumId) && threadbars.first().getElementsByAttributeValueContaining("src", "images/forum-closed.gif").size() == 0;
+
+        unread = parsePosts(document, posts, showImages, showAvatars, hidePreviouslyReadImages, ptiFragment, canReply);
 
         StringBuilder builder = new StringBuilder(2048);
 
@@ -115,7 +119,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
             cachedThread.updateUnreadCount(currentPage, maxPage, SomePreferences.threadPostPerPage);
         }
 
-        return new ThreadPage(builder.toString(), currentPage, maxPage, threadId, forumId, threadTitle, -unread, bookmarked);
+        return new ThreadPage(builder.toString(), currentPage, maxPage, threadId, forumId, threadTitle, -unread, bookmarked, canReply);
 
     }
 
@@ -137,9 +141,9 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
     public static class ThreadPage{
         public final int pageNum, maxPageNum, threadId, forumId, unreadDiff;
         public final String threadTitle, pageHtml;
-        public final boolean bookmarked;
+        public final boolean bookmarked, canReply;
 
-        private ThreadPage(String pageHtml, int pageNum, int maxPageNum, int threadId, int forumId, String threadTitle, int unreadDiff, boolean bookmarked){
+        private ThreadPage(String pageHtml, int pageNum, int maxPageNum, int threadId, int forumId, String threadTitle, int unreadDiff, boolean bookmarked, boolean canReply){
             this.pageHtml = pageHtml;
             this.pageNum = pageNum;
             this.maxPageNum = maxPageNum;
@@ -148,12 +152,13 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
             this.threadTitle = threadTitle;
             this.unreadDiff = unreadDiff;
             this.bookmarked = bookmarked;
+            this.canReply = canReply;
         }
     }
 
     private static Pattern userJumpPattern = Pattern.compile("userid=(\\d+)");
 
-    private static int parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray, boolean showImages, boolean showAvatars, boolean hideSeenImages, String unreadPti){
+    private static int parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray, boolean showImages, boolean showAvatars, boolean hideSeenImages, String unreadPti, boolean canReply){
         int unread = 0;
         boolean previouslyRead = unreadPti != null;
         Elements posts = doc.getElementsByClass("post");
@@ -231,7 +236,6 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 //                postData.put("isOP", (aPrefs.highlightOP && post.isOp())?"op":null);
 //                postData.put("isMarked", (aPrefs.markedUsers.contains(post.getUsername()))?"marked":null);
 //                postData.put("isSelf", (aPrefs.highlightSelf && post.getUsername().equals(aPrefs.username)) ? "self" : null);
-//                postData.put("notOnProbation", (aPrefs.isOnProbation())?null:"notOnProbation");
 
                 //TODO split ik and mod
                 postData.put("mod", (mod || ik)?"mod":null);
@@ -241,7 +245,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 postData.put("isOP", null);
                 postData.put("isMarked", null);
                 postData.put("isSelf", null);
-                postData.put("notOnProbation", "notOnProbation");
+                postData.put("canreply", canReply ? "canreply" : null);
                 postData.put("editable", editable ? "editable" : null);
 
                 postArray.add(postData);

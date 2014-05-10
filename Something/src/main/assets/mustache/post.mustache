@@ -21,7 +21,7 @@
 			<li class="lastread" lastreadid="{{ postIndex }}">
 				last read
 			</li>
-			{{# notOnProbation }}
+			{{# canreply }}
 				{{# editable }}
 					<li class="edit">
 						edit
@@ -30,7 +30,7 @@
 				<li class="quote">
 					quote
 				</li>
-			{{/notOnProbation }}
+			{{/ canreply }}
 		</ul >
 	<section  class="postcontent">
 		{{{ postcontent }}}

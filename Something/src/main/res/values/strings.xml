@@ -61,6 +61,7 @@
     <string name="menu_refresh">Refresh</string>
     <string name="back_title">Back</string>
     <string name="menu_thread_reply">Reply</string>
+    <string name="menu_thread_reply_closed">Thread Closed</string>
     <string name="post_loading_failed">Loading Failed</string>
     <string name="post_loading_failed_message">Failed to load reply page.</string>
     <string name="retry">Retry</string>
