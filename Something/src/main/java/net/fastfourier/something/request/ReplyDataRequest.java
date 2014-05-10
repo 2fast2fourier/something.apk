@@ -6,8 +6,11 @@ import android.database.Cursor;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.salvadordalvik.fastlibrary.util.FastDateUtils;
+
 import net.fastfourier.something.ReplyFragment;
 
+import org.joda.time.DateTime;
 import org.jsoup.nodes.Document;
 
 /**
@@ -66,13 +69,14 @@ public class ReplyDataRequest extends HTMLRequest<ReplyDataRequest.ReplyDataResp
                 "reply_title",
                 "reply_thread_id",
                 "reply_post_id",
-                "reply_type"
+                "reply_type",
+                "reply_saved_timestamp"
         };
 
         public final boolean signature, bookmark, emotes;
         public final String formKey, formCookie, originalContent, threadTitle;
         public final int threadId, postId, type;
-        public String replyMessage;
+        public String replyMessage, savedTimestamp;
 
         protected ReplyDataResponse(boolean signature, boolean bookmark, boolean emotes, String formKey, String formCookie, String replyContent, String threadTitle, int threadId, int postId, int type) {
             this.signature = signature;
@@ -99,6 +103,7 @@ public class ReplyDataRequest extends HTMLRequest<ReplyDataRequest.ReplyDataResp
             this.threadId = data.getInt(data.getColumnIndex("reply_thread_id"));
             this.postId = data.getInt(data.getColumnIndex("reply_post_id"));
             this.type = data.getInt(data.getColumnIndex("reply_type"));
+            this.savedTimestamp = data.getString(data.getColumnIndex("reply_saved_timestamp"));
         }
 
         public ContentValues toContentValues(){
@@ -115,6 +120,7 @@ public class ReplyDataRequest extends HTMLRequest<ReplyDataRequest.ReplyDataResp
             cv.put("reply_signature", signature);
             cv.put("reply_bookmark", bookmark);
             cv.put("reply_emotes", emotes);
+            cv.put("reply_saved_timestamp", FastDateUtils.printSqliteTimestamp(DateTime.now()));
             return cv;
         }
 

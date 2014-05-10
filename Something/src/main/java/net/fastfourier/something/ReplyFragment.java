@@ -25,6 +25,7 @@ import android.widget.EditText;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.salvadordalvik.fastlibrary.data.FastQueryTask;
+import com.salvadordalvik.fastlibrary.util.FastDateUtils;
 
 import net.fastfourier.something.data.SomeDatabase;
 import net.fastfourier.something.request.PMReplyDataRequest;
@@ -40,7 +41,9 @@ import java.util.List;
  */
 public class ReplyFragment extends SomeFragment implements DialogInterface.OnCancelListener, TextWatcher, ActionMode.Callback {
 
+    private static final int DRAFT_PREVIEW_LENGTH = 100;
     private enum BBCODE {BOLD, ITALICS, UNDERLINE, STRIKEOUT, URL, VIDEO, IMAGE, QUOTE, SPOILER, CODE}
+
     public static final int TYPE_REPLY = 2;
     public static final int TYPE_QUOTE = 3;
     public static final int TYPE_EDIT = 4;
@@ -51,7 +54,6 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     private ProgressDialog dialog = null;
 
     private EditText replyContent, replyTitle, replyUsername;
-    private boolean replyEnabled = false;
 
     private ActionMode selectionMode;
 
@@ -129,6 +131,7 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
         if(shouldSaveDraft()){
             if(replyType == TYPE_PM){
                 if(preparePMData()){
+                    Log.e("ReplyFragment", "save draft "+pmId);
                     SomeDatabase.getDatabase().insertRows(SomeDatabase.TABLE_SAVED_DRAFT, SQLiteDatabase.CONFLICT_REPLACE, pmReplyData.toContentValues());
                 }
             }else{
@@ -140,10 +143,26 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     }
 
     private boolean shouldSaveDraft() {
+        Log.e("ReplyFragment", "shouldSaveDraft "+pmId);
         if(replyType == TYPE_PM){
             return pmReplyData != null && replyContent.length() > 0 && !replyContent.getText().toString().trim().equalsIgnoreCase(pmReplyData.replyContent.trim());
         }else{
             return replyData != null && replyContent.length() > 0 && !replyContent.getText().toString().trim().equalsIgnoreCase(replyData.originalContent.trim());
+        }
+    }
+
+    private void discardDraft(){
+        switch (replyType){
+            case TYPE_EDIT:
+                SomeDatabase.getDatabase().deleteRows(SomeDatabase.TABLE_SAVED_DRAFT, "reply_post_id=? AND reply_type=?", Long.toString(postId), Long.toString(TYPE_EDIT));
+                break;
+            case TYPE_REPLY:
+            case TYPE_QUOTE:
+                SomeDatabase.getDatabase().deleteRows(SomeDatabase.TABLE_SAVED_DRAFT, "reply_thread_id=? AND reply_type!=?", Long.toString(threadId), Long.toString(TYPE_EDIT));
+                break;
+            case TYPE_PM:
+                SomeDatabase.getDatabase().deleteRows(SomeDatabase.TABLE_SAVED_DRAFT, "reply_post_id=? AND reply_type=?", Long.toString(pmId), Long.toString(TYPE_PM));
+                break;
         }
     }
 
@@ -152,6 +171,7 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
         super.onPrepareOptionsMenu(menu);
         MenuItem reply = menu.findItem(R.id.menu_post_reply);
         if(reply != null){
+            boolean replyEnabled;
             if(replyType == TYPE_PM){
                 replyEnabled = pmReplyData != null
                         && replyContent.getText() != null
@@ -476,6 +496,7 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
             dismissDialog();
             Activity activity = getActivity();
             if(activity != null){
+                discardDraft();
                 activity.setResult(TYPE_PM);
                 activity.finish();
             }
@@ -488,6 +509,7 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
             dismissDialog();
             Activity activity = getActivity();
             if(activity != null){
+                discardDraft();
                 activity.setResult(response.jumpPostId, new Intent().putExtra("thread_id", response.jumpThreadId).putExtra("post_id", response.jumpPostId));
                 activity.finish();
             }
@@ -637,8 +659,42 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
 
                 @Override
                 public void queryResult(List<ReplyDataRequest.ReplyDataResponse> results) {
-                    for(ReplyDataRequest.ReplyDataResponse draft : results){
-
+                    if(results.size() > 0 && getActivity() != null){
+                        final ReplyDataRequest.ReplyDataResponse draft = results.get(0);
+                        StringBuilder message = new StringBuilder("You have a saved reply:<br/><br/><i>");
+                        if(draft.replyMessage.length() > DRAFT_PREVIEW_LENGTH){
+                            message.append(draft.replyMessage.substring(0, DRAFT_PREVIEW_LENGTH).replaceAll("\\n","<br/>"));
+                            message.append("...");
+                        }else{
+                            message.append(draft.replyMessage.replaceAll("\\n","<br/>"));
+                        }
+                        message.append("</i>");
+                        if(!TextUtils.isEmpty(draft.savedTimestamp)){
+                            message.append("<br/><br/>Saved ");
+                            message.append(FastDateUtils.shortRecentDate(draft.savedTimestamp));
+                            message.append(" ago");
+                        }
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle(getString(R.string.reply_draft_title_reply))
+                                .setMessage(Html.fromHtml(message.toString()))
+                                .setPositiveButton(replyType == TYPE_QUOTE ? "Multiquote" : "Keep", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if (replyType == TYPE_QUOTE) {
+                                            replyContent.setText(draft.replyMessage+"\n"+replyData.originalContent+"\n\n");
+                                        } else if (replyType == TYPE_REPLY) {
+                                            replyContent.setText(draft.replyMessage.trim()+"\n\n");
+                                        }
+                                        replyContent.setSelection(replyContent.length());
+                                    }
+                                })
+                                .setNegativeButton("Discard", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        discardDraft();
+                                    }
+                                })
+                                .show();
                     }
                 }
 
@@ -661,29 +717,37 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
                 @Override
                 public void queryResult(List<ReplyDataRequest.ReplyDataResponse> results) {
                     if(results.size() > 0 && getActivity() != null){
-                        ReplyDataRequest.ReplyDataResponse draft = results.get(0);
+                        final ReplyDataRequest.ReplyDataResponse draft = results.get(0);
+                        StringBuilder message = new StringBuilder("You have a saved edit:<br/><br/><i>");
+                        if(draft.replyMessage.length() > DRAFT_PREVIEW_LENGTH){
+                            message.append(draft.replyMessage.substring(0, DRAFT_PREVIEW_LENGTH).replaceAll("\\n","<br/>"));
+                            message.append("...");
+                        }else{
+                            message.append(draft.replyMessage.replaceAll("\\n","<br/>"));
+                        }
+                        message.append("</i>");
+                        if(!TextUtils.isEmpty(draft.savedTimestamp)){
+                            message.append("<br/><br/>Saved ");
+                            message.append(FastDateUtils.shortRecentDate(draft.savedTimestamp));
+                            message.append(" ago");
+                        }
                         new AlertDialog.Builder(getActivity())
-                                .setIcon(R.drawable.ic_menu_reply)
-                                .setTitle(getString(R.string.reply_draft_title_edit))
-//                                .setMessage("message")
-                                .setPositiveButton("Keep", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-//                                        if (mReplyType == AwfulMessage.TYPE_QUOTE) {
-//                                            originalReplyData = draftReplyData + "\n" + originalReplyData;
-//                                        } else if (mReplyType == AwfulMessage.TYPE_NEW_REPLY || mReplyType == AwfulMessage.TYPE_EDIT) {
-//                                            originalReplyData = draftReplyData + "\n\n";
-//                                        }
-//                                        mMessage.setText(originalReplyData);
-//                                        mMessage.setSelection(originalReplyData.length());
-                                    }
-                                })
-                                .setNegativeButton("Ignore", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                    }
-                                }).show();
+                            .setTitle(getString(R.string.reply_draft_title_edit))
+                            .setMessage(Html.fromHtml(message.toString()))
+                            .setPositiveButton("Keep", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    replyContent.setText(draft.replyMessage);
+                                    replyContent.setSelection(draft.replyMessage.length());
+                                }
+                            })
+                            .setNegativeButton("Discard", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    discardDraft();
+                                }
+                            })
+                            .show();
                     }
                 }
 
@@ -696,26 +760,60 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     }
 
     private void querySavedPM(){
-        new FastQueryTask<ReplyDataRequest.ReplyDataResponse>(SomeDatabase.getDatabase(),
-            new FastQueryTask.QueryResultCallback<ReplyDataRequest.ReplyDataResponse>() {
+        Log.e("ReplyFragment", "querySavedPM "+pmId);
+        new FastQueryTask<PMReplyDataRequest.PMReplyData>(SomeDatabase.getDatabase(),
+            new FastQueryTask.QueryResultCallback<PMReplyDataRequest.PMReplyData>() {
                 @Override
                 public int[] findColumns(Cursor data) {
-                    return FastQueryTask.findColumnIndicies(data, ReplyDataRequest.ReplyDataResponse.COLUMNS);
+                    return new int[0];
                 }
 
                 @Override
-                public void queryResult(List<ReplyDataRequest.ReplyDataResponse> results) {
-                    for(ReplyDataRequest.ReplyDataResponse draft : results){
-
+                public void queryResult(List<PMReplyDataRequest.PMReplyData> results) {
+                    if(results.size() > 0 && getActivity() != null){
+                        final PMReplyDataRequest.PMReplyData draft = results.get(0);
+                        StringBuilder message = new StringBuilder("You have a saved message:<br/><br/><i>");
+                        if(draft.replyMessage.length() > DRAFT_PREVIEW_LENGTH){
+                            message.append(draft.replyMessage.substring(0, DRAFT_PREVIEW_LENGTH).replaceAll("\\n","<br/>"));
+                            message.append("...");
+                        }else{
+                            message.append(draft.replyMessage.replaceAll("\\n","<br/>"));
+                        }
+                        message.append("</i>");
+                        if(!TextUtils.isEmpty(draft.savedTimestamp)){
+                            message.append("<br/><br/>Saved ");
+                            message.append(FastDateUtils.shortRecentDate(draft.savedTimestamp));
+                            message.append(" ago");
+                        }
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle(getString(R.string.reply_draft_title_pm))
+                                .setMessage(Html.fromHtml(message.toString()))
+                                .setPositiveButton("Keep", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        replyContent.setText(draft.replyMessage);
+                                        replyContent.setSelection(draft.replyMessage.length());
+                                        replyTitle.setText(draft.replyTitle);
+                                        replyUsername.setText(draft.replyUsername);
+                                    }
+                                })
+                                .setNegativeButton("Discard", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        discardDraft();
+                                    }
+                                })
+                                .show();
                     }
                 }
 
                 @Override
-                public ReplyDataRequest.ReplyDataResponse createItem(Cursor data, int[] columns) {
-                    return new ReplyDataRequest.ReplyDataResponse(data);
+                public PMReplyDataRequest.PMReplyData createItem(Cursor data, int[] columns) {
+                    Log.e("ReplyFragment", "createItem "+pmId);
+                    return new PMReplyDataRequest.PMReplyData(data);
                 }
             })
-            .query(SomeDatabase.TABLE_SAVED_DRAFT, "reply_saved_timestamp DESC", "reply_post_id=? AND reply_type=?", Long.toString(postId), Long.toString(replyType));
+            .query(SomeDatabase.TABLE_SAVED_DRAFT, "reply_saved_timestamp DESC", "reply_post_id=? AND reply_type=?", Long.toString(pmId), Long.toString(TYPE_PM));
     }
 
     @Override

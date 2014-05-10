@@ -7,9 +7,11 @@ import android.text.TextUtils;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.salvadordalvik.fastlibrary.util.FastDateUtils;
 
 import net.fastfourier.something.ReplyFragment;
 
+import org.joda.time.DateTime;
 import org.jsoup.nodes.Document;
 
 /**
@@ -41,7 +43,7 @@ public class PMReplyDataRequest extends HTMLRequest<PMReplyDataRequest.PMReplyDa
         public final int replyToPMId;
         public final String replyContent;
 
-        public String replyMessage, replyUsername, replyTitle;
+        public String replyMessage, replyUsername, replyTitle, savedTimestamp;
 
         public PMReplyData(int pmId, String replyContent, String username, String title) {
             this.replyToPMId = pmId;
@@ -58,17 +60,20 @@ public class PMReplyDataRequest extends HTMLRequest<PMReplyDataRequest.PMReplyDa
             this.replyMessage = data.getString(data.getColumnIndex("reply_user_content"));
             this.replyUsername = data.getString(data.getColumnIndex("reply_username"));
             this.replyToPMId = data.getInt(data.getColumnIndex("reply_post_id"));
+            this.savedTimestamp = data.getString(data.getColumnIndex("reply_saved_timestamp"));
         }
 
         public ContentValues toContentValues(){
             ContentValues cv = new ContentValues();
-            cv.put("reply_id", generateReplyUID(replyUsername.hashCode(), replyToPMId, ReplyFragment.TYPE_PM));
+            cv.put("reply_id", generateReplyUID(replyToPMId, replyToPMId, ReplyFragment.TYPE_PM));
+            cv.put("reply_thread_id", replyToPMId);
             cv.put("reply_post_id", replyToPMId);
             cv.put("reply_type", ReplyFragment.TYPE_PM);
             cv.put("reply_original_content", replyContent);
             cv.put("reply_user_content", replyMessage);
             cv.put("reply_username", replyUsername);
             cv.put("reply_title", replyTitle);
+            cv.put("reply_saved_timestamp", FastDateUtils.printSqliteTimestamp(DateTime.now()));
             return cv;
         }
 
