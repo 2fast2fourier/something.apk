@@ -59,6 +59,7 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
 
     private int threadId, postId, pmId, replyType;
     private String pmUsername;
+    private boolean sentReply = false;
 
     private ReplyDataRequest.ReplyDataResponse replyData = null;
     private PMReplyDataRequest.PMReplyData pmReplyData = null;
@@ -143,6 +144,9 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     }
 
     private boolean shouldSaveDraft() {
+        if(sentReply){
+            return false;
+        }
         Log.e("ReplyFragment", "shouldSaveDraft "+pmId);
         if(replyType == TYPE_PM){
             return pmReplyData != null && replyContent.length() > 0 && !replyContent.getText().toString().trim().equalsIgnoreCase(pmReplyData.replyContent.trim());
@@ -493,10 +497,11 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     private Response.Listener<PMSendRequest.PMSendResult> pmSendResult = new Response.Listener<PMSendRequest.PMSendResult>() {
         @Override
         public void onResponse(PMSendRequest.PMSendResult response) {
+            sentReply = true;
+            discardDraft();
             dismissDialog();
             Activity activity = getActivity();
             if(activity != null){
-                discardDraft();
                 activity.setResult(TYPE_PM);
                 activity.finish();
             }
@@ -506,10 +511,11 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     private Response.Listener<ReplyPostRequest.ReplyPostResult> postingResult = new Response.Listener<ReplyPostRequest.ReplyPostResult>() {
         @Override
         public void onResponse(ReplyPostRequest.ReplyPostResult response) {
+            sentReply = true;
+            discardDraft();
             dismissDialog();
             Activity activity = getActivity();
             if(activity != null){
-                discardDraft();
                 activity.setResult(response.jumpPostId, new Intent().putExtra("thread_id", response.jumpThreadId).putExtra("post_id", response.jumpPostId));
                 activity.finish();
             }
