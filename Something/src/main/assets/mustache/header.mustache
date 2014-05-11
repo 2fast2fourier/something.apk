@@ -11,7 +11,9 @@
     <script src='file:///android_asset/thread.js' type='text/javascript'></script>
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', onThreadLoaded);
-        window.jumpToPostId = {{ jumpToPostId }};
+        {{# jumpToPostId }}
+        window.jumpToPostId = '{{ jumpToPostId }}';
+        {{/ jumpToPostId }}
     </script>
 </head>
 <body style='font-size: {{ fontSize }};'>

@@ -86,7 +86,7 @@ function pageinit() {
 function jumpToJump(){
     if(window.jumpToPostId){
         window.scrollTo(0,$(window.jumpToPostId).offset().top);
-        window.jumpToPostId = 0;
+        window.jumpToPostId = null;
     }
 }
 
@@ -100,9 +100,9 @@ function showReadPosts(){
 
 function onThreadLoaded(){
     pageinit();
-    if(window.jumpToPostId > 0){
+    if(window.jumpToPostId){
         scrollPost(window.jumpToPostId);
-        window.jumpToPostId = 0;
+        window.jumpToPostId = null;
     }else{
         scrollLastRead();
     }
@@ -110,7 +110,7 @@ function onThreadLoaded(){
 
 function scrollPost(postId) {
     try{
-        window.topScrollItem = $("#post"+postId).first();
+        window.topScrollItem = $(postId).first();
         window.topScrollPos = window.topScrollItem.offset().top;
         window.scrollTo(0,window.topScrollPos);
         window.topScrollCount = 100;

@@ -62,6 +62,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         ArrayList<HashMap<String, String>> posts = new ArrayList<HashMap<String, String>>();
 
         int currentPage, maxPage = 1, threadId, forumId, unread;
+        String jumpToId = jumpToPost > 0 ? "#post"+jumpToPost : null;
 
         String ptiFragment = null;
         if(!TextUtils.isEmpty(redirectedUrl)){
@@ -69,6 +70,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
             ptiFragment = url.getFragment();
             if("lastpost".matches(ptiFragment)){
                 ptiFragment = null;
+                jumpToId = "#lastpost";
             }
         }
 
@@ -98,7 +100,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         int previouslyRead = posts.size()-unread;
 
         HashMap<String, String> headerArgs = new HashMap<String, String>();
-        headerArgs.put("jumpToPostId", Long.toString(jumpToPost));
+        headerArgs.put("jumpToPostId", jumpToId);
         headerArgs.put("fontSize", SomePreferences.fontSize);
         headerArgs.put("theme", getTheme(forumId));
         headerArgs.put("previouslyRead", previouslyRead > 0 && unread > 0 ? previouslyRead+" Previous Post"+(previouslyRead > 1 ? "s":"") : null);
@@ -108,7 +110,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
             MustCache.applyPostTemplate(builder, post);
         }
         if(currentPage == maxPage){
-            builder.append("<div class='unread'></div>");
+            builder.append("<div id='lastpost' class='unread'></div>");
         }
 
         MustCache.applyFooterTemplate(builder, null);
