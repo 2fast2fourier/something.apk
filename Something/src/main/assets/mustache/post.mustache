@@ -1,6 +1,6 @@
 <article class="{{# seen }}seen{{/ seen }} {{ previouslyRead }} {{# isMarked }}marked{{/isMarked }} {{# isOP }}op{{/isOP }} {{# isSelf }}self{{/isSelf }}"  id="post{{ postID }}">
 	<header class="postheader">
-     	<section  class="postinfo">
+     	<section  class="postinfo" {{# specialId }}id='{{specialId}}'{{/ specialId }}>
  			{{# avatarURL }}
      		<div class="avatar-cell">
      	    	<div class="avatar">

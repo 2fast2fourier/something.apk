@@ -93,7 +93,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         Elements threadbars = document.getElementsByClass("threadbar");
         boolean canReply = !Constants.isArchiveForum(forumId) && threadbars.first().getElementsByAttributeValueContaining("src", "images/forum-closed.gif").size() == 0;
 
-        unread = parsePosts(document, posts, showImages, showAvatars, hidePreviouslyReadImages, ptiFragment, canReply);
+        unread = parsePosts(document, posts, showImages, showAvatars, hidePreviouslyReadImages, ptiFragment, canReply, currentPage == maxPage);
 
         StringBuilder builder = new StringBuilder(2048);
 
@@ -108,9 +108,6 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
         for(HashMap<String, String> post : posts){
             MustCache.applyPostTemplate(builder, post);
-        }
-        if(currentPage == maxPage){
-            builder.append("<div id='lastpost' class='unread'></div>");
         }
 
         MustCache.applyFooterTemplate(builder, null);
@@ -159,7 +156,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
     private static Pattern userJumpPattern = Pattern.compile("userid=(\\d+)");
 
-    private static int parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray, boolean showImages, boolean showAvatars, boolean hideSeenImages, String unreadPti, boolean canReply){
+    private static int parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray, boolean showImages, boolean showAvatars, boolean hideSeenImages, String unreadPti, boolean canReply, boolean lastPage){
         int unread = 0;
         boolean previouslyRead = unreadPti != null;
         Elements posts = doc.getElementsByClass("post");
@@ -252,6 +249,10 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
                 postArray.add(postData);
             }
+        }
+
+        if(lastPage && postArray.size() > 0){
+            postArray.get(postArray.size()-1).put("specialId", "lastpost");
         }
         return unread;
     }
