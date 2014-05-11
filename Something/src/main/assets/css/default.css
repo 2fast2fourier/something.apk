@@ -63,11 +63,11 @@ margin:10px 0px;
 padding:12px;
 }
 
-article.read {
+article.seen {
 background-color:#EEF8FF;
 }
 
-article.read div.postcontent {
+article.seen div.postcontent {
 color:#AAAAAA;
 }
 

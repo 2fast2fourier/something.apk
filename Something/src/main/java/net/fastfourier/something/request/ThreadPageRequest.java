@@ -190,11 +190,11 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 if(previouslyRead){
                     previouslyRead = post.getElementById(unreadPti) == null;
                 }
-
-                boolean seen = previouslyRead || post.getElementsByClass("seen1").size() > 0 || post.getElementsByClass("seen2").size() > 0;
-                if(!seen){
+                if(!previouslyRead){
                     unread++;
                 }
+
+                boolean seen = post.getElementsByClass("seen1").size() > 0 || post.getElementsByClass("seen2").size() > 0;
 
                 Element postBody = post.getElementsByClass("postbody").first();
                 if(!showImages){
@@ -227,7 +227,8 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 postData.put("postcontent", postContent);
                 postData.put("postDate", postDate);
                 postData.put("userID", userId);
-                postData.put("seen", seen ? "read" : "unread");
+                postData.put("previouslyRead", previouslyRead ? "read" : "unread");
+                postData.put("seen", seen ? "seen" : null);
                 postData.put("postIndex",  postIndex);
 
 //                postData.put("regDate", post.getRegDate());

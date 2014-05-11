@@ -63,11 +63,11 @@ padding:12px;
 position: relative;
 }
 
-article.read {
+article.seen {
 background-color:#FCC;
 }
 
-article.read div.postcontent {
+article.seen div.postcontent {
 color:#AAAAAA;
 }
 

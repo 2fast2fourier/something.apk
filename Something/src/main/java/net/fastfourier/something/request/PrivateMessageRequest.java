@@ -69,6 +69,7 @@ public class PrivateMessageRequest extends HTMLRequest<PrivateMessageRequest.PMD
             headerArgs.put("jumpToPostId", "0");
             headerArgs.put("fontSize", SomePreferences.fontSize);
             headerArgs.put("previouslyRead", null);
+            postData.put("seen", null);
             MustCache.applyHeaderTemplate(html, headerArgs);
 
             MustCache.applyPMTemplate(html, postData);
