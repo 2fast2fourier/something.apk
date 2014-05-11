@@ -84,8 +84,8 @@ function pageinit() {
 };
 
 function jumpToJump(){
-    if(window.jumpToPostId > 0){
-        window.scrollTo(0,$(jumpTo).offset().top);
+    if(window.jumpToPostId){
+        window.scrollTo(0,$(window.jumpToPostId).offset().top);
         window.jumpToPostId = 0;
     }
 }
