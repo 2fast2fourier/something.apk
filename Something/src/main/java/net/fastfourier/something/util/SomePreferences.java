@@ -75,8 +75,8 @@ public class SomePreferences {
     public static final String POST_PER_PAGE_INT = "post_per_page";
     public static int threadPostPerPage;
 
-    public static final String FONT_SIZE_INT = "font_size_scaled";
-    public static int fontSize;
+    public static final String FONT_SIZE_STRING = "font_size_scaled_em";
+    public static String fontSize;
 
     private synchronized static void updatePreferences(SharedPreferences newPrefs){
         //Update cached preferences here:
@@ -93,7 +93,7 @@ public class SomePreferences {
 
         threadPostPerPage = newPrefs.getInt(POST_PER_PAGE_INT, 40);
 
-        fontSize = newPrefs.getInt(FONT_SIZE_INT, 12);
+        fontSize = newPrefs.getString(FONT_SIZE_STRING, "1em");
 
         lastForumUpdate = newPrefs.getLong(LAST_FORUM_UPDATE_LONG, 0);
 

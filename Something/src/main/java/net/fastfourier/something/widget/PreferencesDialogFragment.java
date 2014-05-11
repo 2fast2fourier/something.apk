@@ -37,7 +37,8 @@ public class PreferencesDialogFragment extends FastDialogFragment implements Vie
     private GridLayout primaryThemes;
     private TextView themeTitle;
     private boolean restartRequired = false;
-    private int[] perPageValues, fontSizeValues;
+    private int[] perPageValues;
+    private String[] fontSizeValues;
 
     public PreferencesDialogFragment() {
         super(R.layout.preference_dialog, R.string.preference_dialog_title);
@@ -161,10 +162,10 @@ public class PreferencesDialogFragment extends FastDialogFragment implements Vie
         ArrayAdapter fontAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.font_size_items, android.R.layout.simple_spinner_item);
         fontAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         fontSpinner.setAdapter(fontAdapter);
-        fontSizeValues = getResources().getIntArray(R.array.font_size_values);
+        fontSizeValues = getResources().getStringArray(R.array.font_size_values);
         int currentFont = 3;
         for(int ix=0;ix<fontSizeValues.length;ix++){
-            if(SomePreferences.fontSize == fontSizeValues[ix]){
+            if(fontSizeValues[ix].equals(SomePreferences.fontSize)){
                 currentFont = ix;
             }
         }
@@ -172,12 +173,12 @@ public class PreferencesDialogFragment extends FastDialogFragment implements Vie
         fontSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                SomePreferences.setInt(SomePreferences.FONT_SIZE_INT, fontSizeValues[position]);
+                SomePreferences.setString(SomePreferences.FONT_SIZE_STRING, fontSizeValues[position]);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                SomePreferences.setInt(SomePreferences.FONT_SIZE_INT, 16);
+                SomePreferences.setString(SomePreferences.FONT_SIZE_STRING, "1em");
             }
         });
     }
