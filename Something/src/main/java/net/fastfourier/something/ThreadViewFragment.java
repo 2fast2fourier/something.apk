@@ -393,11 +393,10 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
             rawThreadTitle = response.threadTitle;
             bookmarked = response.bookmarked;
             canReply = response.canReply;
-            Activity act = getActivity();
-            if (act instanceof MainActivity) {
-                MainActivity main = (MainActivity) act;
-                main.onThreadPageLoaded(response.threadId);
-            }
+
+            //post update to threadlist/activity
+            SomeApplication.bus.post(response);
+
             setTitle(threadTitle);
             updateNavbar();
             invalidateOptionsMenu();

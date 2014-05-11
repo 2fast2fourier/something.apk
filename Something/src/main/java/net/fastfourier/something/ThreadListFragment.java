@@ -21,6 +21,8 @@ import com.salvadordalvik.fastlibrary.alert.FastAlert;
 import com.salvadordalvik.fastlibrary.data.FastQueryTask;
 import com.salvadordalvik.fastlibrary.list.FastItem;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
+import com.squareup.otto.Subscribe;
+
 import net.fastfourier.something.data.SomeDatabase;
 import net.fastfourier.something.list.ForumHeaderItem;
 import net.fastfourier.something.list.ForumItem;
@@ -29,6 +31,7 @@ import net.fastfourier.something.list.ThreadItem;
 import net.fastfourier.something.request.BookmarkRequest;
 import net.fastfourier.something.request.MarkUnreadRequest;
 import net.fastfourier.something.request.ThreadListRequest;
+import net.fastfourier.something.request.ThreadPageRequest;
 import net.fastfourier.something.util.Constants;
 import net.fastfourier.something.util.SomePreferences;
 import net.fastfourier.something.widget.PageSelectDialogFragment;
@@ -125,6 +128,7 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
             updateForumTitle();
         }
         updateStarredForums();
+        SomeApplication.bus.register(this);
     }
 
     public void onPaneObscured() {
@@ -134,6 +138,12 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
         if(isResumed()){
             startRefreshIfStale();
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        SomeApplication.bus.unregister(this);
     }
 
     @Override
@@ -362,7 +372,8 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
         return forumTitle;
     }
 
-    public void onThreadPageLoaded(int threadId) {
+    @Subscribe
+    public void threadPageLoaded(ThreadPageRequest.ThreadPage page) {
         adapter.notifyDataSetChanged();
     }
 

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.webkit.CookieSyncManager;
 
 import com.salvadordalvik.fastlibrary.request.FastVolley;
+import com.squareup.otto.Bus;
 
 import net.fastfourier.something.data.SomeDatabase;
 import net.fastfourier.something.util.MustCache;
@@ -15,6 +16,7 @@ import net.fastfourier.something.util.SomeTheme;
  * Created by matthewshepard on 1/17/14.
  */
 public class SomeApplication extends Application {
+    public static final Bus bus = new Bus();
 
     @Override
     public void onCreate() {

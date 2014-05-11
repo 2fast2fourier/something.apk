@@ -17,7 +17,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.bugsense.trace.BugSenseHandler;
+import com.squareup.otto.Subscribe;
 
+import net.fastfourier.something.request.ThreadPageRequest;
 import net.fastfourier.something.util.SomePreferences;
 import net.fastfourier.something.util.SomeTheme;
 import net.fastfourier.something.widget.LockableSlidingPaneLayout;
@@ -91,11 +93,13 @@ public class MainActivity extends SomeActivity implements SlidingPaneLayout.Pane
         super.onResume();
         lockDrawer(!threadView.isThreadLoaded());
         updateActionbar();
+        SomeApplication.bus.register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        SomeApplication.bus.unregister(this);
     }
 
     @Override
@@ -207,11 +211,10 @@ public class MainActivity extends SomeActivity implements SlidingPaneLayout.Pane
         }
     }
 
-    public void onThreadPageLoaded(int threadId) {
+
+    @Subscribe
+    public void threadPageLoaded(ThreadPageRequest.ThreadPage page) {
         lockDrawer(false);
-        if(threadList != null){
-            threadList.onThreadPageLoaded(threadId);
-        }
     }
 
     public void setTitle(CharSequence title, Fragment requestor){
