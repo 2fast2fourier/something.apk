@@ -566,7 +566,9 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         if(page < maxPage){
             goToPage(page+1);
         }else{
-            startRefresh(false, true);
+            setRefreshAnimation(true);
+            //request unread page, if no new unread messages appear it will only return "lastpost", otherwise will return PTI for new unread post
+            queueRequest(new ThreadPageRequest(getActivity(), threadId, 0, pageListener, errorListener), THREAD_REQUEST_TAG);
         }
     }
 

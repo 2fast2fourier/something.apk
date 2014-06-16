@@ -34,6 +34,9 @@ public abstract class HTMLRequest<T> extends FastRequest<T> {
             throw new SessionError("Not Logged In");
         }
         Document document = parseDocument(response);
+        if(document.body().hasClass("database_error")){
+            throw new SomeError("SA Database Unavailable, try again later.");
+        }
         if(document.getElementsByClass("notregistered").size() > 0){
             //Not logged in.
             SomePreferences.clearAuthentication();
