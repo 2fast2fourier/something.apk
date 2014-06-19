@@ -614,8 +614,13 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         }
 
         @JavascriptInterface
-        public void onMoreClick(String postId, String username, String userid){
-            showMoreDialog(postId, username, userid);
+        public void onMoreClick(final String postId, final String username, final String userid){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showMoreDialog(postId, username, userid);
+                }
+            });
         }
 
         @JavascriptInterface
