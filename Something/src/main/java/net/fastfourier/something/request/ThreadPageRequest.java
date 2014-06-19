@@ -14,6 +14,7 @@ import net.fastfourier.something.util.Constants;
 import net.fastfourier.something.util.MustCache;
 import net.fastfourier.something.util.SomePreferences;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -168,7 +169,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 Element auth = post.getElementsByClass("author").first();
                 String author = auth.text();
                 Element title = post.getElementsByClass("title").first();
-                String avTitle = title.text();
+                String avTitle = StringEscapeUtils.escapeHtml4(title.text());
                 String avatarUrl = title.getElementsByTag("img").attr("src");
                 String postDate = post.getElementsByClass("postdate").text().replaceAll("[#?]", "").trim();
                 String postIndex = post.attr("data-idx");

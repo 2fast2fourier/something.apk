@@ -826,7 +826,11 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
 
         @Override
         public void onReleaseToRefresh(boolean mCurrentPullIsUp) {
-            pfbTitle.setText(R.string.pull_bottom_release_nexpage);
+            if(page == maxPage){
+                pfbTitle.setText(R.string.pull_bottom_release_refresh);
+            }else{
+                pfbTitle.setText(R.string.pull_bottom_release_nexpage);
+            }
             pfbProgressbar.setProgress(pfbProgressbar.getMax());
         }
 

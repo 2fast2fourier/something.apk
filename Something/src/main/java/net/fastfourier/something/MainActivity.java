@@ -45,7 +45,8 @@ public class MainActivity extends SomeActivity implements SlidingPaneLayout.Pane
         drawerLayout = (LockableSlidingPaneLayout) findViewById(R.id.main_drawer);
         drawerLayout.setPanelSlideListener(this);
         drawerLayout.setFocusableInTouchMode(false);
-        drawerLayout.setSliderFadeColor(Color.argb(96,0,0,0));
+        drawerLayout.setSliderFadeColor(0);
+//        drawerLayout.setSliderFadeColor(Color.argb(96,0,0,0));
         if(savedInstanceState != null && savedInstanceState.containsKey("menu_open") && !savedInstanceState.getBoolean("menu_open")){
             closeMenu();
         }else{
