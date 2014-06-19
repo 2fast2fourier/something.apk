@@ -86,14 +86,14 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
         String threadTitle = document.getElementsByClass("bclast").first().text();
 
-        Element body = document.getElementsByTag("body").first();
+        Element body = document.body();
         forumId = Integer.parseInt(body.attr("data-forum"));
         threadId = Integer.parseInt(body.attr("data-thread"));
 
         Elements threadbars = document.getElementsByClass("threadbar");
         boolean canReply = !Constants.isArchiveForum(forumId) && threadbars.first().getElementsByAttributeValueContaining("src", "images/forum-closed.gif").size() == 0;
 
-        unread = parsePosts(document, posts, showImages, showAvatars, hidePreviouslyReadImages, ptiFragment, canReply, currentPage == maxPage);
+        unread = parsePosts(document, posts, showImages, showAvatars, hidePreviouslyReadImages, ptiFragment, canReply, currentPage == maxPage, forumId);
 
         StringBuilder builder = new StringBuilder(2048);
 
@@ -156,7 +156,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
     private static Pattern userJumpPattern = Pattern.compile("userid=(\\d+)");
 
-    private static int parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray, boolean showImages, boolean showAvatars, boolean hideSeenImages, String unreadPti, boolean canReply, boolean lastPage){
+    private static int parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray, boolean showImages, boolean showAvatars, boolean hideSeenImages, String unreadPti, boolean canReply, boolean lastPage, int forumId){
         int unread = 0;
         boolean previouslyRead = unreadPti != null;
         Elements posts = doc.getElementsByClass("post");
@@ -195,7 +195,14 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
                 boolean seen = post.getElementsByClass("seen1").size() > 0 || post.getElementsByClass("seen2").size() > 0;
 
-                Element postBody = post.getElementsByClass("postbody").first();
+                Element postBody;
+                //fyad has a slightly different post html layout than the rest of the forums.
+                //the postbody contains the userinfo block, so we use the inner 'complete_shit' instead.
+                if(forumId == Constants.FYAD_FORUMID){
+                    postBody = post.getElementsByClass("complete_shit").first();
+                }else{
+                    postBody = post.getElementsByClass("postbody").first();
+                }
                 if(!showImages){
                     for(Element imageNode : postBody.getElementsByTag("img")){
                         String src = imageNode.attr("src"), imgTitle = imageNode.attr("title");
