@@ -1,6 +1,7 @@
 package net.fastfourier.something.util;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteClosable;
 
 import com.bugsense.trace.BugSenseHandler;
 import com.google.common.base.Charsets;
@@ -16,7 +17,7 @@ import java.util.Map;
  * Created by matthewshepard on 1/29/14.
  */
 public class MustCache {
-    private static Template postTemplate, footerTemplate, headerTemplate, pmTemplate;
+    private static Template postTemplate, footerTemplate, headerTemplate, pmTemplate, previewTemplate;
 
 
     public static void init(final Context context){
@@ -30,6 +31,11 @@ public class MustCache {
 
     public synchronized static void applyPostTemplate(StringBuilder builder, Map<String, String> post){
         builder.append(postTemplate.execute(post));
+    }
+
+    public synchronized static void applyPreviewTemplate(StringBuilder builder, Map<String, String> post)
+    {
+        builder.append(previewTemplate.execute(post));
     }
 
     public synchronized static void applyFooterTemplate(StringBuilder builder, Map<String, String> args){
@@ -52,12 +58,16 @@ public class MustCache {
             InputStreamReader pmMustReader = new InputStreamReader(context.getResources().getAssets().open("mustache/pm.mustache"), Charsets.UTF_8);
             pmTemplate = Mustache.compiler().compile(pmMustReader);
 
+            InputStreamReader previewMustReader = new InputStreamReader(context.getResources().getAssets().open("mustache/preview.mustache"), Charsets.UTF_8);
+            previewTemplate = Mustache.compiler().compile(previewMustReader);
+
             InputStreamReader headerInput = new InputStreamReader(context.getResources().getAssets().open("mustache/header.mustache"), Charsets.UTF_8);
             headerTemplate = Mustache.compiler().compile(headerInput);
 
             InputStreamReader footerInput = new InputStreamReader(context.getResources().getAssets().open("mustache/footer.mustache"), Charsets.UTF_8);
             footerTemplate = Mustache.compiler().compile(footerInput);
 
+            Closeables.close(previewMustReader, true);
             Closeables.close(pmMustReader, true);
             Closeables.close(headerInput, true);
             Closeables.close(footerInput, true);
