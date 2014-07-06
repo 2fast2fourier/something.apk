@@ -69,8 +69,11 @@ public class MainActivity extends SomeActivity implements SlidingPaneLayout.Pane
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if(intent.hasExtra("thread_id")){
-            showThread(intent.getIntExtra("thread_id", 0), intent.getIntExtra("thread_page", 1), intent.getBooleanExtra("from_url", false));
+        if(intent.hasExtra("user_id")) {
+            showThread(intent.getIntExtra("thread_id", 0), intent.getIntExtra("thread_page",1), intent.getLongExtra("user_id",0), false);
+        }
+        else if(intent.hasExtra("thread_id")){
+            showThread((int) intent.getIntExtra("thread_id", 0), (int) intent.getIntExtra("thread_page", 1), (boolean) intent.getBooleanExtra("from_url", false));
         }else if(intent.hasExtra("post_id")){
             showPost(intent.getLongExtra("post_id", 0), intent.getBooleanExtra("from_url", false));
         }else if(intent.hasExtra("forum_id")){
@@ -144,13 +147,17 @@ public class MainActivity extends SomeActivity implements SlidingPaneLayout.Pane
     }
 
     public void showThread(int id, boolean fromUrl) {
-        showThread(id, 0, fromUrl);
+        showThread((int) id, (int) 0, (boolean) fromUrl);
     }
 
     public void showThread(int id, int page, boolean fromUrl) {
+        showThread(id, page, 0, fromUrl);
+    }
+
+    public void showThread(int id, int page, long userId, boolean fromUrl) {
         lockDrawer(false);
         closeMenu();
-        threadView.loadThread(id, page, fromUrl);
+        threadView.loadThread((int) id, (int) page, (long)userId,(boolean) fromUrl);
         if(threadList != null && threadList.isAdded()){
             threadList.highlightThread(id);
         }

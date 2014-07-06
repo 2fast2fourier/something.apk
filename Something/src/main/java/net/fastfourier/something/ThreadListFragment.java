@@ -204,10 +204,10 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
                         switch (which) {
                             //See R.array.thread_context_actions_normal for item list
                             case 0://First Page
-                                ((MainActivity) getActivity()).showThread(threadId, 1, false);
+                                ((MainActivity) getActivity()).showThread((int) threadId, (int) 1, (boolean) false);
                                 break;
                             case 1://Last Page
-                                ((MainActivity) getActivity()).showThread(threadId, -1, false);
+                                ((MainActivity) getActivity()).showThread((int) threadId, (int) -1, (boolean) false);
                                 break;
                             case 2://Bookmark/Unbookmark
                                 queueRequest(new BookmarkRequest(threadId, !bookmarked, null, null));

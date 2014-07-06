@@ -82,6 +82,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
 
     private int threadId = 0;
     private long postId = 0;
+    private long userId = 0;
     private int page;
     private int maxPage;
     private int forumId;
@@ -275,6 +276,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         outState.putLong("post_id", postId);
         outState.putInt("thread_forum_id", forumId);
         outState.putBoolean("thread_bookmarked", bookmarked);
+        outState.putLong("user_id", userId);
         return outState;
     }
 
@@ -285,6 +287,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         maxPage = inState.getInt("thread_maxpage", 1);
         postId = inState.getLong("post_id", 0);
         forumId = inState.getInt("thread_forum_id", 0);
+        userId = inState.getLong("user_id", 0);
         bookmarked = inState.getBoolean("thread_bookmarked");
         rawThreadTitle = inState.getString("thread_title");
         if(!TextUtils.isEmpty(rawThreadTitle)){
@@ -351,6 +354,9 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         disableNavLoading = true;
         updateNavbar();
         FastVolley.cancelRequestByTag(THREAD_REQUEST_TAG);
+        if(userId > 0 && threadId > 0) {
+           queueRequest(new ThreadPageRequest(getActivity(),threadId,userId,page,pageListener,errorListener));
+        }
         if(threadId > 0){
             queueRequest(new ThreadPageRequest(getActivity(), threadId, page, pageListener, errorListener), THREAD_REQUEST_TAG);
         }else if(postId > 0){
@@ -407,6 +413,10 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     };
 
     public void loadThread(int threadId, int page, boolean fromUrl){
+        loadThread(threadId, page, 0, fromUrl);
+    }
+
+    public void loadThread(int threadId, int page, long userId, boolean fromUrl) {
         if(fromUrl && isThreadLoaded()){
             threadBackstack.push(saveThreadState(new Bundle()));
         }else{
@@ -415,6 +425,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         this.ignorePageProgress = true;
         this.threadId = threadId;
         this.page = page;
+        this.userId = userId;
         this.maxPage = 0;
         this.forumId = 0;
         this.bookmarked = false;
@@ -438,6 +449,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         this.page = 0;
         this.maxPage = 0;
         this.forumId = 0;
+        this.userId = 0;
         this.bookmarked = false;
         this.threadTitle = new SpannedString(getString(R.string.thread_view_loading));
         setTitle(threadTitle);
@@ -570,7 +582,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
             if(resultCode > 0){
                 loadPost(resultCode, false);
             }else if(data != null && data.getIntExtra("thread_id", 0) > 0){
-                loadThread(data.getIntExtra("thread_id", 0), 0, false);
+                loadThread((int) data.getIntExtra("thread_id", 0), (int) 0, (boolean) false);
             }
         }else if(requestCode == REQUEST_NEW_PM && resultCode > 0){
             FastAlert.notice(this, R.string.reply_sent_pm);
@@ -659,8 +671,11 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
                                 );
                                 break;
                             case 1://Filter posts
-                                //TODO not implemented yet
-                                FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
+                                startActivity(new Intent(getActivity(), MainActivity.class)
+                                        .putExtra("thread_id", threadId)
+                                        .putExtra("user_id", Long.valueOf(userid)));
+                                //String filterUrl = "http://forums.somethingawful.com/showthread.php?threadid="+threadId+"&userid=" + userid;
+                                //FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
                                 break;
                             case 2://Share link
                                 String url = "http://forums.somethingawful.com/showthread.php?goto=post&postid=" + postId + "#post" + postId;

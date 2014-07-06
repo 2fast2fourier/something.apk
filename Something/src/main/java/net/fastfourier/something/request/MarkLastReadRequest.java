@@ -24,6 +24,6 @@ public class MarkLastReadRequest extends HTMLRequest<ThreadPageRequest.ThreadPag
 
     @Override
     public ThreadPageRequest.ThreadPage parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
-        return ThreadPageRequest.processThreadPage(document, SomePreferences.shouldShowImages(context), SomePreferences.shouldShowAvatars(context), SomePreferences.hidePreviouslyReadPosts, 0);
+        return ThreadPageRequest.processThreadPage(document, SomePreferences.shouldShowImages(context), SomePreferences.shouldShowAvatars(context), SomePreferences.hidePreviouslyReadPosts, 0, 0);
     }
 }

@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
  */
 public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage> {
     private long jumpToPost = 0;
+    private long userId = 0;
     private Context context;
 
     public ThreadPageRequest(Context context, int threadId, int page, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
@@ -51,12 +52,23 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         this.context = context;
     }
 
-    @Override
-    public ThreadPage parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
-        return processThreadPage(document, SomePreferences.shouldShowImages(context), SomePreferences.shouldShowAvatars(context), SomePreferences.hidePreviouslyReadPosts, jumpToPost);
+    public ThreadPageRequest(Context context, int threadId, long userId, int page, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
+        super("http://forums.somethingawful.com/showthread.php", Request.Method.GET, success, error);
+        addParam("threadid",threadId);
+        if(page > 0) {
+            addParam("pagenumber", page);
+        }
+        addParam("userid", userId);
+        this.userId = userId;
+        this.context = context;
     }
 
-    public static ThreadPage processThreadPage(Document document, boolean showImages, boolean showAvatars, boolean hidePreviouslyReadImages, long jumpToPost){
+    @Override
+    public ThreadPage parseHtmlResponse(NetworkResponse response, Document document) throws Exception {
+        return processThreadPage(document, SomePreferences.shouldShowImages(context), SomePreferences.shouldShowAvatars(context), SomePreferences.hidePreviouslyReadPosts, jumpToPost, userId);
+    }
+
+    public static ThreadPage processThreadPage(Document document, boolean showImages, boolean showAvatars, boolean hidePreviouslyReadImages, long jumpToPost, long userId){
         ArrayList<HashMap<String, String>> posts = new ArrayList<HashMap<String, String>>();
 
         int currentPage, maxPage = 1, threadId, forumId, unread;
@@ -98,13 +110,13 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         }
 
         MustCache.applyFooterTemplate(builder, null);
-
-        ThreadItem cachedThread = ThreadManager.getThread(threadId);
-        if(cachedThread != null){
-            cachedThread.updateUnreadCount(currentPage, maxPage, SomePreferences.threadPostPerPage);
+        if(userId != 0) {
+            ThreadItem cachedThread = ThreadManager.getThread(threadId);
+            if (cachedThread != null) {
+                cachedThread.updateUnreadCount(currentPage, maxPage, SomePreferences.threadPostPerPage);
+            }
         }
-
-        return new ThreadPage(builder.toString(), currentPage, maxPage, threadId, forumId, threadTitle, -unread, bookmarked);
+        return new ThreadPage(builder.toString(), currentPage, maxPage, threadId, forumId, userId, threadTitle, -unread, bookmarked);
 
     }
 
@@ -127,8 +139,9 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         public final int pageNum, maxPageNum, threadId, forumId, unreadDiff;
         public final String threadTitle, pageHtml;
         public final boolean bookmarked;
+        public final long userID;
 
-        private ThreadPage(String pageHtml, int pageNum, int maxPageNum, int threadId, int forumId, String threadTitle, int unreadDiff, boolean bookmarked){
+        private ThreadPage(String pageHtml, int pageNum, int maxPageNum, int threadId, int forumId, long userID, String threadTitle, int unreadDiff, boolean bookmarked) {
             this.pageHtml = pageHtml;
             this.pageNum = pageNum;
             this.maxPageNum = maxPageNum;
@@ -137,10 +150,12 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
             this.threadTitle = threadTitle;
             this.unreadDiff = unreadDiff;
             this.bookmarked = bookmarked;
+            this.userID = userID;
         }
     }
 
     private static Pattern userJumpPattern = Pattern.compile("userid=(\\d+)");
+    private static Pattern userJumpPattern2 = Pattern.compile("userid-(\\d+)");
 
     private static int parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray, boolean showImages, boolean showAvatars, boolean hideSeenImages){
         int unread = 0;
@@ -159,8 +174,8 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
                 boolean editable = post.getElementsByAttributeValueContaining("href","editpost.php?action=editpost").size() > 0;
 
-                Element userInfo = post.getElementsByClass("user_jump").first();
-                Matcher userIdMatcher = userJumpPattern.matcher(userInfo.attr("href"));
+                Element userInfo = post.getElementsByClass("userinfo").first();
+                Matcher userIdMatcher = userJumpPattern2.matcher(userInfo.attr("class"));
                 String userId = null;
                 if(userIdMatcher.find()){
                     userId = userIdMatcher.group(1);

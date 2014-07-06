@@ -14,24 +14,24 @@
 		</section >
 		<nav class="postmenu"></nav>
     </header>
-		<ul  class="postoptions">
-			<li class="more" username="{{ username }}" userid="{{ userID }}">
-				more
-			</li>
-			<li class="lastread" lastreadid="{{ postIndex }}">
-				last read
-			</li>
-			{{# notOnProbation }}
-				{{# editable }}
-					<li class="edit">
-						edit
-					</li>
-	        	{{/editable }}
-				<li class="quote">
-					quote
-				</li>
-			{{/notOnProbation }}
-		</ul >
+        <ul  class="postoptions">
+            <li class="more" username="{{ username }}" userid="{{ userID }}">
+                more
+            </li>
+            <li class="lastread" lastreadid="{{ postIndex }}">
+                last read
+            </li>
+            {{# notOnProbation }}
+                {{# editable }}
+                    <li class="edit">
+                        edit
+                    </li>
+                {{/editable }}
+                <li class="quote">
+                    quote
+                </li>
+            {{/notOnProbation }}
+        </ul >
 	<section  class="postcontent">
 		{{{ postcontent }}}
 	</section >
