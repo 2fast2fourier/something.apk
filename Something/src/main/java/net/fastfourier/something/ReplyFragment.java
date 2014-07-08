@@ -2,6 +2,7 @@ package net.fastfourier.something;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -17,9 +18,11 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ActionMode;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.EditText;
 
 import com.android.volley.Response;
@@ -30,6 +33,7 @@ import com.salvadordalvik.fastlibrary.util.FastDateUtils;
 import net.fastfourier.something.data.SomeDatabase;
 import net.fastfourier.something.request.PMReplyDataRequest;
 import net.fastfourier.something.request.PMSendRequest;
+import net.fastfourier.something.request.PreviewRequest;
 import net.fastfourier.something.request.ReplyDataRequest;
 import net.fastfourier.something.request.ReplyPostRequest;
 import net.fastfourier.something.request.SomeError;
@@ -196,6 +200,10 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case R.id.menu_preview:
+                // TODO: Add preview method
+                postPreview();
+                return true;
             case R.id.menu_post_reply:
                 confirmReply();
                 return true;
@@ -447,6 +455,21 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
         }
     }
 
+    // Technically it's "getPreview", but we have to do an HTML post to get a preview...
+    private void postPreview()
+    {
+        dismissDialog();
+        dialog = ProgressDialog.show(getActivity(), getString(R.string.preview_loading), getString(R.string.please_wait), true, false, this);
+        if(prepareReplyData())
+        {
+            queueRequest(new PreviewRequest(replyData, previewResult, postingErrorListener));
+        }
+        else{
+            //this shouldn't happen, throw and log via bugsense
+            throw new IllegalArgumentException("MISSING REPLY DATA");
+        }
+    }
+
     private void postReply(){
         switch (replyType){
             case TYPE_REPLY:
@@ -505,6 +528,19 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
                 activity.setResult(TYPE_PM);
                 activity.finish();
             }
+        }
+    };
+
+    private Response.Listener<PreviewRequest.PreviewData> previewResult = new Response.Listener<PreviewRequest.PreviewData>() {
+
+        @Override
+        public void onResponse(PreviewRequest.PreviewData response) {
+            dismissDialog();
+            startActivityForResult(
+                    new Intent(getActivity(), PreviewActivity.class)
+                            .putExtra("threadHtml", response.htmlData),
+                    0
+            );
         }
     };
 

@@ -66,6 +66,7 @@
     <string name="post_loading_failed_message">Failed to load reply page.</string>
     <string name="retry">Retry</string>
     <string name="cancel">Cancel</string>
+    <string name="preview_loading">Loading Preview</string>
     <string name="post_loading">Loading Reply</string>
     <string name="please_wait">Please wait…</string>
     <string name="posting_title">Posting…</string>

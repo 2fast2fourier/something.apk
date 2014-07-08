@@ -26,7 +26,7 @@ public class ReplyPreviewFragment extends FastFragment {
 
     @Override
     public void viewCreated(View frag, Bundle savedInstanceState) {
-        replyView = (WebView) frag.findViewById(R.id.reply_webview);
+        replyView = (WebView) frag.findViewById(R.id.preview_webview);
         initWebview();
     }
 

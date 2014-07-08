@@ -28,6 +28,8 @@
             android:configChanges="orientation|screenSize|keyboardHidden"/>
         <activity android:name=".ReplyActivity" android:label="@string/reply_activity"
             android:configChanges="orientation|screenSize|keyboardHidden"/>
+        <activity android:name=".PreviewActivity" android:label="@string/reply_preview"
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
     </application>
 
 </manifest>
