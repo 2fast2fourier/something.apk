@@ -8,6 +8,7 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
+
 import net.fastfourier.something.data.ThreadManager;
 import net.fastfourier.something.list.ThreadItem;
 import net.fastfourier.something.util.Constants;
@@ -33,15 +34,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
     public ThreadPageRequest(Context context, int threadId, int page, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
         super("http://forums.somethingawful.com/showthread.php", Request.Method.GET, success, error);
-        addParam("threadid", threadId);
-        if(page > 0){
-            addParam("pagenumber", page);
-        }else if(page < 0){
-            addParam("goto", "lastpost");
-        }else{
-            addParam("goto", "newpost");
-        }
-        addParam("perpage", SomePreferences.threadPostPerPage);
+        initializeParams(threadId,page,0);
         this.context = context;
     }
 
@@ -52,6 +45,27 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         addParam("perpage", SomePreferences.threadPostPerPage);
         this.jumpToPost = postId;
         this.context = context;
+    }
+
+    public ThreadPageRequest(Context context, int threadId, int page, int userid, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
+        super("http://forums.somethingawful.com/showthread.php", Request.Method.GET, success, error);
+        initializeParams(threadId, page, userid);
+        this.context = context;
+    }
+
+    private void initializeParams(int threadId, int page, int userid) {
+        addParam("threadid", threadId);
+        if(page > 0){
+            addParam("pagenumber", page);
+        }else if(page < 0){
+            addParam("goto", "lastpost");
+        }else{
+            addParam("goto", "newpost");
+        }
+        if(userid != 0) {
+            addParam("userid",userid);
+        }
+        addParam("perpage", SomePreferences.threadPostPerPage);
     }
 
     @Override
@@ -155,7 +169,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         }
     }
 
-    private static Pattern userJumpPattern = Pattern.compile("userid=(\\d+)");
+    private static Pattern userJumpPattern = Pattern.compile("userid-(\\d+)");
 
     private static int parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray, boolean showImages, boolean showAvatars, boolean hideSeenImages, String unreadPti, boolean canReply, boolean lastPage, int forumId){
         int unread = 0;
@@ -171,7 +185,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 Element title = post.getElementsByClass("title").first();
                 String avTitle = StringEscapeUtils.escapeHtml4(title.text());
                 String avatarUrl = title.getElementsByTag("img").attr("src");
-                String postDate = post.getElementsByClass("postdate").text().replaceAll("[#?]", "").trim();
+                String postDate = post.getElementsByClass("postdate").text().replaceAll("[#?¿]", "").trim();
                 String postIndex = post.attr("data-idx");
 
                 boolean admin = auth.hasClass("role-admin");
@@ -180,8 +194,8 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
                 boolean editable = post.getElementsByAttributeValueContaining("href","editpost.php?action=editpost").size() > 0;
 
-                Element userInfo = post.getElementsByClass("user_jump").first();
-                Matcher userIdMatcher = userJumpPattern.matcher(userInfo.attr("href"));
+                Element userInfo = post.getElementsByClass("userinfo").first();
+                Matcher userIdMatcher = userJumpPattern.matcher(userInfo.attr("class"));
                 String userId = null;
                 if(userIdMatcher.find()){
                     userId = userIdMatcher.group(1);
