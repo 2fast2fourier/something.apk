@@ -31,7 +31,6 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.webkit.ConsoleMessage;
-import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -47,18 +46,16 @@ import com.android.volley.VolleyError;
 import com.salvadordalvik.fastlibrary.alert.FastAlert;
 import com.salvadordalvik.fastlibrary.request.FastVolley;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
+
 import net.fastfourier.something.request.BookmarkRequest;
 import net.fastfourier.something.request.MarkLastReadRequest;
 import net.fastfourier.something.request.ThreadPageRequest;
 import net.fastfourier.something.util.Constants;
-import net.fastfourier.something.util.SomePreferences;
 import net.fastfourier.something.util.SomeTheme;
 import net.fastfourier.something.util.SomeURL;
 import net.fastfourier.something.widget.PageSelectDialogFragment;
 
 import java.util.LinkedList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
@@ -82,6 +79,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
 
     private int threadId = 0;
     private long postId = 0;
+    private int userid = 0;
     private int page;
     private int maxPage;
     private int forumId;
@@ -359,7 +357,12 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         updateNavbar();
         FastVolley.cancelRequestByTag(THREAD_REQUEST_TAG);
         if(threadId > 0){
-            queueRequest(new ThreadPageRequest(getActivity(), threadId, page, pageListener, errorListener), THREAD_REQUEST_TAG);
+            if(userid != 0) {
+                queueRequest(new ThreadPageRequest(getActivity(), threadId, page, userid, pageListener, errorListener), THREAD_REQUEST_TAG);
+            }
+            else {
+                queueRequest(new ThreadPageRequest(getActivity(), threadId, page, pageListener, errorListener), THREAD_REQUEST_TAG);
+            }
         }else if(postId > 0){
             queueRequest(new ThreadPageRequest(getActivity(), postId, pageListener, errorListener));
         }
@@ -413,7 +416,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         }
     };
 
-    public void loadThread(int threadId, int page, boolean fromUrl){
+    public void loadThread(int threadId, int page, int userid, boolean fromUrl) {
         if(fromUrl && isThreadLoaded()){
             threadBackstack.push(saveThreadState(new Bundle()));
         }else{
@@ -422,6 +425,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         this.ignorePageProgress = true;
         this.threadId = threadId;
         this.page = page;
+        this.userid = userid;
         this.maxPage = 0;
         this.forumId = 0;
         this.bookmarked = false;
@@ -431,6 +435,10 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         updateNavbar();
         startRefresh();
         threadView.loadUrl("about:blank");
+    }
+
+    public void loadThread(int threadId, int page, boolean fromUrl){
+        loadThread(threadId,page,0,fromUrl);
     }
 
     public void loadPost(long postId, boolean fromUrl){
@@ -618,7 +626,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    showMoreDialog(postId, username, userid);
+                    showMoreDialog(postId, username, Integer.parseInt(userid));
                 }
             });
         }
@@ -655,48 +663,103 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         }
     }
 
-    private void showMoreDialog(final String postId, final String username, final String userid){
-        new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.post_more_title)
-                .setItems(R.array.more_actions_normal, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            //See R.array.more_actions_normal for item list
-                            case 0://PM
-                                startActivityForResult(
-                                        new Intent(getActivity(), ReplyActivity.class)
-                                                .putExtra("pm_id", ReplyFragment.NEW_PM)
-                                                .putExtra("pm_username", username)
-                                                .putExtra("reply_type", ReplyFragment.TYPE_PM),
-                                        REQUEST_NEW_PM
-                                );
-                                break;
-                            case 1://Filter posts
-                                //TODO not implemented yet
-                                FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
-                                break;
-                            case 2://Share link
-                                String url = "http://forums.somethingawful.com/showthread.php?goto=post&postid=" + postId + "#post" + postId;
-                                FastUtils.showSimpleShareChooser(getActivity(), threadTitle.toString(), url, getSafeString(R.string.share_url_title));
-                                break;
-                            case 3://Copy Link
-                                String postUrl = "http://forums.somethingawful.com/showthread.php?goto=post&postid=" + postId + "#post" + postId;
-                                FastUtils.copyToClipboard(getActivity(), threadTitle.toString(), postUrl);
-                                FastAlert.notice(ThreadViewFragment.this, R.string.link_copied, R.drawable.ic_menu_link);
-                                break;
-                            case 4://Profile
-                                //TODO not implemented yet
-                                FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
-                                break;
-                            case 5://Rapsheet
-                                //TODO not implemented yet
-                                FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
-                                break;
+    private void showMoreDialog(final String postId, final String username, final int userid){
+        if(this.userid==0) {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.post_more_title)
+                    .setItems(R.array.more_actions_normal, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                //See R.array.more_actions_normal for item list
+                                case 0://PM
+                                    startActivityForResult(
+                                            new Intent(getActivity(), ReplyActivity.class)
+                                                    .putExtra("pm_id", ReplyFragment.NEW_PM)
+                                                    .putExtra("pm_username", username)
+                                                    .putExtra("reply_type", ReplyFragment.TYPE_PM),
+                                            REQUEST_NEW_PM
+                                    );
+                                    break;
+                                case 1://Filter posts
+                                    getActivity().startActivity(
+                                            new Intent(getActivity(), MainActivity.class)
+                                                    .putExtra("thread_id", threadId)
+                                                    .putExtra("thread_page", 1)
+                                                    .putExtra("userid", userid)
+                                                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                    );
+                                    break;
+                                case 2://Share link
+                                    String url = "http://forums.somethingawful.com/showthread.php?goto=post&postid=" + postId + "#post" + postId;
+                                    FastUtils.showSimpleShareChooser(getActivity(), threadTitle.toString(), url, getSafeString(R.string.share_url_title));
+                                    break;
+                                case 3://Copy Link
+                                    String postUrl = "http://forums.somethingawful.com/showthread.php?goto=post&postid=" + postId + "#post" + postId;
+                                    FastUtils.copyToClipboard(getActivity(), threadTitle.toString(), postUrl);
+                                    FastAlert.notice(ThreadViewFragment.this, R.string.link_copied, R.drawable.ic_menu_link);
+                                    break;
+                                case 4://Profile
+                                    //TODO not implemented yet
+                                    FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
+                                    break;
+                                case 5://Rapsheet
+                                    //TODO not implemented yet
+                                    FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
+                                    break;
+                            }
                         }
-                    }
-                })
-                .show();
+                    })
+                    .show();
+        }
+        else {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.post_more_title)
+                    .setItems(R.array.more_actions_filtered, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                //See R.array.more_actions_normal for item list
+                                case 0://PM
+                                    startActivityForResult(
+                                            new Intent(getActivity(), ReplyActivity.class)
+                                                    .putExtra("pm_id", ReplyFragment.NEW_PM)
+                                                    .putExtra("pm_username", username)
+                                                    .putExtra("reply_type", ReplyFragment.TYPE_PM),
+                                            REQUEST_NEW_PM
+                                    );
+                                    break;
+                                case 1://Filter posts
+                                    getActivity().startActivity(
+                                            new Intent(getActivity(), MainActivity.class)
+                                                    .putExtra("thread_id", threadId)
+                                                    .putExtra("thread_page", 1)
+                                                    .putExtra("userid", 0)
+                                                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                    );
+                                    break;
+                                case 2://Share link
+                                    String url = "http://forums.somethingawful.com/showthread.php?goto=post&postid=" + postId + "#post" + postId;
+                                    FastUtils.showSimpleShareChooser(getActivity(), threadTitle.toString(), url, getSafeString(R.string.share_url_title));
+                                    break;
+                                case 3://Copy Link
+                                    String postUrl = "http://forums.somethingawful.com/showthread.php?goto=post&postid=" + postId + "#post" + postId;
+                                    FastUtils.copyToClipboard(getActivity(), threadTitle.toString(), postUrl);
+                                    FastAlert.notice(ThreadViewFragment.this, R.string.link_copied, R.drawable.ic_menu_link);
+                                    break;
+                                case 4://Profile
+                                    //TODO not implemented yet
+                                    FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
+                                    break;
+                                case 5://Rapsheet
+                                    //TODO not implemented yet
+                                    FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
+                                    break;
+                            }
+                        }
+                    })
+                    .show();
+        }
     }
 
     @Override

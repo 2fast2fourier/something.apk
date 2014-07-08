@@ -5,14 +5,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SlidingPaneLayout;
-import android.text.Spanned;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -23,7 +19,6 @@ import net.fastfourier.something.request.ThreadPageRequest;
 import net.fastfourier.something.util.SomePreferences;
 import net.fastfourier.something.util.SomeTheme;
 import net.fastfourier.something.widget.LockableSlidingPaneLayout;
-import net.fastfourier.something.widget.MarginDrawerLayout;
 
 import java.util.List;
 
@@ -73,7 +68,7 @@ public class MainActivity extends SomeActivity implements SlidingPaneLayout.Pane
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if(intent.hasExtra("thread_id")){
-            showThread(intent.getIntExtra("thread_id", 0), intent.getIntExtra("thread_page", 1), intent.getBooleanExtra("from_url", false));
+            showThread(intent.getIntExtra("thread_id", 0), intent.getIntExtra("thread_page", 1), intent.getIntExtra("userid",0), intent.getBooleanExtra("from_url", false));
         }else if(intent.hasExtra("post_id")){
             showPost(intent.getLongExtra("post_id", 0), intent.getBooleanExtra("from_url", false));
         }else if(intent.hasExtra("forum_id")){
@@ -153,14 +148,17 @@ public class MainActivity extends SomeActivity implements SlidingPaneLayout.Pane
     }
 
     public void showThread(int id, int page, boolean fromUrl) {
+        showThread(id,page,0,fromUrl);
+    }
+
+    public void showThread(int id, int page, int userid, boolean fromUrl) {
         lockDrawer(false);
         closeMenu();
-        threadView.loadThread(id, page, fromUrl);
+        threadView.loadThread(id, page, userid, fromUrl);
         if(threadList != null && threadList.isAdded()){
             threadList.highlightThread(id);
         }
     }
-
     public void showPost(long id, boolean fromUrl) {
         lockDrawer(false);
         closeMenu();
