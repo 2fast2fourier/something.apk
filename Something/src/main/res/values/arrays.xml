@@ -50,6 +50,7 @@
         <item>@string/bbcode_underline</item>
         <item>@string/bbcode_strikeout</item>
         <item>@string/bbcode_imagetag</item>
+        <item>@string/bbcode_timagetag</item>
         <item>@string/bbcode_pasteurl</item>
         <item>@string/bbcode_video</item>
         <item>@string/bbcode_quote</item>

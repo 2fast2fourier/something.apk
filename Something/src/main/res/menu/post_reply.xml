@@ -27,6 +27,10 @@
                 android:icon="@drawable/ic_action_photo"
                 android:title="@string/bbcode_imagetag"/>
             <item
+                android:id="@+id/bbcode_timage"
+                android:icon="@drawable/ic_action_photo"
+                android:title="@string/bbcode_timagetag"/>
+            <item
                 android:id="@+id/bbcode_url"
                 android:icon="@drawable/ic_menu_link"
                 android:title="@string/bbcode_pasteurl"/>

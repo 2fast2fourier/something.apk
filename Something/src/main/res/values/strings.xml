@@ -101,6 +101,7 @@
     <string name="bbcode_underline">Underline</string>
     <string name="bbcode_strikeout">Strikeout</string>
     <string name="bbcode_imagetag">Image Tag</string>
+    <string name="bbcode_timagetag">TIMG Tag</string>
     <string name="bbcode_pasteurl">Insert URL</string>
     <string name="bbcode_video">Insert Video</string>
     <string name="bbcode_quote">Quote Block</string>

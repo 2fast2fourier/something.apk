@@ -46,7 +46,7 @@ import java.util.List;
 public class ReplyFragment extends SomeFragment implements DialogInterface.OnCancelListener, TextWatcher, ActionMode.Callback {
 
     private static final int DRAFT_PREVIEW_LENGTH = 100;
-    private enum BBCODE {BOLD, ITALICS, UNDERLINE, STRIKEOUT, URL, VIDEO, IMAGE, QUOTE, SPOILER, CODE}
+    private enum BBCODE {BOLD, ITALICS, UNDERLINE, STRIKEOUT, URL, VIDEO, IMAGE, TIMAGE, QUOTE, SPOILER, CODE}
 
     public static final int TYPE_REPLY = 2;
     public static final int TYPE_QUOTE = 3;
@@ -228,6 +228,9 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
             case R.id.bbcode_image:
                 insertBBCode(BBCODE.IMAGE);
                 return true;
+            case R.id.bbcode_timage:
+                insertBBCode(BBCODE.TIMAGE);
+                return true;
             case R.id.bbcode_quote:
                 insertBBCode(BBCODE.QUOTE);
                 return true;
@@ -296,7 +299,6 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
                 endTag = "[/quote]";
                 break;
             case IMAGE:
-                //TODO split timg and img
                 String imageUrl = null;
                 ClipData imageClip = cb.getPrimaryClip();
                 if(imageClip != null && imageClip.getItemCount() > 0){
@@ -309,7 +311,26 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
                     }
                 }
                 if(imageUrl != null){
-                    startTag = "[timg]"+imageUrl;
+                    startTag = "[img]"+imageUrl;
+                }else{
+                    startTag = "[img]";
+                }
+                endTag = "[/img]";
+                break;
+            case TIMAGE:
+                String timageUrl = null;
+                ClipData timageClip = cb.getPrimaryClip();
+                if(timageClip != null && timageClip.getItemCount() > 0){
+                    CharSequence clipText = timageClip.getItemAt(0).getText();
+                    if(clipText != null){
+                        String text = clipText.toString().toLowerCase();
+                        if((text.startsWith("http://") || text.startsWith("https://")) && (text.endsWith(".jpg") || text.endsWith(".gif") || text.endsWith(".png"))){
+                            timageUrl = text;
+                        }
+                    }
+                }
+                if(timageUrl != null){
+                    startTag = "[timg]"+timageUrl;
                 }else{
                     startTag = "[timg]";
                 }
@@ -397,18 +418,21 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
                         insertBBCode(BBCODE.IMAGE, selectionStart, selectionEnd);
                         break;
                     case 5:
-                        insertBBCode(BBCODE.URL, selectionStart, selectionEnd);
+                        insertBBCode(BBCODE.TIMAGE, selectionStart, selectionEnd);
                         break;
                     case 6:
-                        insertBBCode(BBCODE.VIDEO, selectionStart, selectionEnd);
+                        insertBBCode(BBCODE.URL, selectionStart, selectionEnd);
                         break;
                     case 7:
-                        insertBBCode(BBCODE.QUOTE, selectionStart, selectionEnd);
+                        insertBBCode(BBCODE.VIDEO, selectionStart, selectionEnd);
                         break;
                     case 8:
-                        insertBBCode(BBCODE.SPOILER, selectionStart, selectionEnd);
+                        insertBBCode(BBCODE.QUOTE, selectionStart, selectionEnd);
                         break;
                     case 9:
+                        insertBBCode(BBCODE.SPOILER, selectionStart, selectionEnd);
+                        break;
+                    case 10:
                         insertBBCode(BBCODE.CODE, selectionStart, selectionEnd);
                         break;
                 }
