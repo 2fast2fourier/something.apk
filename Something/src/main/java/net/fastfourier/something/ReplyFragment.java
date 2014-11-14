@@ -246,6 +246,7 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
     }
 
     public void insertBBCode(BBCODE code, int selectionStart, int selectionEnd){
+        ClipboardManager cb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         if(selectionStart < 0){
             //update selection values
             selectionStart = replyContent.getSelectionStart();
@@ -273,7 +274,6 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
                 break;
             case URL:
                 String link = null;
-                ClipboardManager cb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = cb.getPrimaryClip();
                 if(clip != null && clip.getItemCount() > 0){
                     CharSequence clipText = clip.getItemAt(0).getText();
@@ -296,8 +296,24 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
                 endTag = "[/quote]";
                 break;
             case IMAGE:
-                startTag = "[img]";
-                endTag = "[/img]";
+                //TODO split timg and img
+                String imageUrl = null;
+                ClipData imageClip = cb.getPrimaryClip();
+                if(imageClip != null && imageClip.getItemCount() > 0){
+                    CharSequence clipText = imageClip.getItemAt(0).getText();
+                    if(clipText != null){
+                        String text = clipText.toString().toLowerCase();
+                        if((text.startsWith("http://") || text.startsWith("https://")) && (text.endsWith(".jpg") || text.endsWith(".gif") || text.endsWith(".png"))){
+                            imageUrl = text;
+                        }
+                    }
+                }
+                if(imageUrl != null){
+                    startTag = "[timg]"+imageUrl;
+                }else{
+                    startTag = "[timg]";
+                }
+                endTag = "[/timg]";
                 break;
             case VIDEO:
                 startTag = "[video]";
