@@ -21,16 +21,12 @@
         <item>Filter Thread by this Poster</item>
         <item>Share Link to Post</item>
         <item>Copy Post Link</item>
-        <item>View Profile</item>
-        <item>View Rapsheet</item>
     </array>
     <array name="more_actions_filtered">
         <item>Send Private Message</item>
         <item>Remove User Filter</item>
         <item>Share Link to Post</item>
         <item>Copy Post Link</item>
-        <item>View Profile</item>
-        <item>View Rapsheet</item>
     </array>
     <array name="thread_context_actions_normal">
         <item>First Page</item>

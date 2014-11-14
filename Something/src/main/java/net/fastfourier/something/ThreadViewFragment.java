@@ -7,6 +7,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -18,7 +19,9 @@ import android.graphics.Color;
 import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Html;
 import android.text.SpannedString;
 import android.text.TextUtils;
@@ -87,12 +90,26 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     private String pageHtml, rawThreadTitle;
     private boolean bookmarked, canReply;
 
+    /**
+     * This backstack is used to push-pop thread states when navigating into threads view link from another thread,
+     * allowing back-button to take the user back to the original thread.
+     * See loadThreadState, saveThreadState, overrideBackPressed, and the various loadThread functions to see this in action.
+     */
     private LinkedList<Bundle> threadBackstack = new LinkedList<Bundle>();
 
+    /**
+     * Basic navbar, navNext is next-page if page<maxPage and refresh otherwise.
+     * See updateNavBar() for more.
+     * Navbar buttons are locked for a second after navigation, see enableNavigation runnable.
+     */
     private ImageView navPrev, navNext;
     private TextView navPageBar;
     private boolean disableNavLoading = false;
 
+    /**
+     * ignorePageProgress is a hack to prevent chromeClient progress callbacks when we don't want them,
+     * mostly so we don't get progressbar interruptions in some parts of the refresh process.
+     */
     private boolean ignorePageProgress = false;
 
     public ThreadViewFragment() {
@@ -152,7 +169,6 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     }
 
     private float getScrollDistance(){
-        Log.e("ThreadView","distance: "+FastUtils.calculateScrollDistance(getActivity(), 2f));
         return Math.max(Math.min(FastUtils.calculateScrollDistance(getActivity(), 2f), 0.666f), 0.333f);
     }
 
@@ -180,9 +196,14 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
                 menu.add(R.string.menu_save_image).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        Toast.makeText(getActivity(), "Image Saving not implemented yet!", Toast.LENGTH_LONG).show();
-                        //TODO save image link
-                        FastUtils.startUrlIntent(getActivity(), targetUrl);
+                        Uri image = Uri.parse(targetUrl);
+                        DownloadManager.Request request = new DownloadManager.Request(image);
+                        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, image.getLastPathSegment());
+                        request.allowScanningByMediaScanner();
+                        DownloadManager dlMngr= (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+                        dlMngr.enqueue(request);
+                        Toast.makeText(getActivity(), "Image saved to Downloads folder.", Toast.LENGTH_LONG).show();
                         return true;
                     }
                 });
@@ -264,6 +285,12 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         }
     }
 
+    /**
+     * Saves current thread state for app lifecycle and thread navigation push/pop.
+     * Must mirror loadThreadState implementation.
+     * @param outState Bundle to store all data needed to restore current thread state.
+     * @return outState passthrough
+     */
     private Bundle saveThreadState(Bundle outState){
         outState.putString("thread_html", pageHtml);
         outState.putInt("thread_id", threadId);
@@ -277,6 +304,11 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         return outState;
     }
 
+    /**
+     * Restores state saved in saveThreadState, used when restoring state after app lifecycle changes
+     * or deep navigation into threads via link (and back button).
+     * @param inState
+     */
     private void loadThreadState(Bundle inState){
         threadId = inState.getInt("thread_id", 0);
         pageHtml = inState.getString("thread_html");
@@ -295,6 +327,10 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         threadView.loadDataWithBaseURL(Constants.BASE_URL, pageHtml, "text/html", "utf-8", null);
     }
 
+    /**
+     * Updates current navbar state.
+     * Note: navNext acts as next button when `page < maxPage`, but as refresh otherwise.
+     */
     private void updateNavbar() {
         navPrev.setEnabled(page > 1 && !disableNavLoading);
         navPageBar.setText("Page "+Math.max(page, 0)+"/"+maxPage);
@@ -350,6 +386,15 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
 
     //Must be a common string, volley uses direct equality when comparing tags.
     private static final String THREAD_REQUEST_TAG = "thread_page_request";
+
+    /**
+     * Begins thread page request, loading thread posts.
+     * If the threadID is not known but a postID exists, will do a redirect to that postId.
+     * Otherwise if threadId is known but page isn't specified will do a 'nextpost' request.
+     * If threadId and page is specified, requests that page.
+     * @param pullToRefresh Whether request was triggered by PTR.
+     * @param staleRefresh Whether request triggered by stale timeout. (Not used here in ThreadView)
+     */
     @Override
     public void refreshData(boolean pullToRefresh, boolean staleRefresh) {
         threadView.stopLoading();
@@ -369,6 +414,11 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         getHandler().postDelayed(enableNavigation, 1000);
     }
 
+    /**
+     * Runnable trigger that re-enables navigation.
+     * Navbar buttons are disabled for a second after the initial trigger, to prevent double-tap.
+     * This runnable is queued for approx 1 second, at which point it re-enables navbar and refreshes.
+     */
     private Runnable enableNavigation = new Runnable() {
         @Override
         public void run() {
@@ -416,6 +466,14 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         }
     };
 
+    /**
+     * Trigger page load of specific thread. Called by thread list or url links.
+     * See startRefresh() and ./request/ThreadPageRequest for volley implementation.
+     * @param threadId Thread ID for requested thread. (Required)
+     * @param page Page number to load, Optional, if -1 will go to last post, if 0 will go to newest unread post.
+     * @param userid (Optional) UserId for filtering.
+     * @param fromUrl True if request was sent by internal URL request. Used to decide if we should push current state into backstack.
+     */
     public void loadThread(int threadId, int page, int userid, boolean fromUrl) {
         if(fromUrl && isThreadLoaded()){
             threadBackstack.push(saveThreadState(new Bundle()));
@@ -437,10 +495,25 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         threadView.loadUrl("about:blank");
     }
 
+
+    /**
+     * Trigger page load of specific thread. Called by thread list or url links.
+     * See startRefresh() and ./request/ThreadPageRequest for volley implementation.
+     * @param threadId Thread ID for requested thread. (Required)
+     * @param page Page number to load, Optional, if -1 will go to last post, if 0 will go to newest unread post.
+     * @param fromUrl True if request was sent by internal URL request. Used to decide if we should push current state into backstack.
+     */
     public void loadThread(int threadId, int page, boolean fromUrl){
         loadThread(threadId,page,0,fromUrl);
     }
 
+
+    /**
+     * Trigger page load of specific thread by redirecting from a postID. Called by thread list or url links.
+     * See startRefresh() and ./request/ThreadPageRequest for volley implementation.
+     * @param postId Post ID to redirect to. (Required)
+     * @param fromUrl True if request was sent by internal URL request. Used to decide if we should push current state into backstack.
+     */
     public void loadPost(long postId, boolean fromUrl){
         if(fromUrl && isThreadLoaded()){
             threadBackstack.push(saveThreadState(new Bundle()));
@@ -462,6 +535,11 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         threadView.loadUrl("about:blank");
     }
 
+    /**
+     * Called when user presses back button.
+     * If we have backstack elements, consumes event and triggers pop.
+     * @return True if we are consuming back-press, false allows event to continue. (Event may be intercepted elsewhere or will bubble up to system)
+     */
     public boolean overrideBackPressed() {
         if(threadBackstack.peek() != null){
             loadThreadState(threadBackstack.pop());
@@ -471,6 +549,10 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         }
     }
 
+    /**
+     * Triggers page navigation.
+     * @param pageNum Target page number, must be valid page between 1 and current max.
+     */
     public void goToPage(int pageNum){
         if(pageNum <= maxPage && pageNum > 0){
             page = pageNum;
@@ -479,10 +561,19 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         }
     }
 
+    /**
+     * Checks to see if page HTML has loaded, used to enable/disable specific UI elements.
+     * Does not indicate if WebView has caught up and fully rendered, it may still be rendering.
+     * @return True if page request has returned properly and we have a valid thread or post id.
+     */
     public boolean isThreadLoaded() {
         return pageHtml != null || threadId > 0 || postId > 0;
     }
 
+    /**
+     * Current thread title.
+     * @return Current thread title, HTML entities already converted.
+     */
     public CharSequence getTitle() {
         return threadTitle;
     }
@@ -493,6 +584,8 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
             Log.d("WebView", "Progress: "+newProgress);
+            //ignorePageProgress is a hack to keep the chromeClient progress events from triggering
+            //the loading bar when the webview is doing a page-clear or other event the user doesn't care about
             if(!ignorePageProgress){
                 setProgress(newProgress);
             }
@@ -516,6 +609,8 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
             Log.d("WebView", "onPageFinished: " + url);
+            //ignorePageProgress is a hack to keep the chromeClient progress events from triggering
+            //the loading bar when the webview is doing a page-clear or other event the user doesn't care about
             if(!ignorePageProgress){
                 setProgress(100);
             }
@@ -527,6 +622,15 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
             Log.d("WebView", "onLoadResource: " + url);
         }
 
+        /**
+         * Handle custom URLs and events here.
+         * 'something://something-X' urls are simple event triggers.
+         * Additionally, any real SA urls are parsed and handled here.
+         * Other links are sent to the OS url handler, for browser or external apps to handle.
+         * @param view
+         * @param url
+         * @return
+         */
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             if(url != null && url.startsWith("something")){
@@ -565,6 +669,9 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         }
     }
 
+    /**
+     * Displays page select dialog. Once page is selected, this fragment will call 'goToPage()' in this fragment with the results.
+     */
     private void displayPageSelect(){
         PageSelectDialogFragment.newInstance(page, maxPage, ThreadViewFragment.this).show(getFragmentManager(), "page_select");
     }
@@ -699,14 +806,6 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
                                     FastUtils.copyToClipboard(getActivity(), threadTitle.toString(), postUrl);
                                     FastAlert.notice(ThreadViewFragment.this, R.string.link_copied, R.drawable.ic_menu_link);
                                     break;
-                                case 4://Profile
-                                    //TODO not implemented yet
-                                    FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
-                                    break;
-                                case 5://Rapsheet
-                                    //TODO not implemented yet
-                                    FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
-                                    break;
                             }
                         }
                     })
@@ -747,14 +846,6 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
                                     FastUtils.copyToClipboard(getActivity(), threadTitle.toString(), postUrl);
                                     FastAlert.notice(ThreadViewFragment.this, R.string.link_copied, R.drawable.ic_menu_link);
                                     break;
-                                case 4://Profile
-                                    //TODO not implemented yet
-                                    FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
-                                    break;
-                                case 5://Rapsheet
-                                    //TODO not implemented yet
-                                    FastAlert.error(ThreadViewFragment.this, "NOT IMPLEMENTED YET");
-                                    break;
                             }
                         }
                     })
@@ -770,6 +861,10 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         }
     }
 
+    /**
+     * Hacky support for dynamic actionbar color changes based on theme/specialty theme.
+     * @param forumId
+     */
     protected void updateActionbarColor(int forumId){
         Activity act = getActivity();
         if(forumId > 0 && act instanceof SomeActivity){
@@ -782,6 +877,11 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         return forumId;
     }
 
+    /**
+     * Header class for custom extended ActionbarPullToRefresh.
+     * This portion only updates the view system, custom PTR library implements pull-from-bottom.
+     * See onRefreshStartedFromBottom() for event callback.
+     */
     private HeaderTransformer header = new HeaderTransformer(){
         private int nextPageColor, refreshColor;
 
