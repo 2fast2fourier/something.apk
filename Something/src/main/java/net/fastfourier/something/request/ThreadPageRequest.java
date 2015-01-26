@@ -169,7 +169,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         }
     }
 
-    private static Pattern userJumpPattern = Pattern.compile("userid-(\\d+)");
+    private static Pattern userJumpPattern = Pattern.compile("userid=(\\d+)");
 
     private static int parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray, boolean showImages, boolean showAvatars, boolean hideSeenImages, String unreadPti, boolean canReply, boolean lastPage, int forumId){
         int unread = 0;
@@ -194,8 +194,8 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
                 boolean editable = post.getElementsByAttributeValueContaining("href","editpost.php?action=editpost").size() > 0;
 
-                Element userInfo = post.getElementsByClass("userinfo").first();
-                Matcher userIdMatcher = userJumpPattern.matcher(userInfo.attr("class"));
+                Element userInfo = post.getElementsByClass("user_jump").first();
+                Matcher userIdMatcher = userJumpPattern.matcher(userInfo.attr("href"));
                 String userId = null;
                 if(userIdMatcher.find()){
                     userId = userIdMatcher.group(1);
