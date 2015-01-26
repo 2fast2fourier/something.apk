@@ -194,7 +194,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
                 boolean editable = post.getElementsByAttributeValueContaining("href","editpost.php?action=editpost").size() > 0;
 
-                Element userInfo = post.getElementsByClass("user_jump").first();
+                Element userInfo = post.getElementsByClass("profilelinks").first().getElementsByTag("a").first();
                 Matcher userIdMatcher = userJumpPattern.matcher(userInfo.attr("href"));
                 String userId = null;
                 if(userIdMatcher.find()){
