@@ -7,3 +7,5 @@ gen
 out
 *.iml
 build
+*.apk
+Something/manifest-merger-release-report.txt
