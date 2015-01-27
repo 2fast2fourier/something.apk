@@ -34,7 +34,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
     public ThreadPageRequest(Context context, int threadId, int page, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
         super("http://forums.somethingawful.com/showthread.php", Request.Method.GET, success, error);
-        initializeParams(threadId,page,0);
+        initializeParams(threadId, page, 0);
         this.context = context;
     }
 
@@ -47,13 +47,13 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         this.context = context;
     }
 
-    public ThreadPageRequest(Context context, int threadId, int page, int userid, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
+    public ThreadPageRequest(Context context, int threadId, int page, int userId, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
         super("http://forums.somethingawful.com/showthread.php", Request.Method.GET, success, error);
-        initializeParams(threadId, page, userid);
+        initializeParams(threadId, page, userId);
         this.context = context;
     }
 
-    private void initializeParams(int threadId, int page, int userid) {
+    private void initializeParams(int threadId, int page, int userId) {
         addParam("threadid", threadId);
         if(page > 0){
             addParam("pagenumber", page);
@@ -62,8 +62,8 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         }else{
             addParam("goto", "newpost");
         }
-        if(userid != 0) {
-            addParam("userid",userid);
+        if(userId != 0) {
+            addParam("userid",userId);
         }
         addParam("perpage", SomePreferences.threadPostPerPage);
     }

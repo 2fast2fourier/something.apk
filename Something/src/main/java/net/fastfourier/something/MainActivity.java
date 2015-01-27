@@ -68,7 +68,8 @@ public class MainActivity extends SomeActivity implements SlidingPaneLayout.Pane
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if(intent.hasExtra("thread_id")){
-            showThread(intent.getIntExtra("thread_id", 0), intent.getIntExtra("thread_page", 1), intent.getIntExtra("userid",0), intent.getBooleanExtra("from_url", false));
+            showThread(intent.getIntExtra("thread_id", 0), intent.getIntExtra("thread_page", 1),
+                    intent.getIntExtra("user_id",0), intent.getBooleanExtra("from_url", false));
         }else if(intent.hasExtra("post_id")){
             showPost(intent.getLongExtra("post_id", 0), intent.getBooleanExtra("from_url", false));
         }else if(intent.hasExtra("forum_id")){
@@ -210,7 +211,6 @@ public class MainActivity extends SomeActivity implements SlidingPaneLayout.Pane
         }
     }
 
-
     @Subscribe
     public void threadPageLoaded(ThreadPageRequest.ThreadPage page) {
         lockDrawer(false);
@@ -236,7 +236,7 @@ public class MainActivity extends SomeActivity implements SlidingPaneLayout.Pane
         current[2] = start[2]+((end[2]-start[2])*percent);
         return Color.rgb((int) current[0], (int) current[1], (int) current[2]);
     }
-      
+
     private static void colorToRGB(int color, int[] rgb){
         rgb[0] = Color.red(color);
         rgb[1] = Color.green(color);

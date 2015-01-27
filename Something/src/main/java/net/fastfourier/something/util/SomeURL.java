@@ -145,33 +145,44 @@ public class SomeURL {
         switch (urlType){
             case THREAD:
                 if(activity != null){
-                    activity.startActivity(new Intent(activity, MainActivity.class).putExtra("thread_id", (int) id).putExtra("thread_page", page).putExtra("from_url", true).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    activity.startActivity(new Intent(activity, MainActivity.class)
+                            .putExtra("thread_id", (int) id).putExtra("thread_page", page)
+                            .putExtra("user_id", userId).putExtra("from_url", true)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 }
                 break;
             case POST:
                 if(activity != null){
-                    activity.startActivity(new Intent(activity, MainActivity.class).putExtra("post_id", id).putExtra("from_url", true).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    activity.startActivity(new Intent(activity, MainActivity.class)
+                            .putExtra("post_id", id).putExtra("from_url", true)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 }
                 break;
             case FORUM:
                 if(activity instanceof MainActivity){
                     ((MainActivity) activity).showForum((int) id);
                 }else if(activity != null){
-                    activity.startActivity(new Intent(activity, MainActivity.class).putExtra("forum_id", (int) id).putExtra("forum_page", page).putExtra("from_url", true).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    activity.startActivity(new Intent(activity, MainActivity.class)
+                            .putExtra("forum_id", (int) id).putExtra("forum_page", page)
+                            .putExtra("from_url", true).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 }
                 break;
             case INDEX:
                 if(activity instanceof MainActivity){
                     ((MainActivity) activity).showForumList();
                 }else if(activity != null){
-                    activity.startActivity(new Intent(activity, MainActivity.class).putExtra("show_index", true).putExtra("from_url", true).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    activity.startActivity(new Intent(activity, MainActivity.class)
+                            .putExtra("show_index", true).putExtra("from_url", true)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 }
                 break;
             case PM_FOLDER:
                 if(activity instanceof PrivateMessageListActivity){
                     ((PrivateMessageListActivity) activity).showPMFolder((int) id);
                 }else if(activity != null){
-                    activity.startActivity(new Intent(activity, PrivateMessageListActivity.class).putExtra("pm_folder", (int) id).putExtra("from_url", true).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    activity.startActivity(new Intent(activity, PrivateMessageListActivity.class)
+                            .putExtra("pm_folder", (int) id).putExtra("from_url", true)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 }
                 break;
             case PM_MESSAGE:
@@ -179,7 +190,9 @@ public class SomeURL {
                 if(activity instanceof PrivateMessageListActivity){
                     ((PrivateMessageListActivity) activity).showPM((int) id, "Private Message");
                 }else if(activity != null){
-                    activity.startActivity(new Intent(activity, PrivateMessageListActivity.class).putExtra("pm_id", (int) id).putExtra("from_url", true).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    activity.startActivity(new Intent(activity, PrivateMessageListActivity.class)
+                            .putExtra("pm_id", (int) id).putExtra("from_url", true)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 }
                 break;
             case EXTERNAL:
