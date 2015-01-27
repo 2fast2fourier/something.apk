@@ -27,6 +27,7 @@ public class SomeTheme {
                     //TODO amberpos
                     return actionbar_yospos;
                 case Constants.FYAD_FORUMID:
+                case Constants.FYAD_DUMP_FORUMID:
                     return actionbar_fyad;
             }
         }

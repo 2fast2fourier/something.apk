@@ -141,9 +141,10 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
             return SomePreferences.selectedTheme;
         }else{
             switch (forumId){
-                case 219:
+                case Constants.YOSPOS_FORUMID:
                     return SomePreferences.yosTheme;
-                case 26:
+                case Constants.FYAD_FORUMID:
+                case Constants.FYAD_DUMP_FORUMID:
                     return SomePreferences.fyadTheme;
                 default:
                     return SomePreferences.selectedTheme;
@@ -213,7 +214,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 Element postBody;
                 //fyad has a slightly different post html layout than the rest of the forums.
                 //the postbody contains the userinfo block, so we use the inner 'complete_shit' instead.
-                if(forumId == Constants.FYAD_FORUMID){
+                if(forumId == Constants.FYAD_FORUMID || forumId == Constants.FYAD_DUMP_FORUMID){
                     postBody = post.getElementsByClass("complete_shit").first();
                 }else{
                     postBody = post.getElementsByClass("postbody").first();
