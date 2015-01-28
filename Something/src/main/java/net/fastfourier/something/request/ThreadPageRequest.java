@@ -3,6 +3,7 @@ package net.fastfourier.something.request;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -213,11 +214,14 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
                 Element postBody;
                 //fyad has a slightly different post html layout than the rest of the forums.
-                //the postbody contains the userinfo block, so we use the inner 'complete_shit' instead.
+                //the postbody contains the userinfo block, so we use the inner 'complete_shit'
+                // instead. fyad also doesn't have registered dates for users.
                 if(forumId == Constants.FYAD_FORUMID || forumId == Constants.FYAD_DUMP_FORUMID){
                     postBody = post.getElementsByClass("complete_shit").first();
+                    postData.put("regDate", " ");
                 }else{
                     postBody = post.getElementsByClass("postbody").first();
+                    postData.put("regDate", post.getElementsByClass("registered").first().text());
                 }
                 if(!showImages){
                     for(Element imageNode : postBody.getElementsByTag("img")){
@@ -253,7 +257,6 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 postData.put("seen", seen ? "seen" : null);
                 postData.put("postIndex",  postIndex);
 
-//                postData.put("regDate", post.getRegDate());
                 //TODO nullable, can wait to implement
 //                postData.put("isOP", (aPrefs.highlightOP && post.isOp())?"op":null);
 //                postData.put("isMarked", (aPrefs.markedUsers.contains(post.getUsername()))?"marked":null);
@@ -263,7 +266,6 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 postData.put("mod", (mod || ik)?"mod":null);
                 postData.put("admin", admin ?"admin":null);
 
-                postData.put("regDate", "");
                 postData.put("isOP", null);
                 postData.put("isMarked", null);
                 postData.put("isSelf", null);
