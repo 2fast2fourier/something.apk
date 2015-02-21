@@ -102,4 +102,8 @@
 
     </style>
 
+    <style name="Something.BYOB" parent="Something.Light">
+
+    </style>
+
 </resources>

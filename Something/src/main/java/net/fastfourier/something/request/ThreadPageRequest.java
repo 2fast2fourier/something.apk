@@ -34,7 +34,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
     public ThreadPageRequest(Context context, int threadId, int page, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
         super("http://forums.somethingawful.com/showthread.php", Request.Method.GET, success, error);
-        initializeParams(threadId,page,0);
+        initializeParams(threadId, page, 0);
         this.context = context;
     }
 
@@ -47,13 +47,13 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         this.context = context;
     }
 
-    public ThreadPageRequest(Context context, int threadId, int page, int userid, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
+    public ThreadPageRequest(Context context, int threadId, int page, int userId, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
         super("http://forums.somethingawful.com/showthread.php", Request.Method.GET, success, error);
-        initializeParams(threadId, page, userid);
+        initializeParams(threadId, page, userId);
         this.context = context;
     }
 
-    private void initializeParams(int threadId, int page, int userid) {
+    private void initializeParams(int threadId, int page, int userId) {
         addParam("threadid", threadId);
         if(page > 0){
             addParam("pagenumber", page);
@@ -62,8 +62,8 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         }else{
             addParam("goto", "newpost");
         }
-        if(userid != 0) {
-            addParam("userid",userid);
+        if(userId != 0) {
+            addParam("userid",userId);
         }
         addParam("perpage", SomePreferences.threadPostPerPage);
     }
@@ -141,10 +141,14 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
             return SomePreferences.selectedTheme;
         }else{
             switch (forumId){
-                case 219:
+                case Constants.YOSPOS_FORUMID:
                     return SomePreferences.yosTheme;
-                case 26:
+                case Constants.FYAD_FORUMID:
+                case Constants.FYAD_DUMP_FORUMID:
                     return SomePreferences.fyadTheme;
+                case Constants.BYOB_FORUMID:
+                case Constants.COOL_CREW_FORUMID:
+                    return SomePreferences.byobTheme;
                 default:
                     return SomePreferences.selectedTheme;
             }
@@ -169,7 +173,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         }
     }
 
-    private static Pattern userJumpPattern = Pattern.compile("userid-(\\d+)");
+    private static Pattern userJumpPattern = Pattern.compile("userid=(\\d+)");
 
     private static int parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray, boolean showImages, boolean showAvatars, boolean hideSeenImages, String unreadPti, boolean canReply, boolean lastPage, int forumId){
         int unread = 0;
@@ -194,8 +198,8 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
                 boolean editable = post.getElementsByAttributeValueContaining("href","editpost.php?action=editpost").size() > 0;
 
-                Element userInfo = post.getElementsByClass("userinfo").first();
-                Matcher userIdMatcher = userJumpPattern.matcher(userInfo.attr("class"));
+                Element userInfo = post.getElementsByClass("profilelinks").first().getElementsByTag("a").first();
+                Matcher userIdMatcher = userJumpPattern.matcher(userInfo.attr("href"));
                 String userId = null;
                 if(userIdMatcher.find()){
                     userId = userIdMatcher.group(1);
@@ -212,11 +216,14 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
                 Element postBody;
                 //fyad has a slightly different post html layout than the rest of the forums.
-                //the postbody contains the userinfo block, so we use the inner 'complete_shit' instead.
-                if(forumId == Constants.FYAD_FORUMID){
+                //the postbody contains the userinfo block, so we use the inner 'complete_shit'
+                // instead. fyad also doesn't have registered dates for users.
+                if(forumId == Constants.FYAD_FORUMID || forumId == Constants.FYAD_DUMP_FORUMID){
                     postBody = post.getElementsByClass("complete_shit").first();
+                    postData.put("regDate", " ");
                 }else{
                     postBody = post.getElementsByClass("postbody").first();
+                    postData.put("regDate", post.getElementsByClass("registered").first().text());
                 }
                 if(!showImages){
                     for(Element imageNode : postBody.getElementsByTag("img")){
@@ -252,7 +259,6 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 postData.put("seen", seen ? "seen" : null);
                 postData.put("postIndex",  postIndex);
 
-//                postData.put("regDate", post.getRegDate());
                 //TODO nullable, can wait to implement
 //                postData.put("isOP", (aPrefs.highlightOP && post.isOp())?"op":null);
 //                postData.put("isMarked", (aPrefs.markedUsers.contains(post.getUsername()))?"marked":null);
@@ -262,7 +268,6 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 postData.put("mod", (mod || ik)?"mod":null);
                 postData.put("admin", admin ?"admin":null);
 
-                postData.put("regDate", "");
                 postData.put("isOP", null);
                 postData.put("isMarked", null);
                 postData.put("isSelf", null);

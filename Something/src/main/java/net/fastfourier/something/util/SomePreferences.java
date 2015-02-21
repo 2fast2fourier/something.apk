@@ -5,28 +5,18 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
-import android.util.Log;
 
 import com.salvadordalvik.fastlibrary.request.PersistentCookieStore;
 
 import net.fastfourier.something.R;
-import net.fastfourier.something.SomeApplication;
 
 import java.io.IOException;
-import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
-import java.net.HttpCookie;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by matthewshepard on 1/17/14.
@@ -53,6 +43,7 @@ public class SomePreferences {
     public static boolean forceTheme = false;
     public static String yosTheme = "yospos";
     public static String fyadTheme = "fyad";
+    public static String byobTheme = "byob";
 
     public static boolean loggedIn;
 
@@ -182,6 +173,9 @@ public class SomePreferences {
         }
         if("fyad".equalsIgnoreCase(sysTheme)){
             return R.style.Something_FYAD;
+        }
+        if("byob".equalsIgnoreCase(sysTheme)){
+            return R.style.Something_BYOB;
         }
         return R.style.Something_Light;
     }
