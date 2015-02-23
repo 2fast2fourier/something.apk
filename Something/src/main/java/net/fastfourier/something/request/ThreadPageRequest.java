@@ -147,6 +147,9 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 case Constants.FYAD_FORUMID:
                 case Constants.FYAD_DUMP_FORUMID:
                     return SomePreferences.fyadTheme;
+                case Constants.BYOB_FORUMID:
+                case Constants.COOL_CREW_FORUMID:
+                    return SomePreferences.byobTheme;
                 default:
                     return SomePreferences.selectedTheme;
             }
