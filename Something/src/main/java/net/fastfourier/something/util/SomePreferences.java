@@ -7,12 +7,9 @@ import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
-
 import com.salvadordalvik.fastlibrary.request.PersistentCookieStore;
-
 import net.fastfourier.something.R;
 import net.fastfourier.something.SomeApplication;
-
 import java.io.IOException;
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -53,6 +50,7 @@ public class SomePreferences {
     public static boolean forceTheme = false;
     public static String yosTheme = "yospos";
     public static String fyadTheme = "fyad";
+    public static String byobTheme = "byob";
 
     public static boolean loggedIn;
 
@@ -182,6 +180,9 @@ public class SomePreferences {
         }
         if("fyad".equalsIgnoreCase(sysTheme)){
             return R.style.Something_FYAD;
+        }
+        if("byob".equalsIgnoreCase(sysTheme)){
+            return R.style.Something_BYOB;
         }
         return R.style.Something_Light;
     }
