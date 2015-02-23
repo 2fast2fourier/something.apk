@@ -2,6 +2,7 @@
 local.properties
 .idea
 .DS_Store
+Thumbs.db
 bin
 gen
 out
