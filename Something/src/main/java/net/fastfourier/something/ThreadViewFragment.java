@@ -82,7 +82,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
 
     private int threadId = 0;
     private long postId = 0;
-    private int userid = 0;
+    private int userId = 0;
     private int page;
     private int maxPage;
     private int forumId;
@@ -402,8 +402,8 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         updateNavbar();
         FastVolley.cancelRequestByTag(THREAD_REQUEST_TAG);
         if(threadId > 0){
-            if(userid != 0) {
-                queueRequest(new ThreadPageRequest(getActivity(), threadId, page, userid, pageListener, errorListener), THREAD_REQUEST_TAG);
+            if(userId != 0) {
+                queueRequest(new ThreadPageRequest(getActivity(), threadId, page, userId, pageListener, errorListener), THREAD_REQUEST_TAG);
             }
             else {
                 queueRequest(new ThreadPageRequest(getActivity(), threadId, page, pageListener, errorListener), THREAD_REQUEST_TAG);
@@ -471,10 +471,10 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
      * See startRefresh() and ./request/ThreadPageRequest for volley implementation.
      * @param threadId Thread ID for requested thread. (Required)
      * @param page Page number to load, Optional, if -1 will go to last post, if 0 will go to newest unread post.
-     * @param userid (Optional) UserId for filtering.
+     * @param userId (Optional) UserId for filtering.
      * @param fromUrl True if request was sent by internal URL request. Used to decide if we should push current state into backstack.
      */
-    public void loadThread(int threadId, int page, int userid, boolean fromUrl) {
+    public void loadThread(int threadId, int page, int userId, boolean fromUrl) {
         if(fromUrl && isThreadLoaded()){
             threadBackstack.push(saveThreadState(new Bundle()));
         }else{
@@ -483,7 +483,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         this.ignorePageProgress = true;
         this.threadId = threadId;
         this.page = page;
-        this.userid = userid;
+        this.userId = userId;
         this.maxPage = 0;
         this.forumId = 0;
         this.bookmarked = false;
@@ -729,11 +729,11 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         }
 
         @JavascriptInterface
-        public void onMoreClick(final String postId, final String username, final String userid){
+        public void onMoreClick(final String postId, final String username, final String userId){
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    showMoreDialog(postId, username, Integer.parseInt(userid));
+                    showMoreDialog(postId, username, Integer.parseInt(userId));
                 }
             });
         }
@@ -770,8 +770,8 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         }
     }
 
-    private void showMoreDialog(final String postId, final String username, final int userid){
-        if(this.userid==0) {
+    private void showMoreDialog(final String postId, final String username, final int userId){
+        if(this.userId ==0) {
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.post_more_title)
                     .setItems(R.array.more_actions_normal, new DialogInterface.OnClickListener() {
@@ -793,7 +793,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
                                             new Intent(getActivity(), MainActivity.class)
                                                     .putExtra("thread_id", threadId)
                                                     .putExtra("thread_page", 1)
-                                                    .putExtra("userid", userid)
+                                                    .putExtra("user_id", userId)
                                                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                                     );
                                     break;
@@ -833,7 +833,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
                                             new Intent(getActivity(), MainActivity.class)
                                                     .putExtra("thread_id", threadId)
                                                     .putExtra("thread_page", 1)
-                                                    .putExtra("userid", 0)
+                                                    .putExtra("user_id", 0)
                                                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                                     );
                                     break;
