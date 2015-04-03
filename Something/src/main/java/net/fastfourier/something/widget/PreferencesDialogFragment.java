@@ -25,6 +25,9 @@ import net.fastfourier.something.util.SomePreferences;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,15 +49,25 @@ public class PreferencesDialogFragment extends FastDialogFragment implements Vie
 
     private void loadThemeList(){
         try {
-            String[] themeList = getResources().getAssets().list("css");
-            themes = new String[themeList.length];
-            systemThemes = new String[themeList.length];
-            friendlyThemeNames = new String[themeList.length];
-            themeColors = new int[themeList.length];
-            for(int ix=0;ix<themeList.length;ix++){
-                themes[ix] = themeList[ix].replace(".css", "");
-                loadThemeIconColor(themeList[ix], ix);
-                Log.e("theme", themeList[ix] +" - "+friendlyThemeNames[ix]+" - SysTheme: "+systemThemes[ix]);
+            String[] themeArray = getResources().getAssets().list("css");
+            List<String> themeList = new ArrayList<>();
+            themeList.addAll(Arrays.asList(themeArray));
+            // move default and dark to top of theme list (in that order)
+            for (int i = 0; i < themeList.size(); i++) {
+                String theme = themeList.get(i);
+                if (theme.equalsIgnoreCase("default.css") || theme.equalsIgnoreCase("dark.css")) {
+                    themeList.remove(i);
+                    themeList.add(0, theme);
+                }
+            }
+            themes = new String[themeList.size()];
+            systemThemes = new String[themeList.size()];
+            friendlyThemeNames = new String[themeList.size()];
+            themeColors = new int[themeList.size()];
+            for(int ix=0;ix<themeList.size();ix++){
+                themes[ix] = themeList.get(ix).replace(".css", "");
+                loadThemeIconColor(themeList.get(ix), ix);
+                Log.i("theme", themeList.get(ix) +" - "+friendlyThemeNames[ix]+" - SysTheme: "+systemThemes[ix]);
             }
         } catch (IOException e) {
             e.printStackTrace();
