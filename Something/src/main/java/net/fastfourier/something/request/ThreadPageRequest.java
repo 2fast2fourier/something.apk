@@ -174,7 +174,8 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
         }
     }
 
-    private static Pattern userJumpPattern = Pattern.compile("userid=(\\d+)");
+    private static Pattern userJumpPattern = Pattern.compile("userid-(\\d+)");
+    private static Pattern userJumpPatternBackup = Pattern.compile("userid=(\\d+)");
 
     private static int parsePosts(Document doc, ArrayList<HashMap<String, String>> postArray, boolean showImages, boolean showAvatars, boolean hideSeenImages, String unreadPti, boolean canReply, boolean lastPage, int forumId){
         int unread = 0;
@@ -199,11 +200,19 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
                 boolean editable = post.getElementsByAttributeValueContaining("href","editpost.php?action=editpost").size() > 0;
 
-                Element userInfo = post.getElementsByClass("profilelinks").first().getElementsByTag("a").first();
-                Matcher userIdMatcher = userJumpPattern.matcher(userInfo.attr("href"));
+                // we can use userinfo for every where except BYOB, unless we've ignored a user, then we have to use userinfo
+                Element userInfo = post.getElementsByClass("userinfo").first();
+                Matcher userIdMatcher = userJumpPattern.matcher(userInfo.attr("class"));
                 String userId = null;
-                if(userIdMatcher.find()){
+                if (userIdMatcher.find()) {
                     userId = userIdMatcher.group(1);
+                }
+                else {
+                    userInfo = post.getElementsByClass("profilelinks").first().getElementsByTag("a").first();
+                    userIdMatcher = userJumpPatternBackup.matcher(userInfo.attr("href"));
+                    if(userIdMatcher.find()) {
+                        userId = userIdMatcher.group(1);
+                    }
                 }
 
                 if(previouslyRead){
