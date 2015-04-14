@@ -230,6 +230,9 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 // instead. fyad also doesn't have registered dates for users.
                 if(forumId == Constants.FYAD_FORUMID || forumId == Constants.FYAD_DUMP_FORUMID){
                     postBody = post.getElementsByClass("complete_shit").first();
+                    if (postBody == null) {
+                        postBody = post.getElementsByClass("postbody").first();
+                    }
                     postData.put("regDate", " ");
                 }else{
                     postBody = post.getElementsByClass("postbody").first();
