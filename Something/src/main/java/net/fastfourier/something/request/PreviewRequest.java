@@ -6,6 +6,7 @@ import com.android.volley.Response;
 
 import net.fastfourier.something.ReplyFragment;
 import net.fastfourier.something.util.MustCache;
+import net.fastfourier.something.util.SomePreferences;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -62,6 +63,7 @@ public class PreviewRequest extends HTMLRequest<PreviewRequest.PreviewData> {
         {
             HashMap<String, String> postData = new HashMap<String, String>();
             String postContent = post.html();
+            postData.put("theme", SomePreferences.selectedTheme);
             postData.put("postcontent", postContent);
             MustCache.applyPreviewTemplate(html, postData);
         }

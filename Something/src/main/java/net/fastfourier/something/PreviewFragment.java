@@ -1,34 +1,21 @@
 package net.fastfourier.something;
 
 import android.annotation.SuppressLint;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.ContextMenu;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.salvadordalvik.fastlibrary.alert.FastAlert;
-import com.salvadordalvik.fastlibrary.util.FastUtils;
 
 import net.fastfourier.something.request.PreviewRequest;
-import net.fastfourier.something.request.PrivateMessageRequest;
 import net.fastfourier.something.util.Constants;
 import net.fastfourier.something.util.SomeURL;
 
