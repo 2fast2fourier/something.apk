@@ -2,7 +2,7 @@ repositories {
     mavenCentral()
 }
 
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 19
@@ -12,12 +12,12 @@ android {
         minSdkVersion 15
         targetSdkVersion 19
         versionCode rootProject.versionCode
-        versionName "0.5.0"
+        versionName "0.6.0"
     }
 
     signingConfigs {
         somethingKey {
-            storeFile file("../../../something.jks")
+            storeFile file("../something.jks")
             storePassword "something"
             keyAlias "something"
             keyPassword "something"

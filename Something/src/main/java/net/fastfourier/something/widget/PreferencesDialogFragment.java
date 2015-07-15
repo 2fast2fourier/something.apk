@@ -50,7 +50,7 @@ public class PreferencesDialogFragment extends FastDialogFragment implements Vie
     private void loadThemeList(){
         try {
             String[] themeArray = getResources().getAssets().list("css");
-            List<String> themeList = new ArrayList<>();
+            List<String> themeList = new ArrayList<String>();
             themeList.addAll(Arrays.asList(themeArray));
             // move default and dark to top of theme list (in that order)
             for (int i = 0; i < themeList.size(); i++) {
