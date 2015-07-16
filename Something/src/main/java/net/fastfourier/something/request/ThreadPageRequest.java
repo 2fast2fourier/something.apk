@@ -3,7 +3,6 @@ package net.fastfourier.something.request;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -100,7 +99,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
 
         boolean bookmarked = document.getElementsByClass("unbookmark").size() > 0;
 
-        String threadTitle = document.getElementsByClass("bclast").first().text();
+        String threadTitle = TextUtils.htmlEncode(document.getElementsByClass("bclast").first().text());
 
         Element body = document.body();
         forumId = Integer.parseInt(body.attr("data-forum"));
