@@ -89,7 +89,7 @@ public class PrivateMessageFragment extends SomeFragment implements Response.Err
 
     @Override
     public void refreshData(boolean pullToRefresh, boolean staleRefresh) {
-        queueRequest(new PrivateMessageRequest(pmId, pmTitle, this, this));
+        queueRequest(new PrivateMessageRequest(getActivity(), pmId, pmTitle, this, this));
     }
 
     public void showPM(int pmId, String pmTitle){

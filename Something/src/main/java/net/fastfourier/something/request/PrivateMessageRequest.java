@@ -1,5 +1,7 @@
 package net.fastfourier.something.request;
 
+import android.content.Context;
+
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -16,19 +18,21 @@ import java.util.HashMap;
  */
 public class PrivateMessageRequest extends HTMLRequest<PrivateMessageRequest.PMData> {
     private String pmTitle;
+    private Context context;
 
-    public PrivateMessageRequest(int pmId, String pmTitle, Response.Listener<PMData> success, Response.ErrorListener error) {
+    public PrivateMessageRequest(Context context, int pmId, String pmTitle, Response.Listener<PMData> success, Response.ErrorListener error) {
         super("http://forums.somethingawful.com/private.php", Request.Method.GET, success, error);
         addParam("action", "show");
         addParam("privatemessageid", pmId);
         this.pmTitle = pmTitle;
+        this.context = context;
     }
 
     @Override
     public PMData parseHtmlResponse(Request<PMData> request, NetworkResponse response, Document document) throws Exception {
 
         StringBuilder pmHtml = new StringBuilder();
-        parsePM(document, pmHtml, pmTitle);
+        parsePM(document, pmHtml, pmTitle, SomePreferences.shouldShowAvatars(context));
 
         return new PMData(pmHtml.toString());
     }
@@ -41,7 +45,7 @@ public class PrivateMessageRequest extends HTMLRequest<PrivateMessageRequest.PMD
         }
     }
 
-    private static void parsePM(Document doc, StringBuilder html, String pmTitle){
+    private static void parsePM(Document doc, StringBuilder html, String pmTitle, boolean showAvatars){
         Element post = doc.getElementsByClass("post").first();
         if(post != null){
             HashMap<String, String> postData = new HashMap<String, String>();
@@ -54,7 +58,7 @@ public class PrivateMessageRequest extends HTMLRequest<PrivateMessageRequest.PMD
 
             postData.put("username", author);
             postData.put("avatarText", avTitle);
-            postData.put("avatarURL", avatarUrl);
+            postData.put("avatarURL", (showAvatars && avatarUrl != null &&  avatarUrl.length() > 0 ) ? avatarUrl : null);
             postData.put("postcontent", postContent);
             postData.put("postDate", postDate);
             //Passing title through from fragment because parsing it out of the breadcrumb is a pita
