@@ -9,4 +9,5 @@ out
 *.iml
 build
 *.apk
+*.jks
 Something/manifest-merger-release-report.txt

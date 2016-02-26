@@ -1,11 +1,10 @@
 package net.fastfourier.something.util;
 
-import android.util.Log;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.HttpStack;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.OkUrlFactory;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -99,7 +98,7 @@ public class OkHttpStack implements HttpStack {
         }
         setConnectionParametersForRequest(connection, request);
         // Initialize HttpResponse with data from the HttpURLConnection.
-        ProtocolVersion protocolVersion = new ProtocolVersion("HTTP", 1, 1);
+        ProtocolVersion protocolVersion = new ProtocolVersion("HTTPS", 1, 1);
         int responseCode = connection.getResponseCode();
         if (responseCode == -1) {
             // -1 is returned by getResponseCode() if the response code could not be retrieved.
@@ -144,7 +143,7 @@ public class OkHttpStack implements HttpStack {
     }
 
     protected HttpURLConnection createConnection(URL url) throws IOException {
-        return client.open(url);
+        return new OkUrlFactory(client).open(url);
     }
 
     /**

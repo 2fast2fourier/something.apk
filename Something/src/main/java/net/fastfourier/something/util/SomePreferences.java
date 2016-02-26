@@ -205,7 +205,7 @@ public class SomePreferences {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        };
+        }
         return false;
     }
 

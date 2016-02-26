@@ -1,5 +1,6 @@
 package net.fastfourier.something;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -13,6 +14,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -20,8 +22,11 @@ import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.SpannedString;
 import android.text.TextUtils;
@@ -89,6 +94,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
     private CharSequence threadTitle;
     private String pageHtml, rawThreadTitle;
     private boolean bookmarked, canReply;
+    private String downloadUrl;
 
     /**
      * This backstack is used to push-pop thread states when navigating into threads view link from another thread,
@@ -143,7 +149,6 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
             cookieMan.sync();
         }
 
-
         if(savedInstanceState != null && savedInstanceState.containsKey("thread_html")){
             loadThreadState(savedInstanceState);
         }else{
@@ -189,6 +194,7 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         super.onCreateContextMenu(menu, v, menuInfo);
         WebView.HitTestResult result = threadView.getHitTestResult();
         final String targetUrl = result.getExtra();
+        final ThreadViewFragment that = this;
 
         switch (result.getType()){
             case WebView.HitTestResult.IMAGE_TYPE:
@@ -196,14 +202,16 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
                 menu.add(R.string.menu_save_image).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        Uri image = Uri.parse(targetUrl);
-                        DownloadManager.Request request = new DownloadManager.Request(image);
-                        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, image.getLastPathSegment());
-                        request.allowScanningByMediaScanner();
-                        DownloadManager dlMngr= (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-                        dlMngr.enqueue(request);
-                        Toast.makeText(getActivity(), "Image saved to Downloads folder.", Toast.LENGTH_LONG).show();
+                        if (Build.VERSION.SDK_INT >= 23) {
+                            Log.e("ThreadViewFragment", "Checking SDK");
+                            if (ContextCompat.checkSelfPermission(that.getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                Log.e("ThreadViewFragment", "Need write permissions");
+                                downloadUrl = targetUrl;
+                                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_WRITE_PERMISSIONS);
+                                return false;
+                            }
+                        }
+                        enqueueDownload(targetUrl);
                         return true;
                     }
                 });
@@ -233,6 +241,36 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
                     }
                 });
                 break;
+        }
+    }
+
+    public void enqueueDownload(String targetUrl) {
+        Uri image = Uri.parse(targetUrl);
+        DownloadManager.Request request = new DownloadManager.Request(image);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, image.getLastPathSegment());
+        request.allowScanningByMediaScanner();
+        DownloadManager dlMngr = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+        dlMngr.enqueue(request);
+        Toast.makeText(getActivity(), "Image saved to Downloads folder.", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode) {
+            case Constants.REQUEST_WRITE_PERMISSIONS:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (downloadUrl != null) {
+                        enqueueDownload(downloadUrl);
+                    }
+                }
+                else {
+                    Toast.makeText(getActivity(), R.string.no_permission_download, Toast.LENGTH_LONG).show();
+                }
+                downloadUrl = null;
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
