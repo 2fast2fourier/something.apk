@@ -10,46 +10,6 @@
 
     <!-- BASE LIGHT THEME -->
 
-    <style name="Something.Light" parent="Something.Base.Light">
-        <!-- Actionbar color: #054D7C -->
-        <item name="statusBarBackground">@color/actionbar_background_light</item>
-        <item name="primaryBackground">#EEEEEE</item>
-        <item name="listBackground">#EEEEEE</item>
-        <item name="listPageDividerBackground">#515151</item>
-        <item name="footerBackground">#515151</item>
-        <item name="listHeaderTextColor">#000000</item>
-        <item name="listSubTextColor">#444444</item>
-        <item name="listDividerColor">#808080</item>
-        <item name="webviewBackgroundColor">#DDDDDD</item>
-        <item name="subforumBackground">#DDDDDD</item>
-        <item name="progressBarColor">#2A98FF</item>
-        <item name="progressBarColorRefresh">#BEBEBE</item>
-        <item name="forumCategoryColor">#2E444D</item>
-
-        <item name="progressBarColorArray">@array/sbp_colors_light</item>
-        <item name="ptrProgressBarColorArray">@array/sbp_colors_light</item>
-
-        <item name="listActivatedBackground">@drawable/activated_background_light</item>
-
-        <item name="inlineBookmarkIcon">@drawable/ic_menu_bookmarks_light</item>
-        <item name="inlineStarIcon">@drawable/inline_menu_bookmark_light</item>
-        <item name="inlineEmptyStarIcon">@drawable/inline_menu_unbookmark_light</item>
-        <item name="inlineFolderIcon">@drawable/ic_action_collection_light</item>
-
-        <item name="android:actionBarStyle">@style/ActionBar.Solid.Something_light</item>
-
-        <item name="actionbarBackgroundLayerList">@drawable/actionbar_background_light</item>
-        <item name="android:icon">@android:color/transparent</item>
-    </style>
-
-    <style name="ActionBar.Solid.Something_light" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">?actionbarBackgroundLayerList</item>
-        <item name="android:backgroundStacked">?actionbarBackgroundLayerList</item>
-        <item name="android:backgroundSplit">?actionbarBackgroundLayerList</item>
-    </style>
-
-    <!-- BASE DARK THEME -->
-
     <style name="Something.Dark" parent="Something.Base.Dark">
         <!-- Actionbar color: #222222 -->
         <item name="statusBarBackground">@color/actionbar_background_dark</item>
@@ -88,18 +48,62 @@
         <item name="android:backgroundSplit">?actionbarBackgroundLayerList</item>
     </style>
 
+    <!-- BASE DARK THEME -->
+
+    <style name="Something.Light" parent="Something.Base.Light">
+        <!-- Actionbar color: #054D7C -->
+        <item name="statusBarBackground">@color/actionbar_background_light</item>
+        <item name="primaryBackground">#EEEEEE</item>
+        <item name="listBackground">#EEEEEE</item>
+        <item name="listPageDividerBackground">#515151</item>
+        <item name="footerBackground">#515151</item>
+        <item name="listHeaderTextColor">#000000</item>
+        <item name="listSubTextColor">#444444</item>
+        <item name="listDividerColor">#808080</item>
+        <item name="webviewBackgroundColor">#DDDDDD</item>
+        <item name="subforumBackground">#DDDDDD</item>
+        <item name="progressBarColor">#2A98FF</item>
+        <item name="progressBarColorRefresh">#BEBEBE</item>
+        <item name="forumCategoryColor">#2E444D</item>
+
+        <item name="progressBarColorArray">@array/sbp_colors_light</item>
+        <item name="ptrProgressBarColorArray">@array/sbp_colors_light</item>
+
+        <item name="listActivatedBackground">@drawable/activated_background_light</item>
+
+        <item name="inlineBookmarkIcon">@drawable/ic_menu_bookmarks_light</item>
+        <item name="inlineStarIcon">@drawable/inline_menu_bookmark_light</item>
+        <item name="inlineEmptyStarIcon">@drawable/inline_menu_unbookmark_light</item>
+        <item name="inlineFolderIcon">@drawable/ic_action_collection_light</item>
+
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Something_light</item>
+
+        <item name="actionbarBackgroundLayerList">@drawable/actionbar_background_light</item>
+        <item name="android:icon">@android:color/transparent</item>
+    </style>
+
+    <style name="ActionBar.Solid.Something_light" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">?actionbarBackgroundLayerList</item>
+        <item name="android:backgroundStacked">?actionbarBackgroundLayerList</item>
+        <item name="android:backgroundSplit">?actionbarBackgroundLayerList</item>
+    </style>
+
     <!-- FORUM THEMES -->
 
     <style name="Something.YOSPOS" parent="Something.Dark">
+
     </style>
 
     <style name="Something.AmberPOS" parent="Something.Dark">
+
     </style>
 
     <style name="Something.FYAD" parent="Something.Light">
+
     </style>
 
     <style name="Something.BYOB" parent="Something.Light">
+
     </style>
 
 </resources>
