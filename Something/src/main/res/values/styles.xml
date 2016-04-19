@@ -1,14 +1,71 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="Something.Base.Light" parent="android:Theme.Holo.Light.DarkActionBar">
         <!-- Required for windowTranslucentStatus support, see values-v19/styles.xml -->
+    </style>
+
+    <!-- BASE LIGHT THEME -->
+
+    <style name="Something.Light" parent="Something.Base.Light">
+        <!-- Actionbar color: #054D7C -->
+        <item name="statusBarBackground">@color/actionbar_background_light</item>
+        <item name="primaryBackground">#EEEEEE</item>
+        <item name="listBackground">#EEEEEE</item>
+        <item name="listPageDividerBackground">#515151</item>
+        <item name="footerBackground">#515151</item>
+        <item name="listHeaderTextColor">#000000</item>
+        <item name="listSubTextColor">#444444</item>
+        <item name="listDividerColor">#808080</item>
+        <item name="webviewBackgroundColor">#DDDDDD</item>
+        <item name="subforumBackground">#DDDDDD</item>
+        <item name="progressBarColor">#2A98FF</item>
+        <item name="progressBarColorRefresh">#BEBEBE</item>
+        <item name="forumCategoryColor">#2E444D</item>
+
+        <item name="progressBarColorArray">@array/sbp_colors_light</item>
+        <item name="ptrProgressBarColorArray">@array/sbp_colors_light</item>
+
+        <item name="listActivatedBackground">@drawable/activated_background_light</item>
+
+        <item name="inlineBookmarkIcon">@drawable/ic_menu_bookmarks_light</item>
+        <item name="inlineStarIcon">@drawable/inline_menu_bookmark_light</item>
+        <item name="inlineEmptyStarIcon">@drawable/inline_menu_unbookmark_light</item>
+        <item name="inlineFolderIcon">@drawable/ic_action_collection_light</item>
+
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Something_light</item>
+        <item name="actionbarBackgroundLayerList">@drawable/actionbar_background_light</item>
+        <item name="android:popupMenuStyle">@style/Something.Light.Popup</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/Something.Light.PopupMenuTextAppearanceLarge</item>
+        <item name="android:textAppearanceSmallPopupMenu">@style/Something.Light.PopupMenuTextAppearanceSmall</item>
+        <!-- @android:drawable/item_background_holo_dark -->\
+
+        <item name="android:icon">@android:color/transparent</item>
+    </style>
+
+    <style name="ActionBar.Solid.Something_light" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">?actionbarBackgroundLayerList</item>
+        <item name="android:backgroundStacked">?actionbarBackgroundLayerList</item>
+        <item name="android:backgroundSplit">?actionbarBackgroundLayerList</item>
+    </style>
+
+    <style name="Something.Light.Popup" parent="@android:style/Widget.PopupMenu">
+        <item name="android:popupBackground">@drawable/actionbar_background_dark</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="Something.Light.PopupMenuTextAppearanceLarge" parent="@android:style/TextAppearance.DeviceDefault.Widget.PopupMenu.Large">
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="Something.Light.PopupMenuTextAppearanceSmall" parent="@android:style/TextAppearance.DeviceDefault.Widget.PopupMenu.Small">
+        <item name="android:textColor">#FFFFFF</item>
     </style>
 
     <style name="Something.Base.Dark" parent="android:Theme.Holo">
         <!-- Required for windowTranslucentStatus support, see values-v19/styles.xml -->
     </style>
 
-    <!-- BASE LIGHT THEME -->
+    <!-- BASE DARK THEME -->
 
     <style name="Something.Dark" parent="Something.Base.Dark">
         <!-- Actionbar color: #222222 -->
@@ -43,46 +100,6 @@
     </style>
 
     <style name="ActionBar.Solid.Something_dark" parent="@android:style/Widget.Holo.ActionBar.Solid">
-        <item name="android:background">?actionbarBackgroundLayerList</item>
-        <item name="android:backgroundStacked">?actionbarBackgroundLayerList</item>
-        <item name="android:backgroundSplit">?actionbarBackgroundLayerList</item>
-    </style>
-
-    <!-- BASE DARK THEME -->
-
-    <style name="Something.Light" parent="Something.Base.Light">
-        <!-- Actionbar color: #054D7C -->
-        <item name="statusBarBackground">@color/actionbar_background_light</item>
-        <item name="primaryBackground">#EEEEEE</item>
-        <item name="listBackground">#EEEEEE</item>
-        <item name="listPageDividerBackground">#515151</item>
-        <item name="footerBackground">#515151</item>
-        <item name="listHeaderTextColor">#000000</item>
-        <item name="listSubTextColor">#444444</item>
-        <item name="listDividerColor">#808080</item>
-        <item name="webviewBackgroundColor">#DDDDDD</item>
-        <item name="subforumBackground">#DDDDDD</item>
-        <item name="progressBarColor">#2A98FF</item>
-        <item name="progressBarColorRefresh">#BEBEBE</item>
-        <item name="forumCategoryColor">#2E444D</item>
-
-        <item name="progressBarColorArray">@array/sbp_colors_light</item>
-        <item name="ptrProgressBarColorArray">@array/sbp_colors_light</item>
-
-        <item name="listActivatedBackground">@drawable/activated_background_light</item>
-
-        <item name="inlineBookmarkIcon">@drawable/ic_menu_bookmarks_light</item>
-        <item name="inlineStarIcon">@drawable/inline_menu_bookmark_light</item>
-        <item name="inlineEmptyStarIcon">@drawable/inline_menu_unbookmark_light</item>
-        <item name="inlineFolderIcon">@drawable/ic_action_collection_light</item>
-
-        <item name="android:actionBarStyle">@style/ActionBar.Solid.Something_light</item>
-
-        <item name="actionbarBackgroundLayerList">@drawable/actionbar_background_light</item>
-        <item name="android:icon">@android:color/transparent</item>
-    </style>
-
-    <style name="ActionBar.Solid.Something_light" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">?actionbarBackgroundLayerList</item>
         <item name="android:backgroundStacked">?actionbarBackgroundLayerList</item>
         <item name="android:backgroundSplit">?actionbarBackgroundLayerList</item>
