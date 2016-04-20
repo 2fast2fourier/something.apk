@@ -1,5 +1,7 @@
 package net.fastfourier.something.util;
 
+import net.fastfourier.something.BuildConfig;
+
 /**
  * Created by matthewshepard on 1/17/14.
  */
@@ -16,6 +18,8 @@ public class Constants {
     public static final int PM_FOLDER_SENT_ITEMS = -1;
 
     public static final int REQUEST_WRITE_PERMISSIONS = 1;
+
+    public static final boolean DEBUG = BuildConfig.DEBUG;
 
     /**
      * The forums only hide the postbar on certain archived forums (goldmine/gaschamber/ect).

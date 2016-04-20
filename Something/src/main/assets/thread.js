@@ -75,6 +75,13 @@ function pageinit() {
         }
     });
 
+    try {
+        var salr = new SALR(listener);
+    }
+    catch(error) {
+        console.log(error);
+    }
+
     $('.timg').on('click',function () {
         $(this).removeClass('timg');
         if(!$(this).parent().is('a')){

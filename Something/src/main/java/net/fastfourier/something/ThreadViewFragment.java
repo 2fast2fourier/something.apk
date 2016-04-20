@@ -42,6 +42,7 @@ import android.webkit.ConsoleMessage;
 import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
@@ -59,8 +60,10 @@ import net.fastfourier.something.request.BookmarkRequest;
 import net.fastfourier.something.request.MarkLastReadRequest;
 import net.fastfourier.something.request.ThreadPageRequest;
 import net.fastfourier.something.util.Constants;
+import net.fastfourier.something.util.SomePreferences;
 import net.fastfourier.something.util.SomeTheme;
 import net.fastfourier.something.util.SomeURL;
+import net.fastfourier.something.util.SomeUtils;
 import net.fastfourier.something.widget.PageSelectDialogFragment;
 
 import java.util.LinkedList;
@@ -177,12 +180,27 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         return Math.max(Math.min(FastUtils.calculateScrollDistance(getActivity(), 2f), 0.666f), 0.333f);
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
+    @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface", "NewApi"})
     private void initWebview() {
         threadView.getSettings().setJavaScriptEnabled(true);
         threadView.setWebChromeClient(chromeClient);
         threadView.setWebViewClient(webClient);
         threadView.addJavascriptInterface(new SomeJavascriptInterface(), "listener");
+
+        if (Constants.DEBUG && SomeUtils.isKitKat()) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
+
+        if (SomeUtils.isLollipop()) {
+            threadView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
+
+        if (SomeUtils.isJellybean()) {
+            threadView.getSettings().setAllowUniversalAccessFromFileURLs(true);
+            threadView.getSettings().setAllowFileAccessFromFileURLs(true);
+            threadView.getSettings().setAllowFileAccess(true);
+            threadView.getSettings().setAllowContentAccess(true);
+        }
 
         threadView.setBackgroundColor(SomeTheme.getThemeColor(getActivity(), R.attr.webviewBackgroundColor, Color.BLACK));
 
@@ -805,6 +823,11 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
             }else{
                 throw new RuntimeException("Invalid postIndex in onLastReadClick: "+postIndex);
             }
+        }
+
+        @JavascriptInterface
+        public String getPreference(String preference) {
+            return SomePreferences.getPreference(preference, "undefined");
         }
     }
 

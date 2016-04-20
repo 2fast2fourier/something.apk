@@ -5,14 +5,15 @@ repositories {
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "19.1.0"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+    useLibrary  'org.apache.http.legacy'
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 19
+        targetSdkVersion 23
         versionCode rootProject.versionCode
-        versionName "0.6.2"
+        versionName "0.6.3b1"
     }
 
     signingConfigs {

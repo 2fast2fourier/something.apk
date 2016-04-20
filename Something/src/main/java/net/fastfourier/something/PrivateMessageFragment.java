@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -24,6 +25,7 @@ import com.salvadordalvik.fastlibrary.util.FastUtils;
 import net.fastfourier.something.request.PrivateMessageRequest;
 import net.fastfourier.something.util.Constants;
 import net.fastfourier.something.util.SomeURL;
+import net.fastfourier.something.util.SomeUtils;
 
 /**
  * Created by matthewshepard on 2/12/14.
@@ -104,6 +106,10 @@ public class PrivateMessageFragment extends SomeFragment implements Response.Err
         webview.getSettings().setJavaScriptEnabled(true);
         webview.setWebChromeClient(chromeClient);
         webview.setWebViewClient(webClient);
+
+        if (SomeUtils.isLollipop()) {
+            webview.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
 
         TypedValue val = new TypedValue();
         if(getActivity().getTheme().resolveAttribute(R.attr.webviewBackgroundColor, val, true)){

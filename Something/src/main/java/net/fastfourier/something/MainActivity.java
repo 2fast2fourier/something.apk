@@ -11,6 +11,7 @@ import android.support.v4.widget.SlidingPaneLayout;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebSettings;
 
 import com.bugsense.trace.BugSenseHandler;
 import com.squareup.otto.Subscribe;

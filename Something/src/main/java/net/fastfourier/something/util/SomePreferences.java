@@ -140,6 +140,10 @@ public class SomePreferences {
         });
     }
 
+    public synchronized static String getPreference(String key, String defaultValue) {
+        return preferenceStore.getString(key, defaultValue);
+    }
+
     public synchronized static void setString(String key, String value){
         preferenceStore.edit().putString(key, value).commit();
         updatePreferences(preferenceStore);

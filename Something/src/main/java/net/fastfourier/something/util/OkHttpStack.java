@@ -6,6 +6,9 @@ import com.android.volley.toolbox.HttpStack;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.OkUrlFactory;
 
+/**
+ * TODO: THIS IS DEPRECIATED AND SHOULD BE REMOVED
+ */
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -35,9 +38,9 @@ public class OkHttpStack implements HttpStack {
     private final OkHttpClient client;
 
     public interface Redirectable {
-        public void onRedirect(String redirectUrl);
-        public boolean hasRedirect();
-        public String getRedirectUrl();
+        void onRedirect(String redirectUrl);
+        boolean hasRedirect();
+        String getRedirectUrl();
     }
 
     private static final String HEADER_CONTENT_TYPE = "Content-Type";
@@ -50,7 +53,7 @@ public class OkHttpStack implements HttpStack {
          * Returns a URL to use instead of the provided one, or null to indicate
          * this URL should not be used at all.
          */
-        public String rewriteUrl(String originalUrl);
+        String rewriteUrl(String originalUrl);
     }
 
     private final UrlRewriter mUrlRewriter;
