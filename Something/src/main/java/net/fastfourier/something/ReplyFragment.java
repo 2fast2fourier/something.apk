@@ -195,6 +195,14 @@ public class ReplyFragment extends SomeFragment implements DialogInterface.OnCan
             }
             reply.setEnabled(replyEnabled);
         }
+
+        MenuItem preview = menu.findItem(R.id.menu_preview);
+        if (preview != null) {
+            if (replyType == TYPE_PM) {
+                preview.setEnabled(false);
+                preview.setVisible(false);
+            }
+        }
     }
 
     @Override

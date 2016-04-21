@@ -240,7 +240,7 @@ public class PrivateMessageFragment extends SomeFragment implements Response.Err
 
     private void startReply() {
         startActivityForResult(
-                new Intent(getActivity(), ReplyFragment.class)
+                new Intent(getActivity(), ReplyActivity.class)
                         .putExtra("pm_id", pmId)
                         .putExtra("reply_type", ReplyFragment.TYPE_PM),
                 REQUEST_REPLY
