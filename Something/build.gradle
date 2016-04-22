@@ -56,7 +56,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:19.0.0'
+    compile 'com.android.support:support-v4:23.3.0'
     compile 'org.jsoup:jsoup:1.7.3'
     compile 'com.squareup.okhttp:okhttp:2.7.4'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.7.4'

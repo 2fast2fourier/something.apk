@@ -17,8 +17,8 @@ public class PageSelectDialogFragment extends FastDialogFragment implements View
 
     private NumberPicker picker;
 
-    public static interface PageSelectable{
-        public void goToPage(int page);
+    public interface PageSelectable{
+        void goToPage(int page);
     }
 
     public PageSelectDialogFragment() {
