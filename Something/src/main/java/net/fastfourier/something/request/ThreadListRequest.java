@@ -80,6 +80,8 @@ public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListR
             }else if( thread.getElementsByClass("bm2").size() > 0){
                 bookmarked = 3;
             }
+
+            boolean pinned = thread.getElementsByClass("title_sticky").size() > 0;
             boolean closed = thread.hasClass("closed");
 
             replies = stripParseInt(thread.getElementsByClass("replies").first().text());
@@ -97,7 +99,7 @@ public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListR
                 tagUrl = tag.getElementsByTag("img").attr("src");
             }
 
-            threads.add(new ThreadItem(id, getFirstTextByClass(thread, "thread_title", "Thread Title"), unread, replies, author, lastPost, bookmarked, closed, tagUrl));
+            threads.add(new ThreadItem(id, getFirstTextByClass(thread, "thread_title", "Thread Title"), unread, replies, author, lastPost, bookmarked, pinned, closed, tagUrl));
         }
         if(forumId != Constants.BOOKMARK_FORUMID){
             //bookmark page doesn't have forum shortcut list

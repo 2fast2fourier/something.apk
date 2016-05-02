@@ -25,9 +25,9 @@ import net.fastfourier.something.util.SomeTheme;
 public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements Parcelable{
     private String threadTitle, author, lastPost, tagUrl;
     private int unread, replies, bookmark;
-    private boolean closed, selected;
+    private boolean pinned, closed, selected;
 
-    public ThreadItem(int id, String title, int unreadCount, int replies, String author, String lastPost, int bookmarked, boolean closed, String tagUrl) {
+    public ThreadItem(int id, String title, int unreadCount, int replies, String author, String lastPost, int bookmarked, boolean pinned, boolean closed, String tagUrl) {
         super(R.layout.thread_item, id, true);
         this.threadTitle = title;
         this.unread = unreadCount;
@@ -35,6 +35,7 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         this.author = author;
         this.lastPost = lastPost;
         this.bookmark = bookmarked;
+        this.pinned = pinned;
         this.closed = closed;
         this.tagUrl = tagUrl;
         this.selected = false;
@@ -48,6 +49,7 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         this.author = source.readString();
         this.lastPost = source.readString();
         this.bookmark = source.readInt();
+        this.pinned = source.readInt() > 0;
         this.closed = source.readInt() > 0;
         this.tagUrl = source.readString();
         this.selected = false;
@@ -62,6 +64,7 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         dest.writeString(author);
         dest.writeString(lastPost);
         dest.writeInt(bookmark);
+        dest.writeInt(pinned ? 1 : 0);
         dest.writeInt(closed ? 1 : 0);
         dest.writeString(tagUrl);
     }
@@ -90,16 +93,24 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
                 unreadBackground.setColor(SomeTheme.bookmark_gold);
                 break;
         }
+
         holder.unread.setAlpha(unread > 0 ? 1.0f : 0.5f);
-        if(unread >= 0){
+        if (unread >= 0){
             holder.subtext.setText(" "+(replies/SomePreferences.threadPostPerPage+1)+" - Killed By: "+lastPost);
-        }else{
+        }
+        else {
             holder.subtext.setText(" "+(replies/SomePreferences.threadPostPerPage+1)+" - OP: "+author);
         }
-        if(!TextUtils.isEmpty(tagUrl)){
+
+        if (pinned) {
+            holder.subtext.setCompoundDrawablesWithIntrinsicBounds(R.drawable.sticky, 0, 0, 0);
+        }
+
+        if (!TextUtils.isEmpty(tagUrl)) {
             holder.tagImage.setImageUrl(tagUrl, FastVolley.getImageLoader());
             holder.tagImage.setVisibility(View.VISIBLE);
-        }else{
+        }
+        else {
             holder.tagImage.setVisibility(View.GONE);
         }
 
