@@ -105,6 +105,9 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         if (pinned) {
             holder.subtext.setCompoundDrawablesWithIntrinsicBounds(R.drawable.sticky, 0, 0, 0);
         }
+        else {
+            holder.subtext.setCompoundDrawablesWithIntrinsicBounds(R.drawable.pages, 0, 0, 0);
+        }
 
         if (!TextUtils.isEmpty(tagUrl)) {
             holder.tagImage.setImageUrl(tagUrl, FastVolley.getImageLoader());
