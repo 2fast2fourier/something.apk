@@ -1,5 +1,6 @@
 package net.fastfourier.something.request;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -7,10 +8,13 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.salvadordalvik.fastlibrary.util.FastUtils;
+
+import net.fastfourier.something.R;
 import net.fastfourier.something.data.ForumProcessTask;
 import net.fastfourier.something.data.ThreadManager;
 import net.fastfourier.something.list.ThreadItem;
 import net.fastfourier.something.util.Constants;
+import net.fastfourier.something.util.SomePreferences;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -24,8 +28,9 @@ import java.util.ArrayList;
 public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListResponse> {
     private int forumId;
     private boolean scrollTo;
+    private Context context;
 
-    public ThreadListRequest(int forumId, int page, boolean scrollTo, Response.Listener<ThreadListResponse> success, Response.ErrorListener error) {
+    public ThreadListRequest(Context context, int forumId, int page, boolean scrollTo, Response.Listener<ThreadListResponse> success, Response.ErrorListener error) {
         super(getUrl(forumId, page), Request.Method.GET, success, error);
         if(forumId != Constants.BOOKMARK_FORUMID){
             addParam("forumid", forumId);
@@ -33,6 +38,7 @@ public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListR
         addParam("pagenumber", page);
         this.forumId = forumId;
         this.scrollTo = scrollTo;
+        this.context = context;
     }
 
     private static String getUrl(int forumId, int page){
@@ -91,7 +97,14 @@ public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListR
             String author, tagUrl = null, lastPost = null;
             author = authors.first().text();
             if(authors.size() > 1){
-                lastPost = authors.last().text();
+                String lastAuthor = authors.last().text();
+                int pages = replies/ SomePreferences.threadPostPerPage+1;
+                if (unread >= 0) {
+                    lastPost = String.format(context.getResources().getString(R.string.thread_killed_by), pages, lastAuthor);
+                }
+                else {
+                    lastPost = String.format(context.getResources().getString(R.string.thread_op), pages, author);
+                }
             }
 
             Element tag = thread.getElementsByClass("icon").first();

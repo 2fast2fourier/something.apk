@@ -95,12 +95,7 @@ public class ThreadItem extends BaseFastItem<ThreadItem.ThreadHolder> implements
         }
 
         holder.unread.setAlpha(unread > 0 ? 1.0f : 0.5f);
-        if (unread >= 0){
-            holder.subtext.setText(" "+(replies/SomePreferences.threadPostPerPage+1)+" - Killed By: "+lastPost);
-        }
-        else {
-            holder.subtext.setText(" "+(replies/SomePreferences.threadPostPerPage+1)+" - OP: "+author);
-        }
+        holder.subtext.setText(lastPost);
 
         if (pinned) {
             holder.subtext.setCompoundDrawablesWithIntrinsicBounds(R.drawable.sticky, 0, 0, 0);

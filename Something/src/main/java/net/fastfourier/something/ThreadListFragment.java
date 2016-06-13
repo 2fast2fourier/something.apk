@@ -164,7 +164,7 @@ public class ThreadListFragment extends SomeFragment implements FastQueryTask.Qu
 
     private void loadPage(int page, boolean scrollTo){
         setRefreshAnimation(true);
-        queueRequest(new ThreadListRequest(forumId, page, scrollTo, forumResponse, errorResponse));
+        queueRequest(new ThreadListRequest(this.getContext(), forumId, page, scrollTo, forumResponse, errorResponse));
     }
 
     private Response.Listener<ThreadListRequest.ThreadListResponse> forumResponse = new Response.Listener<ThreadListRequest.ThreadListResponse>() {

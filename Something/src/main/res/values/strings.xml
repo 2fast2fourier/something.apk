@@ -127,4 +127,6 @@
     <string name="reply_draft_title_pm">Saved Draft</string>
     <string name="pull_bottom_release_refresh">Release to refresh…</string>
     <string name="no_permission_download">Something does not have permission to download things.</string>
+    <string name="thread_killed_by">%1$d - Killed By: %2$s</string>
+    <string name="thread_op">%1$d - OP: %2$s</string>
 </resources>
