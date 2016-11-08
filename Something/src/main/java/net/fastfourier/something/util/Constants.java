@@ -19,14 +19,19 @@ public class Constants {
 
     public static final int REQUEST_WRITE_PERMISSIONS = 1;
 
+    public static final String COOKIE_DOMAIN = "forums.somethingawful.com";
+    public static final String COOKIE_USER_ID = "bbuserid";
+    public static final String COOKIE_USER_PASS = "bbpassword";
+    public static final String COOKIE_SESSION_HASH = "sessionhash";
+    public static final String COOKIE_SESSION_ID = "sessionid";
+
     public static final boolean DEBUG = BuildConfig.DEBUG;
 
     /**
      * The forums only hide the postbar on certain archived forums (goldmine/gaschamber/ect).
-     * They do not use the normal 'forum-closed' image,
-     * so this checks against a short list of known archived forums.
-     * Thread parsing also checks against the 'forum-closed' image, but not all forums use that.
-     * this is fucking terrible.
+     * They do not use the normal 'forum-closed' image, so this checks against that short list of
+     * known archived forums. Thread parsing also checks against the 'forum-closed' image, but not
+     * all forums use that. This is fucking terrible.
      */
     public static boolean isArchiveForum(int forumId) {
         return forumId == 21 || forumId == 25 || forumId == 264 || forumId == 115 || forumId == 176 || forumId == 229;

@@ -13,10 +13,15 @@ public class SomeUtils {
      * @param code API code to test again
      * @return boolean
      */
-    public static boolean isAtLeast(int code) {
+    private static boolean isAtLeast(int code) {
         return Build.VERSION.SDK_INT >= code;
     }
 
+    /**
+     * Check if the running OS is at least Jellybean (SDK 16, 4.1 to 4.3)
+     *
+     * @return boolean
+     */
     public static boolean isJellybean() {
         return isAtLeast(Build.VERSION_CODES.JELLY_BEAN);
     }

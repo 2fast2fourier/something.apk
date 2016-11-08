@@ -39,6 +39,7 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.webkit.ConsoleMessage;
+import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -147,9 +148,17 @@ public class ThreadViewFragment extends SomeFragment implements PageSelectDialog
         initWebview();
 
         updateNavbar();
-        CookieSyncManager cookieMan = CookieSyncManager.getInstance();
-        if(cookieMan != null){
-            cookieMan.sync();
+        CookieManager cookieManager = CookieManager.getInstance();
+        if (!SomeUtils.isLollipop()) {
+            CookieSyncManager.createInstance(getContext());
+        }
+        cookieManager.setAcceptCookie(true);
+        cookieManager.setCookie(Constants.COOKIE_DOMAIN, SomePreferences.getCookie(Constants.COOKIE_USER_ID));
+        cookieManager.setCookie(Constants.COOKIE_DOMAIN, SomePreferences.getCookie(Constants.COOKIE_USER_PASS));
+        cookieManager.setCookie(Constants.COOKIE_DOMAIN, SomePreferences.getCookie(Constants.COOKIE_SESSION_HASH));
+        cookieManager.setCookie(Constants.COOKIE_DOMAIN, SomePreferences.getCookie(Constants.COOKIE_SESSION_ID));
+        if (!SomeUtils.isLollipop()) {
+            CookieSyncManager.getInstance().sync();
         }
 
         if(savedInstanceState != null && savedInstanceState.containsKey("thread_html")){

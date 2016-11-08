@@ -4,6 +4,7 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import net.fastfourier.something.data.ForumProcessTask;
+import net.fastfourier.something.util.Constants;
 
 import org.jsoup.nodes.Document;
 
@@ -12,7 +13,7 @@ import org.jsoup.nodes.Document;
  */
 public class ForumListRequest extends HTMLRequest<Void> {
     public ForumListRequest(Response.Listener<Void> success, Response.ErrorListener error) {
-        super("http://forums.somethingawful.com/forumdisplay.php", Request.Method.GET, success, error);
+        super(Constants.BASE_URL + "forumdisplay.php", Request.Method.GET, success, error);
         //request GBS since that forumid will probably never change
         addParam("forumid", 1);
     }

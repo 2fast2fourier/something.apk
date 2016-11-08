@@ -5,30 +5,23 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import android.util.Log;
 import com.salvadordalvik.fastlibrary.request.PersistentCookieStore;
 import net.fastfourier.something.R;
-import net.fastfourier.something.SomeApplication;
 import java.io.IOException;
-import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.HttpCookie;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by matthewshepard on 1/17/14.
  */
 public class SomePreferences {
+    private static String TAG = "SomePreferences";
     /*
      * Define Preference key/cache pairs here:
      */
@@ -36,6 +29,7 @@ public class SomePreferences {
     //public static int exampleVariable;
 
     private static PersistentCookieStore cookieStore;
+    private static CookieManager cookieManager;
 
     public static final String THREADLIST_FAVORITE_FORUMID = "threadlist_favorite_forumid";
     private static final int DEFAULT_FAVORITE_FORUMID_INT = Constants.BOOKMARK_FORUMID;
@@ -128,7 +122,8 @@ public class SomePreferences {
 
     public synchronized static void init(Context context){
         cookieStore = new PersistentCookieStore(context.getApplicationContext());
-        CookieManager.setDefault(new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL));
+        cookieManager = new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL);
+        CookieManager.setDefault(cookieManager);
 
         preferenceStore = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         updatePreferences(preferenceStore);
@@ -145,22 +140,22 @@ public class SomePreferences {
     }
 
     public synchronized static void setString(String key, String value){
-        preferenceStore.edit().putString(key, value).commit();
+        preferenceStore.edit().putString(key, value).apply();
         updatePreferences(preferenceStore);
     }
 
     public synchronized static void setInt(String key, int value){
-        preferenceStore.edit().putInt(key, value).commit();
+        preferenceStore.edit().putInt(key, value).apply();
         updatePreferences(preferenceStore);
     }
 
     public synchronized static void setLong(String key, long value){
-        preferenceStore.edit().putLong(key, value).commit();
+        preferenceStore.edit().putLong(key, value).apply();
         updatePreferences(preferenceStore);
     }
 
     public synchronized static void setBoolean(String key, boolean value){
-        preferenceStore.edit().putBoolean(key, value).commit();
+        preferenceStore.edit().putBoolean(key, value).apply();
         updatePreferences(preferenceStore);
     }
 
@@ -192,17 +187,18 @@ public class SomePreferences {
     }
 
     public static void clearAuthentication() {
+        Log.i(TAG, "Logging out");
         loggedIn = false;
         cookieStore.removeAll();
     }
 
     private static boolean isLoggedIn(){
         try {
-            Map<String, List<String>> cookies = CookieManager.getDefault().get(URI.create("http://forums.somethingawful.com"), new HashMap<String, List<String>>());
+            Map<String, List<String>> cookies = CookieManager.getDefault().get(URI.create(Constants.BASE_URL), new HashMap<String, List<String>>());
             List<String> cookieList = cookies.get("Cookie");
-            if(cookieList != null){
-                for(String cookie : cookieList){
-                    if(cookie.contains("bbuserid") && !cookie.contains("deleted")){
+            if (cookieList != null){
+                for (String cookie : cookieList) {
+                    if(cookie.contains(Constants.COOKIE_USER_ID) && !cookie.contains("deleted")){
                         return true;
                     }
                 }
@@ -216,5 +212,18 @@ public class SomePreferences {
     public static boolean confirmLogin() {
         loggedIn = isLoggedIn();
         return loggedIn;
+    }
+
+    public static String getCookie(String name) {
+        List<HttpCookie> cookies = cookieManager.getCookieStore().getCookies();
+        for (HttpCookie cookie : cookies) {
+            if (cookie.getDomain().contains(Constants.COOKIE_DOMAIN)) {
+                if (cookie.getName().equals(name)) {
+                    return String.format("%s=%s; domain=%s", name, cookie.getValue(), cookie.getDomain());
+                }
+            }
+        }
+        Log.w(TAG, "getCookie: could not find cookie " + name);
+        return "";
     }
 }

@@ -9,6 +9,7 @@ import com.android.volley.Response;
 import com.salvadordalvik.fastlibrary.util.FastDateUtils;
 
 import net.fastfourier.something.ReplyFragment;
+import net.fastfourier.something.util.Constants;
 
 import org.joda.time.DateTime;
 import org.jsoup.nodes.Document;
@@ -18,7 +19,7 @@ import org.jsoup.nodes.Document;
  */
 public class PMReplyDataRequest extends HTMLRequest<PMReplyDataRequest.PMReplyData> {
     public PMReplyDataRequest(int pmId, Response.Listener<PMReplyData> success, Response.ErrorListener error) {
-        super("http://forums.somethingawful.com/private.php", Request.Method.GET, success, error);
+        super(Constants.BASE_URL + "private.php", Request.Method.GET, success, error);
         addParam("action", "newmessage");
         if(pmId > 0){
             addParam("privatemessageid", pmId);

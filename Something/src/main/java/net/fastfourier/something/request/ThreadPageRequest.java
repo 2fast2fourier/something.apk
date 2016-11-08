@@ -33,13 +33,13 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
     private Context context;
 
     public ThreadPageRequest(Context context, int threadId, int page, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
-        super("http://forums.somethingawful.com/showthread.php", Request.Method.GET, success, error);
+        super(Constants.BASE_URL + "showthread.php", Request.Method.GET, success, error);
         initializeParams(threadId, page, 0);
         this.context = context;
     }
 
     public ThreadPageRequest(Context context, long postId, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
-        super("http://forums.somethingawful.com/showthread.php", Request.Method.GET, success, error);
+        super(Constants.BASE_URL + "showthread.php", Request.Method.GET, success, error);
         addParam("postid", postId);
         addParam("goto", "post");
         addParam("perpage", SomePreferences.threadPostPerPage);
@@ -48,7 +48,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
     }
 
     public ThreadPageRequest(Context context, int threadId, int page, int userId, Response.Listener<ThreadPage> success, Response.ErrorListener error) {
-        super("http://forums.somethingawful.com/showthread.php", Request.Method.GET, success, error);
+        super(Constants.BASE_URL + "showthread.php", Request.Method.GET, success, error);
         initializeParams(threadId, page, userId);
         this.context = context;
     }
@@ -197,7 +197,7 @@ public class ThreadPageRequest extends HTMLRequest<ThreadPageRequest.ThreadPage>
                 boolean mod = auth.hasClass("role-mod");
                 boolean ik = auth.hasClass("role-ik");
 
-                boolean editable = post.getElementsByAttributeValueContaining("href","editpost.php?action=editpost").size() > 0;
+                boolean editable = post.getElementsByAttributeValueContaining("href", "editpost.php?action=editpost").size() > 0;
 
                 // we can use userinfo for every where except BYOB, unless we've ignored a user, then we have to use userinfo
                 Element userInfo = post.getElementsByClass("userinfo").first();

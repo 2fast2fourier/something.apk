@@ -4,6 +4,8 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 
+import net.fastfourier.something.util.Constants;
+
 import org.jsoup.nodes.Document;
 
 /**
@@ -11,7 +13,7 @@ import org.jsoup.nodes.Document;
  */
 public class MarkUnreadRequest extends HTMLRequest<Void>{
     public MarkUnreadRequest(int threadId, Response.Listener<Void> success, Response.ErrorListener error) {
-        super("http://forums.somethingawful.com/showthread.php", Request.Method.POST, success, error);
+        super(Constants.BASE_URL + "showthread.php", Request.Method.POST, success, error);
         addParam("action", "resetseen");
         addParam("threadid", threadId);
     }

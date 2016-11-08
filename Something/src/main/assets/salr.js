@@ -52,7 +52,7 @@ SALR.prototype.inlineTweets = function() {
         $.ajax({url:"https://api.twitter.com/1/statuses/oembed.json?id="+tweetId,
             dataType: 'jsonp',
             success: function(data) {
-                link = $(link).wrap("<div class='tweet'>").parent();
+                link = $(link).wrap("<div class='tweet tw-align-center'>").parent();
                 datahtml = data.html.replace("src=\"//platform.twitter.com/widgets.js\"", "src=\"file:///android_asset/twitterwidget.js\"");
                 $(link).html(datahtml);
                 if($('head').children('link').first().attr('href').indexOf('dark.css') != -1 || $('head').children('link').first().attr('href').indexOf('pos.css') != -1){

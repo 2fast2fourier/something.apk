@@ -44,12 +44,12 @@ public class ThreadListRequest extends HTMLRequest<ThreadListRequest.ThreadListR
     private static String getUrl(int forumId, int page){
         if(forumId == Constants.BOOKMARK_FORUMID){
             if(page == 1){
-                return "http://forums.somethingawful.com/usercp.php";
+                return Constants.BASE_URL + "usercp.php";
             }else{
-                return "http://forums.somethingawful.com/bookmarkthreads.php";
+                return Constants.BASE_URL + "bookmarkthreads.php";
             }
         }else{
-            return "http://forums.somethingawful.com/forumdisplay.php";
+            return Constants.BASE_URL + "forumdisplay.php";
         }
     }
 

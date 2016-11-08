@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by matthewshepard on 1/22/14.
+ * Fragment for dealing with viewing the forums list
  */
 public class ForumListFragment extends SomeFragment implements FastQueryTask.QueryResultCallback<ForumItem>,Response.ErrorListener, Response.Listener<Void> {
     private ListView forumList;

@@ -5,6 +5,8 @@ import android.content.Context;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
+
+import net.fastfourier.something.util.Constants;
 import net.fastfourier.something.util.MustCache;
 import net.fastfourier.something.util.SomePreferences;
 
@@ -21,7 +23,7 @@ public class PrivateMessageRequest extends HTMLRequest<PrivateMessageRequest.PMD
     private Context context;
 
     public PrivateMessageRequest(Context context, int pmId, String pmTitle, Response.Listener<PMData> success, Response.ErrorListener error) {
-        super("http://forums.somethingawful.com/private.php", Request.Method.GET, success, error);
+        super(Constants.BASE_URL + "private.php", Request.Method.GET, success, error);
         addParam("action", "show");
         addParam("privatemessageid", pmId);
         this.pmTitle = pmTitle;

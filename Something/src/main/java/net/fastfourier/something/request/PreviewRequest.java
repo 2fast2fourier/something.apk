@@ -5,6 +5,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 
 import net.fastfourier.something.ReplyFragment;
+import net.fastfourier.something.util.Constants;
 import net.fastfourier.something.util.MustCache;
 import net.fastfourier.something.util.SomePreferences;
 
@@ -20,7 +21,7 @@ public class PreviewRequest extends HTMLRequest<PreviewRequest.PreviewData> {
     private String previewTitle = "Preview";
 
     public PreviewRequest(ReplyDataRequest.ReplyDataResponse reply, Response.Listener<PreviewData> success, Response.ErrorListener error) {
-        super(ReplyFragment.TYPE_EDIT == reply.type ? "http://forums.somethingawful.com/editpost.php" : "http://forums.somethingawful.com/newreply.php", Request.Method.POST, success, error);
+        super(ReplyFragment.TYPE_EDIT == reply.type ? Constants.BASE_URL + "editpost.php" : Constants.BASE_URL + "newreply.php", Request.Method.POST, success, error);
         switch (reply.type){
             case ReplyFragment.TYPE_QUOTE:
             case ReplyFragment.TYPE_REPLY:

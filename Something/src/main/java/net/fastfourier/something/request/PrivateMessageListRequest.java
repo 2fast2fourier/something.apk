@@ -6,6 +6,7 @@ import com.android.volley.Response;
 import com.bugsense.trace.BugSenseHandler;
 import net.fastfourier.something.list.PrivateMessageFolderItem;
 import net.fastfourier.something.list.PrivateMessageItem;
+import net.fastfourier.something.util.Constants;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -24,7 +25,7 @@ public class PrivateMessageListRequest extends HTMLRequest<PrivateMessageListReq
     private int folderId;
 
     public PrivateMessageListRequest(int folderId, boolean showAll, Response.Listener<PMListResult> success, Response.ErrorListener error) {
-        super("http://forums.somethingawful.com/private.php", Request.Method.GET, success, error);
+        super(Constants.BASE_URL + "private.php", Request.Method.GET, success, error);
         this.folderId = folderId;
         addParam("folderid", folderId);
         if(showAll){

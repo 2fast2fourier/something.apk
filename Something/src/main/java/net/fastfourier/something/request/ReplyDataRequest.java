@@ -9,6 +9,7 @@ import com.android.volley.Response;
 import com.salvadordalvik.fastlibrary.util.FastDateUtils;
 
 import net.fastfourier.something.ReplyFragment;
+import net.fastfourier.something.util.Constants;
 
 import org.joda.time.DateTime;
 import org.jsoup.nodes.Document;
@@ -20,7 +21,7 @@ public class ReplyDataRequest extends HTMLRequest<ReplyDataRequest.ReplyDataResp
     private int threadId, postId, type;
 
     public ReplyDataRequest(int threadId, int postId, int type, Response.Listener<ReplyDataResponse> success, Response.ErrorListener error) {
-        super(type == ReplyFragment.TYPE_EDIT ? "http://forums.somethingawful.com/editpost.php" : "http://forums.somethingawful.com/newreply.php", Request.Method.GET, success, error);
+        super(type == ReplyFragment.TYPE_EDIT ? Constants.BASE_URL + "editpost.php" : Constants.BASE_URL + "newreply.php", Request.Method.GET, success, error);
         this.threadId = threadId;
         this.postId = postId;
         this.type = type;
